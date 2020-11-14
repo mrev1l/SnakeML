@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# VS Temp
+/!VS_TMP/*
+/.vs/*
+
+# Notes
+/notes
