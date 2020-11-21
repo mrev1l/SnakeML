@@ -4,8 +4,8 @@
 #include "Application.h"
 
 #ifdef _WINDOWS
-#include "system/drivers/win/DX12Driver.h"
-#include "system/drivers/win/WinDriver.h"
+#include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/os/WinDriver.h"
 #endif
 
 #include "system/input/InputManager.h"

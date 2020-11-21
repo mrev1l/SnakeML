@@ -3,7 +3,9 @@
 #include "stdafx.h"
 #include "WinDriver.h"
 
-#include "system/drivers/win/DX12Driver.h"
+#include "system/drivers/win/dx/DX12Driver.h"
+
+#include <Shlwapi.h>
 
 namespace snakeml
 {
@@ -14,6 +16,7 @@ namespace win
 
 WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, math::vec2<uint32_t> windowSz)
 	: IOSDriver()
+	, m_windowSz(windowSz)
 {
 	const HINSTANCE hInstance = GetHInstance();
 	WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
@@ -27,7 +30,16 @@ WinDriver::~WinDriver()
 
 void WinDriver::OnInitialize()
 {
-	new system::win::DX12Driver(m_windowHandle);
+	// Set the working directory to the path of the executable.
+	WCHAR path[MAX_PATH];
+	HMODULE hModule = GetModuleHandleW(NULL);
+	if (GetModuleFileNameW(hModule, path, MAX_PATH) > 0)
+	{
+		PathRemoveFileSpecW(path);
+		SetCurrentDirectoryW(path);
+	}
+
+	new system::win::DX12Driver(m_windowHandle, m_windowSz);
 	system::IRenderDriver::GetInstance()->Initialize();
 }
 

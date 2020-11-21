@@ -33,6 +33,7 @@ private:
 	void OnQuit() override;
 
 	HWND m_windowHandle;
+	math::vec2<uint32_t> m_windowSz;
 };
 
 }
