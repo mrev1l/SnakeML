@@ -8,6 +8,8 @@
 #include "system/drivers/win/os/WinDriver.h"
 #endif
 
+#include "ecs/ECSManager.h"
+#include "ecs/Components.h"
 #include "system/input/InputManager.h"
 
 #include <functional>
@@ -37,6 +39,25 @@ void Application::Initialize()
 	system::IOSDriver::GetInstance()->Initialize();
 
 	system::IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this));
+
+	new system::ECSManager();
+	//system::InitializeCubeMaterialSystem* sys1 = new system::InitializeCubeMaterialSystem();
+	system::InitializeRenderComponentsSystem* sys2 = new system::InitializeRenderComponentsSystem();
+	system::InitializeTransformComponents* sys3 = new system::InitializeTransformComponents();
+	system::InitializeEntitiesSystem* sys4 = new system::InitializeEntitiesSystem();
+	system::LoadMaterialsSystem* sys5 = new system::LoadMaterialsSystem();
+	//system::ECSManager::GetInstance()->ExecuteSystem(sys1);
+	system::ECSManager::GetInstance()->ExecuteSystem(sys5);
+	system::ECSManager::GetInstance()->ExecuteSystem(sys2);
+	system::ECSManager::GetInstance()->ExecuteSystem(sys3);
+	system::ECSManager::GetInstance()->ExecuteSystem(sys4);
+	system::ECSManager::GetInstance()->ScheduleSystem(new system::UpdateCubeSystem());
+	system::ECSManager::GetInstance()->ScheduleSystem(new system::RenderSystem());
+	//delete sys1;
+	delete sys2;
+	delete sys3;
+	delete sys4;
+	delete sys5;
 }
 
 void Application::Run()
@@ -76,6 +97,7 @@ void Application::Update()
 		elapsedSeconds = 0.0;
 	}
 
+	system::ECSManager::GetInstance()->Update();
 	Render();
 }
 

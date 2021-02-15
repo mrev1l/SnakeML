@@ -105,6 +105,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/wd4820 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects_Library\snakeml_repo\snake_ml\third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +124,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/wd4820 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects_Library\snakeml_repo\snake_ml\third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,6 +145,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/wd4820 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects_Library\snakeml_repo\snake_ml\third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,6 +168,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalOptions>/wd4820 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects_Library\snakeml_repo\snake_ml\third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,6 +187,7 @@
     <ClCompile Include="system\drivers\win\dx\DX12CommandQueue.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12Driver.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
+    <ClCompile Include="system\ecs\ECSManager.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="utils\win_utils.cpp" />
   </ItemGroup>
@@ -196,7 +201,46 @@
     <ClInclude Include="system\drivers\win\dx\DX12CommandQueue.h" />
     <ClInclude Include="system\drivers\win\dx\DX12Driver.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
+    <ClInclude Include="system\ecs\Components.h" />
+    <ClInclude Include="system\ecs\ECSManager.h" />
     <ClInclude Include="system\input\InputManager.h" />
+    <ClInclude Include="third_party\rapidjson\allocators.h" />
+    <ClInclude Include="third_party\rapidjson\cursorstreamwrapper.h" />
+    <ClInclude Include="third_party\rapidjson\document.h" />
+    <ClInclude Include="third_party\rapidjson\encodedstream.h" />
+    <ClInclude Include="third_party\rapidjson\encodings.h" />
+    <ClInclude Include="third_party\rapidjson\error\en.h" />
+    <ClInclude Include="third_party\rapidjson\error\error.h" />
+    <ClInclude Include="third_party\rapidjson\filereadstream.h" />
+    <ClInclude Include="third_party\rapidjson\filewritestream.h" />
+    <ClInclude Include="third_party\rapidjson\fwd.h" />
+    <ClInclude Include="third_party\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="third_party\rapidjson\internal\clzll.h" />
+    <ClInclude Include="third_party\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="third_party\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="third_party\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="third_party\rapidjson\internal\itoa.h" />
+    <ClInclude Include="third_party\rapidjson\internal\meta.h" />
+    <ClInclude Include="third_party\rapidjson\internal\pow10.h" />
+    <ClInclude Include="third_party\rapidjson\internal\regex.h" />
+    <ClInclude Include="third_party\rapidjson\internal\stack.h" />
+    <ClInclude Include="third_party\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="third_party\rapidjson\internal\strtod.h" />
+    <ClInclude Include="third_party\rapidjson\internal\swap.h" />
+    <ClInclude Include="third_party\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="third_party\rapidjson\memorybuffer.h" />
+    <ClInclude Include="third_party\rapidjson\memorystream.h" />
+    <ClInclude Include="third_party\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="third_party\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="third_party\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="third_party\rapidjson\pointer.h" />
+    <ClInclude Include="third_party\rapidjson\prettywriter.h" />
+    <ClInclude Include="third_party\rapidjson\rapidjson.h" />
+    <ClInclude Include="third_party\rapidjson\reader.h" />
+    <ClInclude Include="third_party\rapidjson\schema.h" />
+    <ClInclude Include="third_party\rapidjson\stream.h" />
+    <ClInclude Include="third_party\rapidjson\stringbuffer.h" />
+    <ClInclude Include="third_party\rapidjson\writer.h" />
     <ClInclude Include="utils\directX_utils.h" />
     <ClInclude Include="utils\os_defines.h" />
     <ClInclude Include="utils\patterns\event.h" />

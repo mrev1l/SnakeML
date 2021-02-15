@@ -8,19 +8,41 @@ namespace snakeml
 {
 namespace system
 {
+
+class RenderSystem;
+
 namespace win
 {
 
 class DX12Driver
 	: public IRenderDriver
 {
+	friend RenderSystem;
 	static constexpr std::chrono::milliseconds s_DX12FenceDefaultWait = std::chrono::milliseconds::max();
 	static constexpr uint8_t s_backBufferCount = 2u;
 	static constexpr FLOAT s_defaultClearColor[4] = { 0.f,0.f,0.f,1.f };
 
 public:
+	enum class CommandQueueType
+	{
+		Direct,
+		Compute,
+		Copy
+	};
+
 	DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz);
 	~DX12Driver() = default;
+
+	Microsoft::WRL::ComPtr<ID3D12Device2> GetD3D12Device() { return m_device; }
+	std::shared_ptr<DX12CommandQueue> GetDX12CommandQueue(CommandQueueType type) 
+	{
+		switch (type)
+		{
+		case CommandQueueType::Direct: return m_directCommandQueue;
+		case CommandQueueType::Compute: return m_computeCommandQueue;
+		case CommandQueueType::Copy: return m_copyCommandQueue;
+		}
+	}
 
 private:
 	void OnInitialize() override;

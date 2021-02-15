@@ -233,7 +233,7 @@ void DX12Driver::OnRender()
 		float aspectRatio = static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight);
 		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
 	}
-
+	return;
 	// Render
 	{
 		auto commandQueue = m_directCommandQueue;

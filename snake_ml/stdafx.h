@@ -7,4 +7,8 @@
 
 #include "utils/snake_math.h"
 
-#define ASSERT(Condition, Message) if(!(Condition)) { _wassert(_CRT_WIDE(#Message), _CRT_WIDE(__FILE__), __LINE__); }
+#ifdef NDEBUG
+	#define ASSERT(Condition, Message) ;
+#else
+	#define ASSERT(Condition, Message) if(!(Condition)) { _wassert(_CRT_WIDE(#Message), _CRT_WIDE(__FILE__), __LINE__); }
+#endif

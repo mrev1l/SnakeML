@@ -6,6 +6,7 @@
 #pragma warning( disable : 4365)
 #include <algorithm>
 #pragma warning( default : 4365)
+#include <fstream>
 
 namespace snakeml
 {
@@ -75,6 +76,24 @@ HANDLE WinUtils::CreateEventHandle()
 	ASSERT(fenceEvent, "Failed to create fence event.");
 
 	return fenceEvent;
+}
+
+void WinUtils::StringToWstring(const char* source, wchar_t*& dest)
+{
+	int destSz = MultiByteToWideChar(CP_UTF8, 0, source, -1, NULL, 0);
+	dest = new wchar_t[destSz];
+	MultiByteToWideChar(CP_UTF8, 0, source, -1, dest, destSz);
+}
+
+void WinUtils::LoadFileIntoBuffer(const char* filename, std::string& fileBuffer)
+{
+	std::ifstream materialJsonFile(filename, std::ios_base::in);
+	
+	std::string line;
+	while (materialJsonFile >> line)
+	{
+		fileBuffer.append(line);
+	}
 }
 
 }
