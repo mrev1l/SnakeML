@@ -4,13 +4,18 @@
 #include "Application.h"
 
 #ifdef _WINDOWS
-#include "system/drivers/win/dx/DX12Driver.h"
-#include "system/drivers/win/os/WinDriver.h"
+#include "drivers/win/dx/DX12Driver.h"
+#include "drivers/win/os/WinDriver.h"
+#include "ecs/systems/platform_specific/InitializeRenderComponentsSystem.h"
+#include "ecs/systems/platform_specific/LoadMaterialsSystem.h"
+#include "ecs/systems/platform_specific/RenderSystem.h"
 #endif
 
 #include "ecs/ECSManager.h"
-#include "ecs/Components.h"
-#include "system/input/InputManager.h"
+#include "ecs/systems/InitializeEntitiesSystem.h"
+#include "ecs/systems/InitializeTransformComponentsSystem.h"
+#include "ecs/systems/RotateCubeSystem.h"
+#include "input/InputManager.h"
 
 #include <functional>
 #include <string_view>
@@ -43,7 +48,7 @@ void Application::Initialize()
 	new system::ECSManager();
 	//system::InitializeCubeMaterialSystem* sys1 = new system::InitializeCubeMaterialSystem();
 	system::InitializeRenderComponentsSystem* sys2 = new system::InitializeRenderComponentsSystem();
-	system::InitializeTransformComponents* sys3 = new system::InitializeTransformComponents();
+	system::InitializeTransformComponentsSystem* sys3 = new system::InitializeTransformComponentsSystem();
 	system::InitializeEntitiesSystem* sys4 = new system::InitializeEntitiesSystem();
 	system::LoadMaterialsSystem* sys5 = new system::LoadMaterialsSystem();
 	//system::ECSManager::GetInstance()->ExecuteSystem(sys1);
@@ -51,7 +56,7 @@ void Application::Initialize()
 	system::ECSManager::GetInstance()->ExecuteSystem(sys2);
 	system::ECSManager::GetInstance()->ExecuteSystem(sys3);
 	system::ECSManager::GetInstance()->ExecuteSystem(sys4);
-	system::ECSManager::GetInstance()->ScheduleSystem(new system::UpdateCubeSystem());
+	system::ECSManager::GetInstance()->ScheduleSystem(new system::RotateCubeSystem());
 	system::ECSManager::GetInstance()->ScheduleSystem(new system::RenderSystem());
 	//delete sys1;
 	delete sys2;

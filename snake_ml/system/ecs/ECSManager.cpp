@@ -7,9 +7,30 @@ namespace snakeml
 {
 namespace system
 {
-	//std::unordered_map<ComponentType, Factory*> IComponent::factories;
-}
-}
-snakeml::system::ECSManager::ECSManager()
+
+ECSManager::ECSManager()
 {
+}
+
+void ECSManager::ExecuteSystem(ISystem* system)
+{
+	system->Execute();
+}
+
+void ECSManager::ScheduleSystem(ISystem* system)
+{
+	m_systems.push_back(system);
+}
+
+void ECSManager::Update()
+{
+	for (ISystem* system : m_systems)
+	{
+		system->Execute();
+	}
+}
+
+
+
+}
 }
