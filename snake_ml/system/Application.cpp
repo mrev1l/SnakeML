@@ -8,13 +8,14 @@
 #include "drivers/win/os/WinDriver.h"
 #include "ecs/systems/platform_specific/InitializeRenderComponentsSystem.h"
 #include "ecs/systems/platform_specific/LoadMaterialsSystem.h"
-#include "ecs/systems/platform_specific/RenderSystem.h"
+#include "ecs/systems/platform_specific/Render2DSystem.h"
 #endif
 
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeEntitiesSystem.h"
 #include "ecs/systems/InitializeTransformComponentsSystem.h"
 #include "ecs/systems/RotateCubeSystem.h"
+#include "ecs/systems/TestMoveSnakeHeadSystem.h"
 #include "input/InputManager.h"
 
 #include <functional>
@@ -34,7 +35,7 @@ void Application::Initialize()
 {
 	constexpr std::wstring_view windowClassName(L"SnakeML_WindowClass");
 	constexpr std::wstring_view windowTitle(L"snake_ml");
-	constexpr math::vec2<uint32_t> windowSz = {1280, 720};
+	constexpr math::vec2<uint32_t> windowSz = {720, 720};
 
 #ifdef _WINDOWS
 	new system::win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
@@ -56,8 +57,9 @@ void Application::Initialize()
 	system::ECSManager::GetInstance()->ExecuteSystem(sys2);
 	system::ECSManager::GetInstance()->ExecuteSystem(sys3);
 	system::ECSManager::GetInstance()->ExecuteSystem(sys4);
-	system::ECSManager::GetInstance()->ScheduleSystem(new system::RotateCubeSystem());
-	system::ECSManager::GetInstance()->ScheduleSystem(new system::RenderSystem());
+	//system::ECSManager::GetInstance()->ScheduleSystem(new system::RotateCubeSystem());
+	system::ECSManager::GetInstance()->ScheduleSystem(new system::TestMoveSnakeHeadSystem());
+	system::ECSManager::GetInstance()->ScheduleSystem(new system::Render2DSystem());
 	//delete sys1;
 	delete sys2;
 	delete sys3;

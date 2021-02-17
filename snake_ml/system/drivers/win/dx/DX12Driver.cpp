@@ -88,6 +88,8 @@ void DX12Driver::OnInitialize()
 
 	m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, m_clientWidth, m_clientHeight);
 	m_scissorRect = CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX);
+
+	m_orthogonalMatrix = DirectX::XMMatrixOrthographicLH(m_clientWidth, m_clientHeight, 0.1f, 100.f);
 	
 	// Resize/Create the depth buffer.
 	ResizeDepthBuffer();
@@ -179,6 +181,7 @@ void DX12Driver::OnInitialize()
 			CD3DX12_PIPELINE_STATE_STREAM_VS VS;
 			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
 			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DSVFormat;
+			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL DS;
 			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RTVFormats;
 		} pipelineStateStream;
 
@@ -186,12 +189,29 @@ void DX12Driver::OnInitialize()
 		rtvFormats.NumRenderTargets = 1;
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
+		CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc;
+		depthStencilDesc.DepthEnable = false;// true;
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		depthStencilDesc.StencilEnable = true;
+		depthStencilDesc.StencilReadMask = 0xFF;
+		depthStencilDesc.StencilWriteMask = 0xFF;
+		depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_INCR;
+		depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+		depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_DECR;
+		depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+		depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
 		pipelineStateStream.pRootSignature = m_rootSignature.Get();
 		pipelineStateStream.InputLayout = { inputLayout, _countof(inputLayout) };
 		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
 		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.Get());
 		pipelineStateStream.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		pipelineStateStream.DS = depthStencilDesc;
 		pipelineStateStream.RTVFormats = rtvFormats;
 
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {

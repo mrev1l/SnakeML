@@ -9,7 +9,7 @@ namespace snakeml
 namespace system
 {
 
-class RenderSystem : public ISystem
+class Render2DSystem : public ISystem
 {
 public:
 	void Execute() override;

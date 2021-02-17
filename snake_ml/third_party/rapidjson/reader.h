@@ -212,10 +212,10 @@ struct BaseReaderHandler {
     bool RawNumber(const Ch* str, SizeType len, bool copy) { return static_cast<Override&>(*this).String(str, len, copy); }
     bool String(const Ch*, SizeType, bool) { return static_cast<Override&>(*this).Default(); }
     bool StartObject() { return static_cast<Override&>(*this).Default(); }
-    bool Key(const Ch* str, SizeType len, bool copy) { return static_cast<Override&>(*this).String(str, len, copy); }
+    bool Key(const Ch* str, SizeType len, bool copy) { return static_cast<Override&>(*this).String(str, len, copy); } //-V524
     bool EndObject(SizeType) { return static_cast<Override&>(*this).Default(); }
     bool StartArray() { return static_cast<Override&>(*this).Default(); }
-    bool EndArray(SizeType) { return static_cast<Override&>(*this).Default(); }
+    bool EndArray(SizeType) { return static_cast<Override&>(*this).Default(); } //-V524
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -905,7 +905,7 @@ private:
     template<typename InputStream>
     unsigned ParseHex4(InputStream& is, size_t escapeOffset) {
         unsigned codepoint = 0;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) { //-V112
             Ch c = is.Peek();
             codepoint <<= 4;
             codepoint += static_cast<unsigned>(c);
@@ -937,13 +937,13 @@ private:
 
         RAPIDJSON_FORCEINLINE void* Push(SizeType count) {
             length_ += count;
-            return stack_.template Push<Ch>(count);
+            return stack_.template Push<Ch>(count); //-V106
         }
 
-        size_t Length() const { return length_; }
+        size_t Length() const { return length_; } //-V109
 
         Ch* Pop() {
-            return stack_.template Pop<Ch>(length_);
+            return stack_.template Pop<Ch>(length_); //-V106
         }
 
     private:
@@ -969,7 +969,7 @@ private:
             ParseStringToStream<parseFlags, SourceEncoding, SourceEncoding>(s, s);
             RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
             size_t length = s.PutEnd(head) - 1;
-            RAPIDJSON_ASSERT(length <= 0xFFFFFFFF);
+            RAPIDJSON_ASSERT(length <= 0xFFFFFFFF); //-V112 //-V104
             const typename TargetEncoding::Ch* const str = reinterpret_cast<typename TargetEncoding::Ch*>(head);
             success = (isKey ? handler.Key(str, SizeType(length), false) : handler.String(str, SizeType(length), false));
         }
@@ -1051,7 +1051,7 @@ private:
                 os.Put('\0');   // null-terminate the string
                 return;
             }
-            else if (RAPIDJSON_UNLIKELY(static_cast<unsigned>(c) < 0x20)) { // RFC 4627: unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
+            else if (RAPIDJSON_UNLIKELY(static_cast<unsigned>(c) < 0x20)) { // RFC 4627: unescaped = %x20-21 / %x23-5B / %x5D-10FFFF //-V112
                 if (c == '\0')
                     RAPIDJSON_PARSE_ERROR(kParseErrorStringMissQuotationMark, is.Tell());
                 else
@@ -1416,7 +1416,7 @@ private:
 
         RAPIDJSON_FORCEINLINE Ch Peek() const { return is.Peek(); }
         RAPIDJSON_FORCEINLINE Ch TakePush() { return is.Take(); }
-        RAPIDJSON_FORCEINLINE Ch Take() { return is.Take(); }
+        RAPIDJSON_FORCEINLINE Ch Take() { return is.Take(); } //-V524
         RAPIDJSON_FORCEINLINE void Push(char) {}
 
         size_t Tell() { return is.Tell(); }
@@ -1595,7 +1595,7 @@ private:
                     i64 = i;
 
                 while (RAPIDJSON_LIKELY(s.Peek() >= '0' && s.Peek() <= '9')) {
-                    if (i64 > RAPIDJSON_UINT64_C2(0x1FFFFF, 0xFFFFFFFF)) // 2^53 - 1 for fast path
+                    if (i64 > RAPIDJSON_UINT64_C2(0x1FFFFF, 0xFFFFFFFF)) // 2^53 - 1 for fast path //-V112
                         break;
                     else {
                         i64 = i64 * 10 + static_cast<unsigned>(s.TakePush() - '0');
@@ -1643,7 +1643,7 @@ private:
 
             if (RAPIDJSON_LIKELY(s.Peek() >= '0' && s.Peek() <= '9')) {
                 exp = static_cast<int>(s.Take() - '0');
-                if (expMinus) {
+                if (expMinus) { //-V1051
                     // (exp + expFrac) must not underflow int => we're detecting when -exp gets
                     // dangerously close to INT_MIN (a pessimistic next digit 9 would push it into
                     // underflow territory):
@@ -1685,7 +1685,7 @@ private:
                 s.Pop();  // Pop stack no matter if it will be used or not.
                 typename InputStream::Ch* head = is.PutBegin();
                 const size_t length = s.Tell() - startOffset;
-                RAPIDJSON_ASSERT(length <= 0xFFFFFFFF);
+                RAPIDJSON_ASSERT(length <= 0xFFFFFFFF); //-V112 //-V104
                 // unable to insert the \0 character here, it will erase the comma after this number
                 const typename TargetEncoding::Ch* const str = reinterpret_cast<typename TargetEncoding::Ch*>(head);
                 cont = handler.RawNumber(str, SizeType(length), false);
@@ -2054,7 +2054,7 @@ private:
 
         case IterativeParsingMemberValueState:
             // Must be non-compound value. Or it would be ObjectInitial or ArrayInitial state.
-            ParseValue<parseFlags>(is, handler);
+            ParseValue<parseFlags>(is, handler); //-V1037
             if (HasParseError()) {
                 return IterativeParsingErrorState;
             }

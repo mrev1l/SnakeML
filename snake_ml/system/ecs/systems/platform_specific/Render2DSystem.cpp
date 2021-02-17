@@ -1,7 +1,7 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
-#include "RenderSystem.h"
+#include "Render2DSystem.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/ecs/components/TransformComponent.h"
@@ -13,7 +13,7 @@ namespace snakeml
 namespace system
 {
 
-void RenderSystem::Execute()
+void Render2DSystem::Execute()
 {
 	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
 	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
@@ -42,6 +42,7 @@ void RenderSystem::Execute()
 		commandList->SetGraphicsRootSignature(renderable.m_rootSignature.Get());
 
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 		commandList->IASetVertexBuffers(0, 1, &renderable.m_vertexBufferView);
 		commandList->IASetIndexBuffer(&renderable.m_indexBufferView);
 
@@ -53,13 +54,15 @@ void RenderSystem::Execute()
 		auto scaleMatrix = DirectX::XMMatrixScaling(transform.m_scale.m_x, transform.m_scale.m_y, transform.m_scale.m_z);
 		auto rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(transform.m_rotation.m_x), DirectX::XMConvertToRadians(transform.m_rotation.m_y), DirectX::XMConvertToRadians(transform.m_rotation.m_z));
 		auto translationMatrix = DirectX::XMMatrixTranslation(transform.m_position.m_x, transform.m_position.m_y, transform.m_position.m_z);
+		
 		const DirectX::XMMATRIX modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
-		DirectX::XMMATRIX mvpMatrix = DirectX::XMMatrixMultiply(modelMatrix, dx12Driver->m_viewMatrix);
-		mvpMatrix = DirectX::XMMatrixMultiply(mvpMatrix, dx12Driver->m_projectionMatrix);
+		
+		DirectX::XMMATRIX mvpMatrix = modelMatrix * dx12Driver->m_viewMatrix * dx12Driver->m_orthogonalMatrix;
+
 		commandList->SetGraphicsRoot32BitConstants(0, sizeof(DirectX::XMMATRIX) / _countof(DirectX::XMMATRIX::r), &mvpMatrix, 0);
-
-		commandList->DrawIndexedInstanced(renderable.m_indexBufferView.SizeInBytes / sizeof(uint16_t), 1, 0, 0, 0);
-
+		UINT vertexCount = renderable.m_vertexBufferView.SizeInBytes / renderable.m_vertexBufferView.StrideInBytes;
+		commandList->DrawInstanced(vertexCount, 1, 0, 0);
+		
 		// Present
 		{
 			dxutils::TransitionResource(commandList, backBuffer,

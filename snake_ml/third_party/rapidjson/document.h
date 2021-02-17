@@ -734,11 +734,11 @@ public:
         switch (rhs.GetType()) {
         case kObjectType: {
                 SizeType count = rhs.data_.o.size;
-                Member* lm = reinterpret_cast<Member*>(allocator.Malloc(count * sizeof(Member)));
+                Member* lm = reinterpret_cast<Member*>(allocator.Malloc(count * sizeof(Member))); //-V104
                 const typename GenericValue<Encoding,SourceAllocator>::Member* rm = rhs.GetMembersPointer();
                 for (SizeType i = 0; i < count; i++) {
-                    new (&lm[i].name) GenericValue(rm[i].name, allocator, copyConstStrings);
-                    new (&lm[i].value) GenericValue(rm[i].value, allocator, copyConstStrings);
+                    new (&lm[i].name) GenericValue(rm[i].name, allocator, copyConstStrings); //-V108
+                    new (&lm[i].value) GenericValue(rm[i].value, allocator, copyConstStrings); //-V108
                 }
                 data_.f.flags = kObjectFlag;
                 data_.o.size = data_.o.capacity = count;
@@ -747,10 +747,10 @@ public:
             break;
         case kArrayType: {
                 SizeType count = rhs.data_.a.size;
-                GenericValue* le = reinterpret_cast<GenericValue*>(allocator.Malloc(count * sizeof(GenericValue)));
+                GenericValue* le = reinterpret_cast<GenericValue*>(allocator.Malloc(count * sizeof(GenericValue))); //-V104
                 const GenericValue<Encoding,SourceAllocator>* re = rhs.GetElementsPointer();
                 for (SizeType i = 0; i < count; i++)
-                    new (&le[i]) GenericValue(re[i], allocator, copyConstStrings);
+                    new (&le[i]) GenericValue(re[i], allocator, copyConstStrings); //-V108
                 data_.f.flags = kArrayFlag;
                 data_.a.size = data_.a.capacity = count;
                 SetElementsPointer(le);
@@ -762,7 +762,7 @@ public:
                 data_  = *reinterpret_cast<const Data*>(&rhs.data_);
             }
             else
-                SetStringRaw(StringRef(rhs.GetString(), rhs.GetStringLength()), allocator);
+                SetStringRaw(StringRef(rhs.GetString(), rhs.GetStringLength()), allocator); //-V106
             break;
         default:
             data_.f.flags = rhs.data_.f.flags;
@@ -798,7 +798,7 @@ public:
     //! Constructor for unsigned value.
     explicit GenericValue(unsigned u) RAPIDJSON_NOEXCEPT : data_() {
         data_.n.u64 = u; 
-        data_.f.flags = (u & 0x80000000) ? kNumberUintFlag : (kNumberUintFlag | kIntFlag | kInt64Flag);
+        data_.f.flags = (u & 0x80000000) ? kNumberUintFlag : (kNumberUintFlag | kIntFlag | kInt64Flag); //-V112
     }
 
     //! Constructor for int64_t value.
@@ -807,12 +807,12 @@ public:
         data_.f.flags = kNumberInt64Flag;
         if (i64 >= 0) {
             data_.f.flags |= kNumberUint64Flag;
-            if (!(static_cast<uint64_t>(i64) & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x00000000)))
+            if (!(static_cast<uint64_t>(i64) & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x00000000))) //-V112
                 data_.f.flags |= kUintFlag;
-            if (!(static_cast<uint64_t>(i64) & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
+            if (!(static_cast<uint64_t>(i64) & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000))) //-V112
                 data_.f.flags |= kIntFlag;
         }
-        else if (i64 >= static_cast<int64_t>(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
+        else if (i64 >= static_cast<int64_t>(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000))) //-V112
             data_.f.flags |= kIntFlag;
     }
 
@@ -820,11 +820,11 @@ public:
     explicit GenericValue(uint64_t u64) RAPIDJSON_NOEXCEPT : data_() {
         data_.n.u64 = u64;
         data_.f.flags = kNumberUint64Flag;
-        if (!(u64 & RAPIDJSON_UINT64_C2(0x80000000, 0x00000000)))
+        if (!(u64 & RAPIDJSON_UINT64_C2(0x80000000, 0x00000000))) //-V112
             data_.f.flags |= kInt64Flag;
-        if (!(u64 & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x00000000)))
+        if (!(u64 & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x00000000))) //-V112
             data_.f.flags |= kUintFlag;
-        if (!(u64 & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
+        if (!(u64 & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000))) //-V112
             data_.f.flags |= kIntFlag;
     }
 
@@ -835,13 +835,13 @@ public:
     explicit GenericValue(float f) RAPIDJSON_NOEXCEPT : data_() { data_.n.d = static_cast<double>(f); data_.f.flags = kNumberDoubleFlag; }
 
     //! Constructor for constant string (i.e. do not make a copy of string)
-    GenericValue(const Ch* s, SizeType length) RAPIDJSON_NOEXCEPT : data_() { SetStringRaw(StringRef(s, length)); }
+    GenericValue(const Ch* s, SizeType length) RAPIDJSON_NOEXCEPT : data_() { SetStringRaw(StringRef(s, length)); } //-V106
 
     //! Constructor for constant string (i.e. do not make a copy of string)
     explicit GenericValue(StringRefType s) RAPIDJSON_NOEXCEPT : data_() { SetStringRaw(s); }
 
     //! Constructor for copy-string (i.e. do make a copy of string)
-    GenericValue(const Ch* s, SizeType length, Allocator& allocator) : data_() { SetStringRaw(StringRef(s, length), allocator); }
+    GenericValue(const Ch* s, SizeType length, Allocator& allocator) : data_() { SetStringRaw(StringRef(s, length), allocator); } //-V106
 
     //! Constructor for copy-string (i.e. do make a copy of string)
     GenericValue(const Ch*s, Allocator& allocator) : data_() { SetStringRaw(StringRef(s), allocator); }
@@ -884,7 +884,7 @@ public:
             case kArrayFlag:
                 {
                     GenericValue* e = GetElementsPointer();
-                    for (GenericValue* v = e; v != e + data_.a.size; ++v)
+                    for (GenericValue* v = e; v != e + data_.a.size; ++v) //-V104
                         v->~GenericValue();
                     Allocator::Free(e);
                 }
@@ -1044,7 +1044,7 @@ public:
             if (IsDouble() || rhs.IsDouble()) {
                 double a = GetDouble();     // May convert from integer to double.
                 double b = rhs.GetDouble(); // Ditto
-                return a >= b && a <= b;    // Prevent -Wfloat-equal
+                return a >= b && a <= b;    // Prevent -Wfloat-equal //-V590
             }
             else
                 return data_.n.u64 == rhs.data_.n.u64;
@@ -1147,7 +1147,7 @@ public:
                 || a > static_cast<double>((std::numeric_limits<float>::max)()))
             return false;
         double b = static_cast<double>(static_cast<float>(a));
-        return a >= b && a <= b;    // Prevent -Wfloat-equal
+        return a >= b && a <= b;    // Prevent -Wfloat-equal //-V590
     }
 
     //@}
@@ -1242,13 +1242,13 @@ public:
     ConstMemberIterator MemberBegin() const { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(GetMembersPointer()); }
     //! Const \em past-the-end member iterator
     /*! \pre IsObject() == true */
-    ConstMemberIterator MemberEnd() const   { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(GetMembersPointer() + data_.o.size); }
+    ConstMemberIterator MemberEnd() const   { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(GetMembersPointer() + data_.o.size); } //-V104
     //! Member iterator
     /*! \pre IsObject() == true */
     MemberIterator MemberBegin()            { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer()); }
     //! \em Past-the-end member iterator
     /*! \pre IsObject() == true */
-    MemberIterator MemberEnd()              { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer() + data_.o.size); }
+    MemberIterator MemberEnd()              { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(GetMembersPointer() + data_.o.size); } //-V104
 
     //! Request the object to have enough capacity to store members.
     /*! \param newCapacity  The capacity that the object at least need to have.
@@ -1259,7 +1259,7 @@ public:
     GenericValue& MemberReserve(SizeType newCapacity, Allocator &allocator) {
         RAPIDJSON_ASSERT(IsObject());
         if (newCapacity > data_.o.capacity) {
-            SetMembersPointer(reinterpret_cast<Member*>(allocator.Realloc(GetMembersPointer(), data_.o.capacity * sizeof(Member), newCapacity * sizeof(Member))));
+            SetMembersPointer(reinterpret_cast<Member*>(allocator.Realloc(GetMembersPointer(), data_.o.capacity * sizeof(Member), newCapacity * sizeof(Member)))); //-V104
             data_.o.capacity = newCapacity;
         }
         return *this;
@@ -1373,8 +1373,8 @@ public:
         if (o.size >= o.capacity)
             MemberReserve(o.capacity == 0 ? kDefaultObjectCapacity : (o.capacity + (o.capacity + 1) / 2), allocator);
         Member* members = GetMembersPointer();
-        members[o.size].name.RawAssign(name);
-        members[o.size].value.RawAssign(value);
+        members[o.size].name.RawAssign(name); //-V108
+        members[o.size].value.RawAssign(value); //-V108
         o.size++;
         return *this;
     }
@@ -1556,7 +1556,7 @@ public:
         RAPIDJSON_ASSERT(GetMembersPointer() != 0);
         RAPIDJSON_ASSERT(m >= MemberBegin() && m < MemberEnd());
 
-        MemberIterator last(GetMembersPointer() + (data_.o.size - 1));
+        MemberIterator last(GetMembersPointer() + (data_.o.size - 1)); //-V104
         if (data_.o.size > 1 && m != last)
             *m = *last; // Move the last one to this place
         else
@@ -1656,7 +1656,7 @@ public:
     void Clear() {
         RAPIDJSON_ASSERT(IsArray()); 
         GenericValue* e = GetElementsPointer();
-        for (GenericValue* v = e; v != e + data_.a.size; ++v)
+        for (GenericValue* v = e; v != e + data_.a.size; ++v) //-V104
             v->~GenericValue();
         data_.a.size = 0;
     }
@@ -1666,19 +1666,19 @@ public:
         \param index Zero-based index of element.
         \see operator[](T*)
     */
-    GenericValue& operator[](SizeType index) {
+    GenericValue& operator[](SizeType index) { //-V302
         RAPIDJSON_ASSERT(IsArray());
         RAPIDJSON_ASSERT(index < data_.a.size);
-        return GetElementsPointer()[index];
+        return GetElementsPointer()[index]; //-V108
     }
-    const GenericValue& operator[](SizeType index) const { return const_cast<GenericValue&>(*this)[index]; }
+    const GenericValue& operator[](SizeType index) const { return const_cast<GenericValue&>(*this)[index]; } //-V302 //-V659
 
     //! Element iterator
     /*! \pre IsArray() == true */
     ValueIterator Begin() { RAPIDJSON_ASSERT(IsArray()); return GetElementsPointer(); }
     //! \em Past-the-end element iterator
     /*! \pre IsArray() == true */
-    ValueIterator End() { RAPIDJSON_ASSERT(IsArray()); return GetElementsPointer() + data_.a.size; }
+    ValueIterator End() { RAPIDJSON_ASSERT(IsArray()); return GetElementsPointer() + data_.a.size; } //-V104
     //! Constant element iterator
     /*! \pre IsArray() == true */
     ConstValueIterator Begin() const { return const_cast<GenericValue&>(*this).Begin(); }
@@ -1695,7 +1695,7 @@ public:
     GenericValue& Reserve(SizeType newCapacity, Allocator &allocator) {
         RAPIDJSON_ASSERT(IsArray());
         if (newCapacity > data_.a.capacity) {
-            SetElementsPointer(reinterpret_cast<GenericValue*>(allocator.Realloc(GetElementsPointer(), data_.a.capacity * sizeof(GenericValue), newCapacity * sizeof(GenericValue))));
+            SetElementsPointer(reinterpret_cast<GenericValue*>(allocator.Realloc(GetElementsPointer(), data_.a.capacity * sizeof(GenericValue), newCapacity * sizeof(GenericValue)))); //-V104
             data_.a.capacity = newCapacity;
         }
         return *this;
@@ -1715,7 +1715,7 @@ public:
         RAPIDJSON_ASSERT(IsArray());
         if (data_.a.size >= data_.a.capacity)
             Reserve(data_.a.capacity == 0 ? kDefaultArrayCapacity : (data_.a.capacity + (data_.a.capacity + 1) / 2), allocator);
-        GetElementsPointer()[data_.a.size++].RawAssign(value);
+        GetElementsPointer()[data_.a.size++].RawAssign(value); //-V108
         return *this;
     }
 
@@ -1769,7 +1769,7 @@ public:
     GenericValue& PopBack() {
         RAPIDJSON_ASSERT(IsArray());
         RAPIDJSON_ASSERT(!Empty());
-        GetElementsPointer()[--data_.a.size].~GenericValue();
+        GetElementsPointer()[--data_.a.size].~GenericValue(); //-V108
         return *this;
     }
 
@@ -1866,7 +1866,7 @@ public:
         \post IsString() == true && GetString() == s && GetStringLength() == length
         \see SetString(StringRefType)
     */
-    GenericValue& SetString(const Ch* s, SizeType length) { return SetString(StringRef(s, length)); }
+    GenericValue& SetString(const Ch* s, SizeType length) { return SetString(StringRef(s, length)); } //-V106
 
     //! Set this value as a string without copying source string.
     /*! \param s source string reference
@@ -1883,7 +1883,7 @@ public:
         \return The value itself for fluent API.
         \post IsString() == true && GetString() != s && strcmp(GetString(),s) == 0 && GetStringLength() == length
     */
-    GenericValue& SetString(const Ch* s, SizeType length, Allocator& allocator) { return SetString(StringRef(s, length), allocator); }
+    GenericValue& SetString(const Ch* s, SizeType length, Allocator& allocator) { return SetString(StringRef(s, length), allocator); } //-V106
 
     //! Set this value as a string by copying from source string.
     /*! \param s source string. 
@@ -1956,7 +1956,7 @@ public:
             if (RAPIDJSON_UNLIKELY(!handler.StartObject()))
                 return false;
             for (ConstMemberIterator m = MemberBegin(); m != MemberEnd(); ++m) {
-                RAPIDJSON_ASSERT(m->name.IsString()); // User may change the type of name by MemberIterator.
+                RAPIDJSON_ASSERT(m->name.IsString()); // User may change the type of name by MemberIterator. //-V807
                 if (RAPIDJSON_UNLIKELY(!handler.Key(m->name.GetString(), m->name.GetStringLength(), (m->name.data_.f.flags & kCopyFlag) != 0)))
                     return false;
                 if (RAPIDJSON_UNLIKELY(!m->value.Accept(handler)))
@@ -2063,11 +2063,11 @@ private:
 #if RAPIDJSON_ENDIAN == RAPIDJSON_LITTLEENDIAN
         struct I {
             int i;
-            char padding[4];
+            char padding[4]; //-V112
         }i;
         struct U {
             unsigned u;
-            char padding2[4];
+            char padding2[4]; //-V112
         }u;
 #else
         struct I {
@@ -2116,9 +2116,9 @@ private:
     void SetArrayRaw(GenericValue* values, SizeType count, Allocator& allocator) {
         data_.f.flags = kArrayFlag;
         if (count) {
-            GenericValue* e = static_cast<GenericValue*>(allocator.Malloc(count * sizeof(GenericValue)));
+            GenericValue* e = static_cast<GenericValue*>(allocator.Malloc(count * sizeof(GenericValue))); //-V104
             SetElementsPointer(e);
-            std::memcpy(static_cast<void*>(e), values, count * sizeof(GenericValue));
+            std::memcpy(static_cast<void*>(e), values, count * sizeof(GenericValue)); //-V104
         }
         else
             SetElementsPointer(0);
@@ -2129,9 +2129,9 @@ private:
     void SetObjectRaw(Member* members, SizeType count, Allocator& allocator) {
         data_.f.flags = kObjectFlag;
         if (count) {
-            Member* m = static_cast<Member*>(allocator.Malloc(count * sizeof(Member)));
+            Member* m = static_cast<Member*>(allocator.Malloc(count * sizeof(Member))); //-V104
             SetMembersPointer(m);
-            std::memcpy(static_cast<void*>(m), members, count * sizeof(Member));
+            std::memcpy(static_cast<void*>(m), members, count * sizeof(Member)); //-V104
         }
         else
             SetMembersPointer(0);
@@ -2155,11 +2155,11 @@ private:
         } else {
             data_.f.flags = kCopyStringFlag;
             data_.s.length = s.length;
-            str = static_cast<Ch *>(allocator.Malloc((s.length + 1) * sizeof(Ch)));
+            str = static_cast<Ch *>(allocator.Malloc((s.length + 1) * sizeof(Ch))); //-V104
             SetStringPointer(str);
         }
-        std::memcpy(str, s, s.length * sizeof(Ch));
-        str[s.length] = '\0';
+        std::memcpy(str, s, s.length * sizeof(Ch)); //-V104
+        str[s.length] = '\0'; //-V108
     }
 
     //! Assignment without calling destructor
@@ -2182,7 +2182,7 @@ private:
         const Ch* const str2 = rhs.GetString();
         if(str1 == str2) { return true; } // fast path for constant string
 
-        return (std::memcmp(str1, str2, sizeof(Ch) * len1) == 0);
+        return (std::memcmp(str1, str2, sizeof(Ch) * len1) == 0); //-V104
     }
 
     Data data_;
@@ -2532,7 +2532,7 @@ public:
         return true;
     }
 
-    bool String(const Ch* str, SizeType length, bool copy) { 
+    bool String(const Ch* str, SizeType length, bool copy) {  //-V524
         if (copy) 
             new (stack_.template Push<ValueType>()) ValueType(str, length, GetAllocator());
         else
@@ -2545,7 +2545,7 @@ public:
     bool Key(const Ch* str, SizeType length, bool copy) { return String(str, length, copy); }
 
     bool EndObject(SizeType memberCount) {
-        typename ValueType::Member* members = stack_.template Pop<typename ValueType::Member>(memberCount);
+        typename ValueType::Member* members = stack_.template Pop<typename ValueType::Member>(memberCount); //-V106
         stack_.template Top<ValueType>()->SetObjectRaw(members, memberCount, GetAllocator());
         return true;
     }
@@ -2553,7 +2553,7 @@ public:
     bool StartArray() { new (stack_.template Push<ValueType>()) ValueType(kArrayType); return true; }
     
     bool EndArray(SizeType elementCount) {
-        ValueType* elements = stack_.template Pop<ValueType>(elementCount);
+        ValueType* elements = stack_.template Pop<ValueType>(elementCount); //-V106
         stack_.template Top<ValueType>()->SetArrayRaw(elements, elementCount, GetAllocator());
         return true;
     }
@@ -2617,7 +2617,7 @@ public:
     SizeType Capacity() const { return value_.Capacity(); }
     bool Empty() const { return value_.Empty(); }
     void Clear() const { value_.Clear(); }
-    ValueType& operator[](SizeType index) const {  return value_[index]; }
+    ValueType& operator[](SizeType index) const {  return value_[index]; } //-V108 //-V302
     ValueIterator Begin() const { return value_.Begin(); }
     ValueIterator End() const { return value_.End(); }
     GenericArray Reserve(SizeType newCapacity, AllocatorType &allocator) const { value_.Reserve(newCapacity, allocator); return *this; }
@@ -2721,8 +2721,8 @@ public:
     template <typename SourceAllocator> bool EraseMember(const GenericValue<EncodingType, SourceAllocator>& name) const { return value_.EraseMember(name); }
 
 #if RAPIDJSON_HAS_CXX11_RANGE_FOR
-    MemberIterator begin() const { return value_.MemberBegin(); }
-    MemberIterator end() const { return value_.MemberEnd(); }
+    MemberIterator begin() const { return value_.MemberBegin(); } //-V524
+    MemberIterator end() const { return value_.MemberEnd(); } //-V524
 #endif
 
 private:

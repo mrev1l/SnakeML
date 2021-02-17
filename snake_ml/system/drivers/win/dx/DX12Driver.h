@@ -9,7 +9,7 @@ namespace snakeml
 namespace system
 {
 
-class RenderSystem;
+class Render2DSystem;
 
 namespace win
 {
@@ -17,7 +17,7 @@ namespace win
 class DX12Driver
 	: public IRenderDriver
 {
-	friend RenderSystem;
+	friend Render2DSystem;
 	static constexpr std::chrono::milliseconds s_DX12FenceDefaultWait = std::chrono::milliseconds::max();
 	static constexpr uint8_t s_backBufferCount = 2u;
 	static constexpr FLOAT s_defaultClearColor[4] = { 0.f,0.f,0.f,1.f };
@@ -42,6 +42,8 @@ public:
 		case CommandQueueType::Compute: return m_computeCommandQueue;
 		case CommandQueueType::Copy: return m_copyCommandQueue;
 		}
+		ASSERT(false, "Unknown command queue type");
+		return nullptr;
 	}
 
 private:
@@ -143,6 +145,7 @@ private:
 	DirectX::XMMATRIX m_modelMatrix;
 	DirectX::XMMATRIX m_viewMatrix;
 	DirectX::XMMATRIX m_projectionMatrix;
+	DirectX::XMMATRIX m_orthogonalMatrix;
 };
 
 }

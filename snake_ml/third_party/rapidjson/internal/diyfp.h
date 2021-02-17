@@ -151,7 +151,7 @@ struct DiyFp {
     static const int kDpMinExponent = -kDpExponentBias;
     static const int kDpDenormalExponent = -kDpExponentBias + 1;
     static const uint64_t kDpExponentMask = RAPIDJSON_UINT64_C2(0x7FF00000, 0x00000000);
-    static const uint64_t kDpSignificandMask = RAPIDJSON_UINT64_C2(0x000FFFFF, 0xFFFFFFFF);
+    static const uint64_t kDpSignificandMask = RAPIDJSON_UINT64_C2(0x000FFFFF, 0xFFFFFFFF); //-V112
     static const uint64_t kDpHiddenBit = RAPIDJSON_UINT64_C2(0x00100000, 0x00000000);
 
     uint64_t f;
@@ -232,14 +232,14 @@ inline DiyFp GetCachedPower(int e, int* K) {
     unsigned index = static_cast<unsigned>((k >> 3) + 1);
     *K = -(-348 + static_cast<int>(index << 3));    // decimal exponent no need lookup table
 
-    return GetCachedPowerByIndex(index);
+    return GetCachedPowerByIndex(index); //-V106
 }
 
 inline DiyFp GetCachedPower10(int exp, int *outExp) {
     RAPIDJSON_ASSERT(exp >= -348);
     unsigned index = static_cast<unsigned>(exp + 348) / 8u;
     *outExp = -348 + static_cast<int>(index) * 8;
-    return GetCachedPowerByIndex(index);
+    return GetCachedPowerByIndex(index); //-V106
 }
 
 #ifdef __GNUC__

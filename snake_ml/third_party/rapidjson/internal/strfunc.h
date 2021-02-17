@@ -51,13 +51,13 @@ bool CountStringCodePoint(const typename Encoding::Ch* s, SizeType length, SizeT
     RAPIDJSON_ASSERT(s != 0);
     RAPIDJSON_ASSERT(outCount != 0);
     GenericStringStream<Encoding> is(s);
-    const typename Encoding::Ch* end = s + length;
+    const typename Encoding::Ch* end = s + length; //-V104
     SizeType count = 0;
     while (is.src_ < end) {
         unsigned codepoint;
         if (!Encoding::Decode(is, &codepoint))
             return false;
-        count++;
+        count++; //-V127
     }
     *outCount = count;
     return true;

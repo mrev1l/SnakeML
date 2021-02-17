@@ -42,7 +42,7 @@ void InitializeRenderComponentsSystem::Execute()
 
 		// Create the vertex buffer view.
 		renderComponent.m_vertexBufferView.BufferLocation = renderComponent.m_vertexBuffer->GetGPUVirtualAddress();
-		renderComponent.m_vertexBufferView.SizeInBytes = sizeof(materialComponent.m_vertices[0]) * materialComponent.m_vertices.size();
+		renderComponent.m_vertexBufferView.SizeInBytes = sizeof(materialComponent.m_vertices[0]) * static_cast<UINT>(materialComponent.m_vertices.size());
 		renderComponent.m_vertexBufferView.StrideInBytes = sizeof(materialComponent.m_vertices[0]);
 
 		// Upload index buffer data.
@@ -55,7 +55,7 @@ void InitializeRenderComponentsSystem::Execute()
 		// Create index buffer view.
 		renderComponent.m_indexBufferView.BufferLocation = renderComponent.m_indexBuffer->GetGPUVirtualAddress();
 		renderComponent.m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		renderComponent.m_indexBufferView.SizeInBytes = sizeof(materialComponent.m_indices[0]) * materialComponent.m_indices.size();
+		renderComponent.m_indexBufferView.SizeInBytes = sizeof(materialComponent.m_indices[0]) * static_cast<UINT>(materialComponent.m_indices.size());
 
 		// Load the vertex shader.
 		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob;

@@ -200,7 +200,7 @@ private:
         // xx xx xx xx  UTF-8
 
         if (!hasBOM_) {
-            int pattern = (c[0] ? 1 : 0) | (c[1] ? 2 : 0) | (c[2] ? 4 : 0) | (c[3] ? 8 : 0);
+            int pattern = (c[0] ? 1 : 0) | (c[1] ? 2 : 0) | (c[2] ? 4 : 0) | (c[3] ? 8 : 0); //-V112
             switch (pattern) {
             case 0x08: type_ = kUTF32BE; break;
             case 0x0A: type_ = kUTF16BE; break;
@@ -213,7 +213,7 @@ private:
 
         // Runtime check whether the size of character type is sufficient. It only perform checks with assertion.
         if (type_ == kUTF16LE || type_ == kUTF16BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 2);
-        if (type_ == kUTF32LE || type_ == kUTF32BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 4);
+        if (type_ == kUTF32LE || type_ == kUTF32BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 4); //-V112
     }
 
     typedef Ch (*TakeFunc)(InputByteStream& is);
@@ -246,7 +246,7 @@ public:
 
         // Runtime check whether the size of character type is sufficient. It only perform checks with assertion.
         if (type_ == kUTF16LE || type_ == kUTF16BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 2);
-        if (type_ == kUTF32LE || type_ == kUTF32BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 4);
+        if (type_ == kUTF32LE || type_ == kUTF32BE) RAPIDJSON_ASSERT(sizeof(Ch) >= 4); //-V112
 
         static const PutFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Put) };
         putFunc_ = f[type_];

@@ -52,10 +52,9 @@ class Iterator
 {
 public:
 	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) {};
-	IComponent* At(size_t idx)
-	{
-		return GetElement(idx);
-	}
+	virtual ~Iterator() = default;
+
+	IComponent* At(size_t idx) { return GetElement(idx); }
 
 	IComponent* GetData() { return m_data; }
 	size_t Num() { return m_count; }
@@ -70,6 +69,8 @@ protected:
 class Factory
 {
 public:
+	virtual ~Factory() = default;
+
 	virtual IComponent* Create() = 0;
 	virtual IComponent* Create(size_t num) = 0;
 	virtual Iterator* CreateIterator(size_t num) = 0;
@@ -78,27 +79,15 @@ public:
 class IComponent
 {
 public:
+	virtual ~IComponent() = default;
 	virtual ComponentType GetComponentType() const = 0;
 
-	static void RegisterFactory(ComponentType objType, Factory* objFactory)
-	{
-		factories.insert({ objType, objFactory });
-	}
+	static void RegisterFactory(ComponentType objType, Factory* objFactory);
 
-	static IComponent* Create(ComponentType objType)
-	{
-		return factories.at(objType)->Create();
-	}
+	static IComponent* Create(ComponentType objType);
+	static IComponent* Create(ComponentType objType, size_t num);
 
-	static IComponent* Create(ComponentType objType, size_t num)
-	{
-		return factories.at(objType)->Create(num);
-	}
-
-	static Iterator* CreateIterator(ComponentType objType, size_t num)
-	{
-		return factories.at(objType)->CreateIterator(num);
-	}
+	static Iterator* CreateIterator(ComponentType objType, size_t num);
 
 	uint32_t m_entityId;
 

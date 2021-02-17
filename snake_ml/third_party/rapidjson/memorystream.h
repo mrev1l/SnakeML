@@ -53,7 +53,7 @@ struct MemoryStream {
 
     // For encoding detection only.
     const Ch* Peek4() const {
-        return Tell() + 4 <= size_ ? src_ : 0;
+        return Tell() + 4 <= size_ ? src_ : 0; //-V112
     }
 
     const Ch* src_;     //!< Current read position.

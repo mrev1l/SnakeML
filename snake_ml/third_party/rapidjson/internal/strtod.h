@@ -133,12 +133,12 @@ inline bool StrtodDiyFp(const char* decimals, int dLen, int dExp, double* result
     int i = 0;   // 2^64 - 1 = 18446744073709551615, 1844674407370955161 = 0x1999999999999999    
     for (; i < dLen; i++) {
         if (significand  >  RAPIDJSON_UINT64_C2(0x19999999, 0x99999999) ||
-            (significand == RAPIDJSON_UINT64_C2(0x19999999, 0x99999999) && decimals[i] > '5'))
+            (significand == RAPIDJSON_UINT64_C2(0x19999999, 0x99999999) && decimals[i] > '5')) //-V108
             break;
-        significand = significand * 10u + static_cast<unsigned>(decimals[i] - '0');
+        significand = significand * 10u + static_cast<unsigned>(decimals[i] - '0'); //-V108
     }
     
-    if (i < dLen && decimals[i] >= '5') // Rounding
+    if (i < dLen && decimals[i] >= '5') // Rounding //-V108
         significand++;
 
     int remaining = dLen - i;
@@ -251,7 +251,7 @@ inline double StrtodFullPrecision(double d, int p, const char* decimals, size_t 
     }
 
     // Trim trailing zeros
-    while (dLen > 0 && decimals[dLen - 1] == '0') {
+    while (dLen > 0 && decimals[dLen - 1] == '0') { //-V108
         dLen--;
         dExp++;
     }

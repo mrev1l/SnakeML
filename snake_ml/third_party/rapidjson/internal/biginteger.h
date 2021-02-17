@@ -109,14 +109,14 @@ public:
 
         uint64_t k = 0;
         for (size_t i = 0; i < count_; i++) {
-            const uint64_t c = digits_[i] >> 32;
-            const uint64_t d = digits_[i] & 0xFFFFFFFF;
+            const uint64_t c = digits_[i] >> 32; //-V112
+            const uint64_t d = digits_[i] & 0xFFFFFFFF; //-V112
             const uint64_t uc = u * c;
             const uint64_t ud = u * d;
             const uint64_t p0 = ud + k;
-            const uint64_t p1 = uc + (p0 >> 32);
-            digits_[i] = (p0 & 0xFFFFFFFF) | (p1 << 32);
-            k = p1 >> 32;
+            const uint64_t p1 = uc + (p0 >> 32); //-V112
+            digits_[i] = (p0 & 0xFFFFFFFF) | (p1 << 32); //-V112
+            k = p1 >> 32; //-V112
         }
         
         if (k > 0)

@@ -2,3 +2,32 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "IComponent.h"
+
+namespace snakeml
+{
+namespace system
+{
+
+void IComponent::RegisterFactory(ComponentType objType, Factory* objFactory)
+{
+	factories.insert({ objType, objFactory });
+}
+
+IComponent* IComponent::Create(ComponentType objType)
+{
+	return factories.at(objType)->Create();
+}
+
+IComponent* IComponent::Create(ComponentType objType, size_t num)
+{
+	return factories.at(objType)->Create(num);
+}
+
+Iterator* IComponent::CreateIterator(ComponentType objType, size_t num)
+{
+	return factories.at(objType)->CreateIterator(num);
+}
+
+}
+}
+

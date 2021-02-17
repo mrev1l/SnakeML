@@ -2,18 +2,17 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "IComponent.h"
+#include "system/ecs/ISystem.h"
 
 namespace snakeml
 {
 namespace system
 {
 
-class ISystem
+class TestMoveSnakeHeadSystem : public ISystem
 {
 public:
-	virtual ~ISystem() = default;
-	virtual void Execute() = 0; // private + friend class?
+	void Execute() override;
 };
 
 }

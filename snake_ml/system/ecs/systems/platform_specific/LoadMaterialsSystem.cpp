@@ -14,7 +14,7 @@ namespace system
 void LoadMaterialsSystem::Execute()
 {
 	constexpr uint32_t materialsNum = 1u;
-	constexpr const char* jsonName = "D:\\Projects_Library\\snakeml_repo\\materialcomponentjson.txt"; // fix full path
+	constexpr const char* jsonName = "D:\\Projects_Library\\snakeml_repo\\2dmaterialcomponentjson.txt"; // fix full path
 
 	rapidjson::Document jsonDocument;
 	std::string jsonString;

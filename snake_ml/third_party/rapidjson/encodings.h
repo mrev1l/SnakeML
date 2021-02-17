@@ -145,7 +145,7 @@ struct UTF8 {
     template <typename InputStream>
     static bool Decode(InputStream& is, unsigned* codepoint) {
 #define RAPIDJSON_COPY() c = is.Take(); *codepoint = (*codepoint << 6) | (static_cast<unsigned char>(c) & 0x3Fu)
-#define RAPIDJSON_TRANS(mask) result &= ((GetRange(static_cast<unsigned char>(c)) & mask) != 0)
+#define RAPIDJSON_TRANS(mask) result &= ((GetRange(static_cast<unsigned char>(c)) & mask) != 0) //-V1003
 #define RAPIDJSON_TAIL() RAPIDJSON_COPY(); RAPIDJSON_TRANS(0x70)
         typename InputStream::Ch c = is.Take();
         if (!(c & 0x80)) {
@@ -154,7 +154,7 @@ struct UTF8 {
         }
 
         unsigned char type = GetRange(static_cast<unsigned char>(c));
-        if (type >= 32) {
+        if (type >= 32) { //-V112
             *codepoint = 0;
         } else {
             *codepoint = (0xFFu >> type) & static_cast<unsigned char>(c);
@@ -178,7 +178,7 @@ struct UTF8 {
     template <typename InputStream, typename OutputStream>
     static bool Validate(InputStream& is, OutputStream& os) {
 #define RAPIDJSON_COPY() os.Put(c = is.Take())
-#define RAPIDJSON_TRANS(mask) result &= ((GetRange(static_cast<unsigned char>(c)) & mask) != 0)
+#define RAPIDJSON_TRANS(mask) result &= ((GetRange(static_cast<unsigned char>(c)) & mask) != 0) //-V1003
 #define RAPIDJSON_TAIL() RAPIDJSON_COPY(); RAPIDJSON_TRANS(0x70)
         Ch c;
         RAPIDJSON_COPY();
@@ -417,27 +417,27 @@ struct UTF16BE : UTF16<CharType> {
 template<typename CharType = unsigned>
 struct UTF32 {
     typedef CharType Ch;
-    RAPIDJSON_STATIC_ASSERT(sizeof(Ch) >= 4);
+    RAPIDJSON_STATIC_ASSERT(sizeof(Ch) >= 4); //-V112
 
     enum { supportUnicode = 1 };
 
     template<typename OutputStream>
     static void Encode(OutputStream& os, unsigned codepoint) {
-        RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 4);
+        RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 4); //-V112
         RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
         os.Put(codepoint);
     }
 
     template<typename OutputStream>
     static void EncodeUnsafe(OutputStream& os, unsigned codepoint) {
-        RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 4);
+        RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 4); //-V112
         RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
         PutUnsafe(os, codepoint);
     }
 
     template <typename InputStream>
     static bool Decode(InputStream& is, unsigned* codepoint) {
-        RAPIDJSON_STATIC_ASSERT(sizeof(typename InputStream::Ch) >= 4);
+        RAPIDJSON_STATIC_ASSERT(sizeof(typename InputStream::Ch) >= 4); //-V112
         Ch c = is.Take();
         *codepoint = c;
         return c <= 0x10FFFF;
@@ -445,7 +445,7 @@ struct UTF32 {
 
     template <typename InputStream, typename OutputStream>
     static bool Validate(InputStream& is, OutputStream& os) {
-        RAPIDJSON_STATIC_ASSERT(sizeof(typename InputStream::Ch) >= 4);
+        RAPIDJSON_STATIC_ASSERT(sizeof(typename InputStream::Ch) >= 4); //-V112
         Ch c;
         os.Put(c = is.Take());
         return c <= 0x10FFFF;
