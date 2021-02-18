@@ -90,11 +90,11 @@ void LoadMaterialsSystem::ParseVSName(const rapidjson::Document& json, std::wstr
 {
 	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
 
-	std::string ps = json["vs"].GetString();
-	wchar_t* wPSName = nullptr;
-	snakeml::WinUtils::StringToWstring(ps.c_str(), wPSName);
-	outVSName = std::wstring(wPSName); // TODO: we don't actually copy it in ctor do we?
-	delete wPSName;
+	std::string vs = json["vs"].GetString();
+	wchar_t* wVSName = nullptr;
+	snakeml::WinUtils::StringToWstring(vs.c_str(), wVSName);
+	outVSName = std::wstring(wVSName); // TODO: we don't actually copy it in ctor do we?
+	delete wVSName;
 }
 
 void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstring& outPSName)

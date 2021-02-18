@@ -8,7 +8,9 @@
 #include "utils/snake_math.h"
 
 #ifdef NDEBUG
-	#define ASSERT(Condition, Message) ;
+	#define ASSERT(Condition, Message) (Condition);
 #else
 	#define ASSERT(Condition, Message) if(!(Condition)) { _wassert(_CRT_WIDE(#Message), _CRT_WIDE(__FILE__), __LINE__); }
 #endif
+
+#pragma warning(disable : 4834)
