@@ -56,7 +56,7 @@ void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, st
 	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
 	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
 
-	outVertices.resize(verticesArray.Size());
+	outVertices.resize(static_cast<std::vector<std::pair<math::vec3<float>, math::vec3<float>>>::size_type>(verticesArray.Size()));
 	for (auto& vertex : outVertices)
 	{
 		ASSERT(vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u, "Invalid vertices json");
@@ -77,7 +77,7 @@ void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std
 	ASSERT(json.HasMember("indices") && json["indices"].IsArray(), "Invalid indices json");
 	const rapidjson::GenericArray<true, rapidjson::Value>& indicesJson = json["indices"].GetArray();
 
-	indicesArray.resize(indicesJson.Size());
+	indicesArray.resize(static_cast<std::vector<uint16_t>::size_type>(indicesJson.Size()));
 	rapidjson::Value::ConstValueIterator indicesIt = indicesJson.Begin();
 
 	for (uint16_t& index : indicesArray)
@@ -113,7 +113,7 @@ void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json
 	ASSERT(json.HasMember("vertex_input_layout") && json["vertex_input_layout"].IsArray(), "Invalid vertex_input_layout json");
 	const rapidjson::GenericArray<true, rapidjson::Value>& vsInputJson = json["vertex_input_layout"].GetArray();
 
-	outLayout.resize(vsInputJson.Size());
+	outLayout.resize(static_cast<std::vector<D3D12_INPUT_ELEMENT_DESC>::size_type>(vsInputJson.Size()));
 	rapidjson::Value::ConstValueIterator vsInputLayoutIt = vsInputJson.Begin();
 
 	for (auto& inputElement : outLayout)

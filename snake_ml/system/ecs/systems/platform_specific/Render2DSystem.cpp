@@ -23,6 +23,10 @@ void Render2DSystem::Execute()
 		const TransformComponent& transform = *(TransformComponent*)entity.m_components.at(ComponentType::TransformComponent);
 
 		auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Direct);
+		if (!commandQueue)
+		{
+			return;
+		}
 		auto commandList = commandQueue->GetD3D12CommandList();
 
 		auto backBuffer = dx12Driver->m_backBuffers[dx12Driver->m_currentBackBufferIndex];

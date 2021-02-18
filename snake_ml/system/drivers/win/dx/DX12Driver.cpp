@@ -91,6 +91,14 @@ void DX12Driver::OnInitialize()
 
 	m_orthogonalMatrix = DirectX::XMMatrixOrthographicLH(m_clientWidth, m_clientHeight, 0.1f, 100.f);
 	
+	const DirectX::XMVECTOR eyePosition = DirectX::XMVectorSet(0, 0, -10, 1);
+	const DirectX::XMVECTOR focusPoint = DirectX::XMVectorSet(0, 0, 0, 1);
+	const DirectX::XMVECTOR upDirection = DirectX::XMVectorSet(0, 1, 0, 0);
+	m_viewMatrix = DirectX::XMMatrixLookAtLH(eyePosition, focusPoint, upDirection);
+
+	float aspectRatio = static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight);
+	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
+
 	// Resize/Create the depth buffer.
 	ResizeDepthBuffer();
 
@@ -181,7 +189,6 @@ void DX12Driver::OnInitialize()
 			CD3DX12_PIPELINE_STATE_STREAM_VS VS;
 			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
 			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DSVFormat;
-			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL DS;
 			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RTVFormats;
 		} pipelineStateStream;
 
@@ -189,29 +196,12 @@ void DX12Driver::OnInitialize()
 		rtvFormats.NumRenderTargets = 1;
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-		CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc;
-		depthStencilDesc.DepthEnable = false;// true;
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-		depthStencilDesc.StencilEnable = true;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
-		depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
 		pipelineStateStream.pRootSignature = m_rootSignature.Get();
 		pipelineStateStream.InputLayout = { inputLayout, _countof(inputLayout) };
 		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
 		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.Get());
 		pipelineStateStream.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-		pipelineStateStream.DS = depthStencilDesc;
 		pipelineStateStream.RTVFormats = rtvFormats;
 
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
@@ -231,82 +221,6 @@ void DX12Driver::OnShutdown()
 
 void DX12Driver::OnRender()
 {
-	// Temp Update
-	{
-		static std::chrono::high_resolution_clock clock;
-		static auto t0 = clock.now();
-
-		auto t1 = clock.now(); //-V656
-		auto deltaTime = t1 - t0;
-		
-		float angle = static_cast<float>(deltaTime.count() * 1e-9 * 90.0);
-		const DirectX::XMVECTOR rotationAxis = DirectX::XMVectorSet(0, 1, 1, 0);
-		m_modelMatrix = DirectX::XMMatrixRotationAxis(rotationAxis, DirectX::XMConvertToRadians(angle));
-
-		// Update the view matrix.
-		const DirectX::XMVECTOR eyePosition = DirectX::XMVectorSet(0, 0, -10, 1);
-		const DirectX::XMVECTOR focusPoint = DirectX::XMVectorSet(0, 0, 0, 1);
-		const DirectX::XMVECTOR upDirection = DirectX::XMVectorSet(0, 1, 0, 0);
-		m_viewMatrix = DirectX::XMMatrixLookAtLH(eyePosition, focusPoint, upDirection);
-
-		// Update the projection matrix.
-		float aspectRatio = static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight);
-		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
-	}
-	return;
-	// Render
-	{
-		auto commandQueue = m_directCommandQueue;
-		auto commandList = commandQueue->GetD3D12CommandList();
-
-		auto backBuffer = m_backBuffers[m_currentBackBufferIndex];
-		auto rtv = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_currentBackBufferIndex, m_RTVDescriptorSize);
-		auto dsv = m_DSVHeap->GetCPUDescriptorHandleForHeapStart();
-
-		// Clear the render targets.
-		{
-			TransitionResource(commandList, backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-			ClearRTV(commandList, rtv, s_defaultClearColor);
-			ClearDSV(commandList, dsv);
-		}
-
-		commandList->SetPipelineState(m_pipelineState.Get());
-		commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-		commandList->IASetIndexBuffer(&m_indexBufferView);
-
-		commandList->RSSetViewports(1, &m_viewport);
-		commandList->RSSetScissorRects(1, &m_scissorRect);
-
-		commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
-
-		// Update the MVP matrix
-		DirectX::XMMATRIX mvpMatrix = DirectX::XMMatrixMultiply(m_modelMatrix, m_viewMatrix);
-		mvpMatrix = DirectX::XMMatrixMultiply(mvpMatrix, m_projectionMatrix);
-		commandList->SetGraphicsRoot32BitConstants(0, sizeof(DirectX::XMMATRIX) / _countof(DirectX::XMMATRIX::r), &mvpMatrix, 0);
-
-		commandList->DrawIndexedInstanced(_countof(g_Indicies), 1, 0, 0, 0);
-
-		// Present
-		{
-			TransitionResource(commandList, backBuffer,
-				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
-			m_frameFenceValues[m_currentBackBufferIndex] = commandQueue->ExecuteCommandList(commandList);
-
-			{
-				UINT syncInterval = m_isVSync ? 1 : 0;
-				UINT presentFlags = m_isTearingSupported && !m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
-				dxutils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
-				m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-			}
-
-			commandQueue->WaitForFenceValue(m_frameFenceValues[m_currentBackBufferIndex]);
-		}
-	}
 }
 
 void DX12Driver::Flush()

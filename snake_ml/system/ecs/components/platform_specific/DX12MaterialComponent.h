@@ -17,8 +17,8 @@ class DX12MaterialComponent : public IComponent
 public:
 	struct VSParamLayout
 	{
-		UINT num32BitValues;
-		UINT shaderRegister;
+		UINT num32BitValues = 0;
+		UINT shaderRegister = 0;
 		UINT registerSpace = 0;
 		D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL;
 	};

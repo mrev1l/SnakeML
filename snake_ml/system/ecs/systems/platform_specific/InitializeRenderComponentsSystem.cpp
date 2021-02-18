@@ -25,9 +25,9 @@ void InitializeRenderComponentsSystem::Execute()
 	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
-	auto commandList = commandQueue->GetD3D12CommandList();
+	auto commandList = commandQueue ? commandQueue->GetD3D12CommandList() : nullptr;
 
-	for (int i = 0; i < materialComponents->Num(); ++i)
+	for (size_t i = 0; i < materialComponents->Num(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponents[i];
 		const DX12MaterialComponent& materialComponent = materials[i];
@@ -42,7 +42,7 @@ void InitializeRenderComponentsSystem::Execute()
 
 		// Create the vertex buffer view.
 		renderComponent.m_vertexBufferView.BufferLocation = renderComponent.m_vertexBuffer->GetGPUVirtualAddress();
-		renderComponent.m_vertexBufferView.SizeInBytes = sizeof(materialComponent.m_vertices[0]) * static_cast<UINT>(materialComponent.m_vertices.size());
+		renderComponent.m_vertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_vertices[0])) * static_cast<UINT>(materialComponent.m_vertices.size());
 		renderComponent.m_vertexBufferView.StrideInBytes = sizeof(materialComponent.m_vertices[0]);
 
 		// Upload index buffer data.
@@ -55,7 +55,7 @@ void InitializeRenderComponentsSystem::Execute()
 		// Create index buffer view.
 		renderComponent.m_indexBufferView.BufferLocation = renderComponent.m_indexBuffer->GetGPUVirtualAddress();
 		renderComponent.m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		renderComponent.m_indexBufferView.SizeInBytes = sizeof(materialComponent.m_indices[0]) * static_cast<UINT>(materialComponent.m_indices.size());
+		renderComponent.m_indexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_indices[0])) * static_cast<UINT>(materialComponent.m_indices.size());
 
 		// Load the vertex shader.
 		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob;
@@ -128,8 +128,11 @@ void InitializeRenderComponentsSystem::Execute()
 		};
 		dxutils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&renderComponent.m_pipelineState)));
 
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-		commandQueue->WaitForFenceValue(fenceValue);
+		if (commandQueue)
+		{
+			auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+			commandQueue->WaitForFenceValue(fenceValue);
+		}
 	}
 }
 

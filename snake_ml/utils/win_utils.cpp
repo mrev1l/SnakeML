@@ -3,9 +3,10 @@
 #include "stdafx.h"
 #include "win_utils.h"
 
+#pragma warning(push)
 #pragma warning( disable : 4365)
 #include <algorithm>
-#pragma warning( default : 4365)
+#pragma warning(pop)
 #include <fstream>
 
 namespace snakeml
@@ -81,7 +82,7 @@ HANDLE WinUtils::CreateEventHandle()
 void WinUtils::StringToWstring(const char* source, wchar_t*& dest)
 {
 	int destSz = MultiByteToWideChar(CP_UTF8, 0, source, -1, NULL, 0);
-	dest = new wchar_t[destSz];
+	dest = new wchar_t[static_cast<size_t>(destSz)];
 	MultiByteToWideChar(CP_UTF8, 0, source, -1, dest, destSz);
 }
 
