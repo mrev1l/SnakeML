@@ -1,9 +1,7 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 #pragma region (copyright)
 /*
- *  Copyright(c) 2017 Jeremiah van Oosten
+ *  Copyright(c) 2018 Jeremiah van Oosten
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files(the "Software"), to deal
@@ -25,65 +23,38 @@
  */
 
  /**
-  *  @file Helpers.h
-  *  @date August 28, 2017
+  *  @file Buffer.h
+  *  @date October 22, 2018
   *  @author Jeremiah van Oosten
   *
-  *  @brief Helper functions.
+  *  @brief Abstract base class for buffer resources.
   */
 #pragma endregion
 
+#include "DX12Resource.h"
+
 namespace snakeml
 {
-namespace math
+namespace system
+{
+namespace win
 {
 
-constexpr float default_epsilon = 1e-4f;
-
-template<typename T>
-class vec2
-{
-public:
-	T m_x;
-	T m_y;
-};
-
-template<typename T>
-class vec3
+class DX12Buffer : public DX12Resource
 {
 public:
-	T m_x;
-	T m_y;
-	T m_z;
+    DX12Buffer(const std::wstring& name = L"");
+    DX12Buffer(const D3D12_RESOURCE_DESC& resDesc,
+        size_t numElements, size_t elementSize,
+        const std::wstring& name = L"");
+
+    /**
+        * Create the views for the buffer resource.
+        * Used by the CommandList when setting the buffer contents.
+        */
+    virtual void CreateViews(size_t numElements, size_t elementSize) = 0;
 };
 
-template<typename T>
-class vec4
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-	T m_w;
-};
-
-/***************************************************************************
-	* These functions were taken from the MiniEngine.
-	* Source code available here:
-	* https://github.com/Microsoft/DirectX-Graphics-Samples/blob/master/MiniEngine/Core/Math/Common.h
-	* Retrieved: January 13, 2016
-	**************************************************************************/
-template <typename T>
-inline T AlignUpWithMask(T value, size_t mask)
-{
-	return (T)(((size_t)value + mask) & ~mask);
 }
-
-template <typename T>
-inline T AlignUp(T value, size_t alignment)
-{
-	return AlignUpWithMask(value, alignment - 1);
-}
-
 }
 }

@@ -1,9 +1,7 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 #pragma region (copyright)
 /*
- *  Copyright(c) 2017 Jeremiah van Oosten
+ *  Copyright(c) 2018 Jeremiah van Oosten
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files(the "Software"), to deal
@@ -25,65 +23,58 @@
  */
 
  /**
-  *  @file Helpers.h
-  *  @date August 28, 2017
+  *  @file VertexBuffer.h
+  *  @date October 24, 2018
   *  @author Jeremiah van Oosten
   *
-  *  @brief Helper functions.
+  *  @brief Vertex buffer resource.
   */
 #pragma endregion
 
+#include "DX12Buffer.h"
+
 namespace snakeml
 {
-namespace math
+namespace system
+{
+namespace win
 {
 
-constexpr float default_epsilon = 1e-4f;
-
-template<typename T>
-class vec2
-{
-public:
-	T m_x;
-	T m_y;
-};
-
-template<typename T>
-class vec3
+class DX12VertexBuffer : public DX12Buffer
 {
 public:
-	T m_x;
-	T m_y;
-	T m_z;
+    DX12VertexBuffer(const std::wstring& name = L"");
+    virtual ~DX12VertexBuffer() = default;
+
+    // Inherited from Buffer
+    virtual void CreateViews(size_t numElements, size_t elementSize) override;
+
+    /**
+     * Get the vertex buffer view for binding to the Input Assembler stage.
+     */
+    D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const { return m_vertexBufferView; }
+
+    size_t GetNumVertices() const { return m_numVertices; }
+
+    size_t GetVertexStride() const { return m_vertexStride; }
+
+    /**
+    * Get the SRV for a resource.
+    */
+    virtual D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView(const D3D12_SHADER_RESOURCE_VIEW_DESC* srvDesc = nullptr) const override;
+
+    /**
+    * Get the UAV for a (sub)resource.
+    */
+    virtual D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(const D3D12_UNORDERED_ACCESS_VIEW_DESC* uavDesc = nullptr) const override;
+
+private:
+    size_t m_numVertices;
+    size_t m_vertexStride;
+
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 };
 
-template<typename T>
-class vec4
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-	T m_w;
-};
-
-/***************************************************************************
-	* These functions were taken from the MiniEngine.
-	* Source code available here:
-	* https://github.com/Microsoft/DirectX-Graphics-Samples/blob/master/MiniEngine/Core/Math/Common.h
-	* Retrieved: January 13, 2016
-	**************************************************************************/
-template <typename T>
-inline T AlignUpWithMask(T value, size_t mask)
-{
-	return (T)(((size_t)value + mask) & ~mask);
 }
-
-template <typename T>
-inline T AlignUp(T value, size_t alignment)
-{
-	return AlignUpWithMask(value, alignment - 1);
-}
-
 }
 }
