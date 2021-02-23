@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -184,8 +184,19 @@
     <ClCompile Include="system\Application.cpp" />
     <ClCompile Include="system\drivers\OSDriver.cpp" />
     <ClCompile Include="system\drivers\RenderDriver.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12Buffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12CommandList.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12CommandQueue.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocation.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocator.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12Driver.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12Resource.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12ResourceStateTracker.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12RootSignature.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12UploadBuffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12VertexBuffer.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
     <ClCompile Include="system\ecs\ComponentsPool.cpp" />
     <ClCompile Include="system\ecs\ECSManager.cpp" />
@@ -209,8 +220,19 @@
     <ClInclude Include="system\Application.h" />
     <ClInclude Include="system\drivers\OSDriver.h" />
     <ClInclude Include="system\drivers\RenderDriver.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12Buffer.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12CommandList.h" />
     <ClInclude Include="system\drivers\win\dx\DX12CommandQueue.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocation.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocator.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.h" />
     <ClInclude Include="system\drivers\win\dx\DX12Driver.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12Resource.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12ResourceStateTracker.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12RootSignature.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12UploadBuffer.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12VertexBuffer.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
     <ClInclude Include="system\ecs\ComponentsPool.h" />
     <ClInclude Include="system\ecs\components\platform_specific\DX12MaterialComponent.h" />
