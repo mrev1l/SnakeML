@@ -9,6 +9,7 @@
 #include "DX12Resource.h"
 #include "DX12ResourceStateTracker.h"
 #include "DX12RootSignature.h"
+#include "DX12Texture.h"
 #include "DX12VertexBuffer.h"
 #include "DX12UploadBuffer.h"
 
@@ -123,6 +124,112 @@ void DX12CommandList::CopyVertexBuffer(DX12VertexBuffer& vertexBuffer, size_t nu
 void DX12CommandList::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
     m_d3d12CommandList->IASetPrimitiveTopology(primitiveTopology);
+}
+
+void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstring& fileName, TextureUsage textureUsage)
+{
+    ASSERT(false, "Not implemented!");
+}
+
+void DX12CommandList::ClearTexture(const DX12Texture& texture, const float clearColor[4])
+{
+    TransitionBarrier(texture, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_d3d12CommandList->ClearRenderTargetView(texture.GetRenderTargetView(), clearColor, 0, nullptr);
+
+    TrackResource(texture);
+}
+
+void DX12CommandList::ClearDepthStencilTexture(const DX12Texture& texture, D3D12_CLEAR_FLAGS clearFlags, float depth, uint8_t stencil)
+{
+    TransitionBarrier(texture, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+    m_d3d12CommandList->ClearDepthStencilView(texture.GetDepthStencilView(), clearFlags, depth, stencil, 0, nullptr);
+
+    TrackResource(texture);
+}
+
+void DX12CommandList::GenerateMips(DX12Texture& texture)
+{
+    if (m_d3d12CommandListType == D3D12_COMMAND_LIST_TYPE_COPY)
+    {
+        if (!m_computeCommandList)
+        {
+            m_computeCommandList = ((DX12Driver*)DX12Driver::GetInstance())->GetDX12CommandQueue(DX12Driver::CommandQueueType::Compute)->GetCommandList();
+        }
+        m_computeCommandList->GenerateMips(texture);
+        return;
+    }
+
+    auto d3d12Resource = texture.GetD3D12Resource();
+
+    // If the texture doesn't have a valid resource, do nothing.
+    if (!d3d12Resource) return;
+    auto d3d12ResourceDesc = d3d12Resource->GetDesc();
+
+    // If the texture only has a single mip level (level 0)
+    // do nothing.
+    if (d3d12ResourceDesc.MipLevels == 1) return;
+    // Currently, only 2D textures are supported.
+    if (d3d12ResourceDesc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D || d3d12ResourceDesc.DepthOrArraySize != 1)
+    {
+        throw std::exception("Generate Mips only supports 2D Textures.");
+    }
+
+    if (DX12Texture::IsUAVCompatibleFormat(d3d12ResourceDesc.Format))
+    {
+        ASSERT(false, "Not implemented.");
+        //GenerateMips_UAV(texture);
+    }
+    else if (DX12Texture::IsBGRFormat(d3d12ResourceDesc.Format))
+    {
+        ASSERT(false, "Not implemented.");
+        //GenerateMips_BGR(texture);
+    }
+    else if (DX12Texture::IsSRGBFormat(d3d12ResourceDesc.Format))
+    {
+        ASSERT(false, "Not implemented.");
+        //GenerateMips_sRGB(texture);
+    }
+    else
+    {
+        throw std::exception("Unsupported texture format for mipmap generation.");
+    }
+}
+
+void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pano)
+{
+    ASSERT(false, "Not implemented.");
+}
+
+void DX12CommandList::CopyTextureSubresource(DX12Texture& texture, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData)
+{
+    auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
+    auto destinationResource = texture.GetD3D12Resource();
+    if (destinationResource)
+    {
+        // Resource must be in the copy-destination state.
+        TransitionBarrier(texture, D3D12_RESOURCE_STATE_COPY_DEST);
+        FlushResourceBarriers();
+
+        UINT64 requiredSize = GetRequiredIntermediateSize(destinationResource.Get(), firstSubresource, numSubresources);
+
+        // Create a temporary (intermediate) resource for uploading the subresources
+        Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource;
+        CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
+        CD3DX12_RESOURCE_DESC resourceDesc(CD3DX12_RESOURCE_DESC::Buffer(requiredSize));
+        dxutils::ThrowIfFailed(device->CreateCommittedResource(
+            &heapProp,
+            D3D12_HEAP_FLAG_NONE,
+            &resourceDesc,
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(&intermediateResource)
+        ));
+
+        UpdateSubresources(m_d3d12CommandList.Get(), destinationResource.Get(), intermediateResource.Get(), 0, firstSubresource, numSubresources, subresourceData);
+
+        TrackObject(intermediateResource);
+        TrackObject(destinationResource);
+    }
 }
 
 void DX12CommandList::SetGraphicsDynamicConstantBuffer(uint32_t rootParameterIndex, size_t sizeInBytes, const void* bufferData)
@@ -311,6 +418,44 @@ void DX12CommandList::SetUnorderedAccessView(
     m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(rootParameterIndex, descrptorOffset, 1, resource.GetUnorderedAccessView(uav));
 
     TrackResource(resource);
+}
+
+void DX12CommandList::SetRenderTarget(const DX12RenderTarget& renderTarget)
+{
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> renderTargetDescriptors;
+    renderTargetDescriptors.reserve(AttachmentPoint::NumAttachmentPoints);
+
+    const auto& textures = renderTarget.GetTextures();
+
+    // Bind color targets (max of 8 render targets can be bound to the rendering pipeline.
+    for (int i = 0; i < 8; ++i)
+    {
+        auto& texture = textures[i];
+
+        if (texture.IsValid())
+        {
+            TransitionBarrier(texture, D3D12_RESOURCE_STATE_RENDER_TARGET);
+            renderTargetDescriptors.push_back(texture.GetRenderTargetView());
+
+            TrackResource(texture);
+        }
+    }
+
+    const auto& depthTexture = renderTarget.GetTexture(AttachmentPoint::DepthStencil);
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE depthStencilDescriptor(D3D12_DEFAULT);
+    if (depthTexture.GetD3D12Resource())
+    {
+        TransitionBarrier(depthTexture, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+        depthStencilDescriptor = depthTexture.GetDepthStencilView();
+
+        TrackResource(depthTexture);
+    }
+
+    D3D12_CPU_DESCRIPTOR_HANDLE* pDSV = depthStencilDescriptor.ptr != 0 ? &depthStencilDescriptor : nullptr;
+
+    m_d3d12CommandList->OMSetRenderTargets(static_cast<UINT>(renderTargetDescriptors.size()),
+        renderTargetDescriptors.data(), FALSE, pDSV);
 }
 
 void DX12CommandList::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t startVertex, uint32_t startInstance)

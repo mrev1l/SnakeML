@@ -27,7 +27,7 @@ void LoadMaterialsSystem::Execute()
 
 	ParseEntityId(jsonDocument, material->m_entityId);
 	ParseVerticesArray(jsonDocument, material->m_vertices);
-	ParseIndicesArray(jsonDocument, material->m_indices);
+	//ParseIndicesArray(jsonDocument, material->m_indices);
 	ParseVSName(jsonDocument, material->m_vs);
 	ParsePSName(jsonDocument, material->m_ps);
 	ParseVertexInputLayout(jsonDocument, material->m_vsInputLayout);

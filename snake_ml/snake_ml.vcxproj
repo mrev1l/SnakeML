@@ -192,9 +192,11 @@
     <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12Driver.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12RenderTarget.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12Resource.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12ResourceStateTracker.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12RootSignature.cpp" />
+    <ClCompile Include="system\drivers\win\dx\DX12Texture.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12UploadBuffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12VertexBuffer.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
@@ -228,9 +230,12 @@
     <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.h" />
     <ClInclude Include="system\drivers\win\dx\DX12Driver.h" />
     <ClInclude Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12RenderTarget.h" />
     <ClInclude Include="system\drivers\win\dx\DX12Resource.h" />
     <ClInclude Include="system\drivers\win\dx\DX12ResourceStateTracker.h" />
     <ClInclude Include="system\drivers\win\dx\DX12RootSignature.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12Texture.h" />
+    <ClInclude Include="system\drivers\win\dx\DX12TextureUsage.h" />
     <ClInclude Include="system\drivers\win\dx\DX12UploadBuffer.h" />
     <ClInclude Include="system\drivers\win\dx\DX12VertexBuffer.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
@@ -255,6 +260,7 @@
     <ClInclude Include="utils\patterns\event.h" />
     <ClInclude Include="utils\patterns\singleton.h" />
     <ClInclude Include="utils\snake_math.h" />
+    <ClInclude Include="utils\types\ThreadSafeQueue.h" />
     <ClInclude Include="utils\win_utils.h" />
   </ItemGroup>
   <ItemGroup>

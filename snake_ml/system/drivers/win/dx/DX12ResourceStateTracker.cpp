@@ -240,7 +240,7 @@ void DX12ResourceStateTracker::ResourceState::SetSubresourceState(UINT subresour
 {
     if (subresource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES)
     {
-        state = state;
+        m_state = state;
         m_subresourceState.clear();
     }
     else

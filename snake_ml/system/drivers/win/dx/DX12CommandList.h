@@ -33,6 +33,7 @@
   */
 #pragma endregion
 
+#include "DX12TextureUsage.h"
 #include "lib_includes/directX_includes.h"
 #include <map>
 #include <mutex>
@@ -46,9 +47,11 @@ namespace win
 
 class DX12Buffer;
 class DX12DynamicDescriptorHeap;
+class DX12RenderTarget;
 class DX12Resource;
 class DX12ResourceStateTracker;
 class DX12RootSignature;
+class DX12Texture;
 class DX12VertexBuffer;
 class DX12UploadBuffer;
 
@@ -166,38 +169,37 @@ public:
      */
     void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
 
-    // TODO : Integrate Textures
-    ///**
-    // * Load a texture by a filename.
-    // */
-    //void LoadTextureFromFile(Texture& texture, const std::wstring& fileName, TextureUsage textureUsage = TextureUsage::Albedo);
-    //
-    ///**
-    // * Clear a texture.
-    // */
-    //void ClearTexture(const Texture& texture, const float clearColor[4]);
-    //
-    ///**
-    // * Clear depth/stencil texture.
-    // */
-    //void ClearDepthStencilTexture(const Texture& texture, D3D12_CLEAR_FLAGS clearFlags, float depth = 1.0f, uint8_t stencil = 0);
-    //
-    ///**
-    // * Generate mips for the texture.
-    // * The first subresource is used to generate the mip chain.
-    // * Mips are automatically generated for textures loaded from files.
-    // */
-    //void GenerateMips(Texture& texture);
-    //
-    ///**
-    // * Generate a cubemap texture from a panoramic (equirectangular) texture.
-    // */
-    //void PanoToCubemap(Texture& cubemap, const Texture& pano);
-    //
-    ///**
-    // * Copy subresource data to a texture.
-    // */
-    //void CopyTextureSubresource(Texture& texture, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
+    /**
+     * Load a texture by a filename.
+     */
+    void LoadTextureFromFile(DX12Texture& texture, const std::wstring& fileName, TextureUsage textureUsage = TextureUsage::Albedo);
+    
+    /**
+     * Clear a texture.
+     */
+    void ClearTexture(const DX12Texture& texture, const float clearColor[4]);
+    
+    /**
+     * Clear depth/stencil texture.
+     */
+    void ClearDepthStencilTexture(const DX12Texture& texture, D3D12_CLEAR_FLAGS clearFlags, float depth = 1.0f, uint8_t stencil = 0);
+    
+    /**
+     * Generate mips for the texture.
+     * The first subresource is used to generate the mip chain.
+     * Mips are automatically generated for textures loaded from files.
+     */
+    void GenerateMips(DX12Texture& texture);
+    
+    /**
+     * Generate a cubemap texture from a panoramic (equirectangular) texture.
+     */
+    void PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pano);
+    
+    /**
+     * Copy subresource data to a texture.
+     */
+    void CopyTextureSubresource(DX12Texture& texture, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData);
 
     /**
      * Set a dynamic constant buffer data to an inline descriptor in the root
@@ -326,11 +328,10 @@ public:
         const D3D12_UNORDERED_ACCESS_VIEW_DESC* uav = nullptr
     );
 
-    // Integrate custom render targets
-    ///**
-    // * Set the render targets for the graphics rendering pipeline.
-    // */
-    //void SetRenderTarget(const RenderTarget& renderTarget);
+    /**
+     * Set the render targets for the graphics rendering pipeline.
+     */
+    void SetRenderTarget(const DX12RenderTarget& renderTarget);
 
     /**
      * Draw geometry.

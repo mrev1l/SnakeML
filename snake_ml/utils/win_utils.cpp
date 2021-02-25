@@ -71,12 +71,12 @@ HWND WinUtils::CreateWindow(const wchar_t* windowClassName, HINSTANCE hInst, con
 
 HANDLE WinUtils::CreateEventHandle()
 {
-	HANDLE fenceEvent;
+	HANDLE eventHandle;
 
-	fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-	ASSERT(fenceEvent, "Failed to create fence event.");
+	eventHandle = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+	ASSERT(eventHandle, "Failed to create event.");
 
-	return fenceEvent;
+	return eventHandle;
 }
 
 void WinUtils::StringToWstring(const char* source, wchar_t*& dest)
