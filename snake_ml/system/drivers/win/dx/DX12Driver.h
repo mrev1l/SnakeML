@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 #include "DX12CommandQueue.h"
+#include "DX12DescriptorAllocator.h"
+#include "DX12RenderTarget.h"
 #include "system/drivers/RenderDriver.h"
 
 namespace snakeml
@@ -13,6 +15,20 @@ class Render2DSystem;
 
 namespace win
 {
+
+// An enum for root signature parameters.
+// I'm not using scoped enums to avoid the explicit cast that would be required
+// to use these as root indices in the root signature.
+enum RootParameters
+{
+    MatricesCB,         // ConstantBuffer<Mat> MatCB : register(b0);
+    MaterialCB,         // ConstantBuffer<Material> MaterialCB : register( b0, space1 );
+    LightPropertiesCB,  // ConstantBuffer<LightProperties> LightPropertiesCB : register( b1 );
+    PointLights,        // StructuredBuffer<PointLight> PointLights : register( t0 );
+    SpotLights,         // StructuredBuffer<SpotLight> SpotLights : register( t1 );
+    Textures,           // Texture2D DiffuseTexture : register( t2 );
+    NumRootParameters
+};
 
 class DX12Driver
 	: public IRenderDriver
@@ -31,20 +47,25 @@ public:
 	};
 
 	DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz);
-	~DX12Driver() = default;
+	~DX12Driver();
 
 	Microsoft::WRL::ComPtr<ID3D12Device2> GetD3D12Device() { return m_device; }
-	std::shared_ptr<DX12CommandQueue> GetDX12CommandQueue(CommandQueueType type) 
-	{
-		switch (type)
-		{
-		case CommandQueueType::Direct: return m_directCommandQueue;
-		case CommandQueueType::Compute: return m_computeCommandQueue;
-		case CommandQueueType::Copy: return m_copyCommandQueue;
-		}
-		ASSERT(false, "Unknown command queue type");
-		return nullptr;
-	}
+	std::shared_ptr<DX12CommandQueue> GetDX12CommandQueue(CommandQueueType type);
+
+	/**
+	 * Allocate a number of CPU visible descriptors.
+	 */
+	DX12DescriptorAllocation AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1);
+
+	/**
+	 * Release stale descriptors. This should only be called with a completed frame counter.
+	 */
+	void ReleaseStaleDescriptors(uint64_t finishedFrame);
+
+	/**
+	 * Check if the requested multisample quality is supported for the given format.
+	 */
+	DXGI_SAMPLE_DESC GetMultisampleQualityLevels(DXGI_FORMAT format, UINT numSamples, D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE) const;
 
 private:
 	void OnInitialize() override;
@@ -90,17 +111,24 @@ private:
 
 	// DirectX 12 Objects
 	Microsoft::WRL::ComPtr<ID3D12Device2> m_device;
+	
 	std::shared_ptr<DX12CommandQueue> m_directCommandQueue;
 	std::shared_ptr<DX12CommandQueue> m_computeCommandQueue;
 	std::shared_ptr<DX12CommandQueue> m_copyCommandQueue;
+	std::unique_ptr<DX12DescriptorAllocator> m_descriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
+	DX12RenderTarget m_renderTarget;
+	DX12Texture m_backBufferTextures[s_backBufferCount];
+
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapChain;
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, s_backBufferCount> m_backBuffers;
+	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, s_backBufferCount> m_backBuffers;
+
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_RTVDescriptorHeap;
 	UINT m_RTVDescriptorSize = 0;
 	UINT m_currentBackBufferIndex = 0;
 
 	// Synchronization objects
 	std::array<uint64_t, s_backBufferCount> m_frameFenceValues = {};
+	std::array<uint64_t, s_backBufferCount> m_frameValues = {};
 
 	// By default, enable V-Sync.
 	// Can be toggled with the V key.

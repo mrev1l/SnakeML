@@ -4,6 +4,7 @@
 #include "InitializeRenderComponentsSystem.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/DX12CommandList.h"
 #include "system/ecs/components/platform_specific/DX12MaterialComponent.h"
 #include "system/ecs/components/platform_specific/DX12RenderComponent.h"
 #include "system/ecs/ECSManager.h"
@@ -25,7 +26,7 @@ void InitializeRenderComponentsSystem::Execute()
 	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
-	auto commandList = commandQueue ? commandQueue->GetD3D12CommandList() : nullptr;
+	auto commandList = commandQueue ? commandQueue->GetCommandList()/*->GetGraphicsCommandList()*/ : nullptr;
 
 	for (size_t i = 0; i < materialComponents->Num(); ++i)
 	{
@@ -33,29 +34,41 @@ void InitializeRenderComponentsSystem::Execute()
 		const DX12MaterialComponent& materialComponent = materials[i];
 
 		renderComponent.m_entityId = materialComponent.m_entityId;
+		
+		// BEFORE
 		// Upload vertex buffer data.
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateVertexBuffer;
-		dxutils::UpdateBufferResource(device,
-			commandList,
-			&renderComponent.m_vertexBuffer, &intermediateVertexBuffer,
-			materialComponent.m_vertices.size(), sizeof(materialComponent.m_vertices[0]), materialComponent.m_vertices.data());
+		//Microsoft::WRL::ComPtr<ID3D12Resource> intermediateVertexBuffer;
+		//dxutils::UpdateBufferResource(device,
+		//	commandList,
+		//	&renderComponent.m_vertexBuffer, &intermediateVertexBuffer,
+		//	materialComponent.m_vertices.size(), sizeof(materialComponent.m_vertices[0]), materialComponent.m_vertices.data());
+		//
+		//// Create the vertex buffer view.
+		//renderComponent.m_vertexBufferView.BufferLocation = renderComponent.m_vertexBuffer->GetGPUVirtualAddress();
+		//renderComponent.m_vertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_vertices[0])) * static_cast<UINT>(materialComponent.m_vertices.size());
+		//renderComponent.m_vertexBufferView.StrideInBytes = sizeof(materialComponent.m_vertices[0]);
+		// ~BEFORE
+		
+		// AFTER
+		commandList->CopyVertexBuffer(renderComponent.m_vertexBuffer, materialComponent.m_vertices);
+		// ~AFTER
 
-		// Create the vertex buffer view.
-		renderComponent.m_vertexBufferView.BufferLocation = renderComponent.m_vertexBuffer->GetGPUVirtualAddress();
-		renderComponent.m_vertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_vertices[0])) * static_cast<UINT>(materialComponent.m_vertices.size());
-		renderComponent.m_vertexBufferView.StrideInBytes = sizeof(materialComponent.m_vertices[0]);
+		if (!materialComponent.m_indices.empty())
+		{
+			// BEFORE
+			// Upload index buffer data.
+			//Microsoft::WRL::ComPtr<ID3D12Resource> intermediateIndexBuffer;
+			//dxutils::UpdateBufferResource(device,
+			//	commandList,
+			//	&renderComponent.m_indexBuffer, &intermediateIndexBuffer,
+			//	materialComponent.m_indices.size(), sizeof(materialComponent.m_indices[0]), materialComponent.m_indices.data());
 
-		// Upload index buffer data.
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateIndexBuffer;
-		dxutils::UpdateBufferResource(device,
-			commandList,
-			&renderComponent.m_indexBuffer, &intermediateIndexBuffer,
-			materialComponent.m_indices.size(), sizeof(materialComponent.m_indices[0]), materialComponent.m_indices.data());
-
-		// Create index buffer view.
-		renderComponent.m_indexBufferView.BufferLocation = renderComponent.m_indexBuffer->GetGPUVirtualAddress();
-		renderComponent.m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		renderComponent.m_indexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_indices[0])) * static_cast<UINT>(materialComponent.m_indices.size());
+			//// Create index buffer view.
+			//renderComponent.m_indexBufferView.BufferLocation = renderComponent.m_indexBuffer->GetGPUVirtualAddress();
+			//renderComponent.m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
+			//renderComponent.m_indexBufferView.SizeInBytes = static_cast<UINT>(sizeof(materialComponent.m_indices[0])) * static_cast<UINT>(materialComponent.m_indices.size());
+			// ~BEFORE
+		}
 
 		// Load the vertex shader.
 		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob;
@@ -90,15 +103,22 @@ void InitializeRenderComponentsSystem::Execute()
 
 		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription;
 		rootSignatureDescription.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+		
+		//BEFORE
 		// Serialize the root signature.
-		Microsoft::WRL::ComPtr<ID3DBlob> rootSignatureBlob;
-		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
-		dxutils::ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&rootSignatureDescription,
-			featureData.HighestVersion, &rootSignatureBlob, &errorBlob));
+		//Microsoft::WRL::ComPtr<ID3DBlob> rootSignatureBlob;
+		//Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+		//dxutils::ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&rootSignatureDescription,
+		//	featureData.HighestVersion, &rootSignatureBlob, &errorBlob));
+		//
+		//// Create the root signature.
+		//dxutils::ThrowIfFailed(device->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
+		//	rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&renderComponent.m_rootSignature)));
+		//~BEFORE
 
-		// Create the root signature.
-		dxutils::ThrowIfFailed(device->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
-			rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&renderComponent.m_rootSignature)));
+		//AFTER
+		renderComponent.m_rootSignature.SetRootSignatureDesc(rootSignatureDescription.Desc_1_1, featureData.HighestVersion);
+		//~AFTER
 
 		struct PipelineStateStream
 		{
@@ -109,19 +129,24 @@ void InitializeRenderComponentsSystem::Execute()
 			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
 			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DSVFormat;
 			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RTVFormats;
+			CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC SampleDesc;
 		} pipelineStateStream;
+
+		// Check the best multisample quality level that can be used for the given back buffer format.
+		DXGI_SAMPLE_DESC sampleDesc = dx12Driver->GetMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, D3D12_MAX_MULTISAMPLE_SAMPLE_COUNT);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-		pipelineStateStream.pRootSignature = renderComponent.m_rootSignature.Get();
+		pipelineStateStream.pRootSignature = renderComponent.m_rootSignature.GetRootSignature().Get();
 		pipelineStateStream.InputLayout = { materialComponent.m_vsInputLayout.data(), (UINT)materialComponent.m_vsInputLayout.size() };
 		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
 		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.Get());
 		pipelineStateStream.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 		pipelineStateStream.RTVFormats = rtvFormats;
+		pipelineStateStream.SampleDesc = sampleDesc;
 
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 		sizeof(PipelineStateStream), &pipelineStateStream
