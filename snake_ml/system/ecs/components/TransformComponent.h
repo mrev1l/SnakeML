@@ -13,6 +13,7 @@ namespace system
 class TransformComponent : public IComponent
 {
 public:
+	virtual ~TransformComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::TransformComponent; }
 
 	math::vec4<float> m_position;

@@ -20,6 +20,10 @@ enum class ComponentType : uint32_t
 	class ObjectType##Iterator : public Iterator { \
 	public: \
 		ObjectType##Iterator(IComponent* data, size_t num) : Iterator(data, num) {} \
+		virtual ~ObjectType##Iterator() { \
+			ObjectType* concreteArray = (ObjectType*)m_data; \
+			delete[] concreteArray; \
+		} \
 		\
 	protected: \
 		IComponent* GetElement(size_t idx) override { \
@@ -34,14 +38,18 @@ enum class ComponentType : uint32_t
         { \
             IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
         } \
-        virtual IComponent* Create() { \
+        virtual IComponent* Create() override { \
             return new ObjectType(); \
         } \
-        virtual IComponent* Create(size_t num) { \
+        virtual IComponent* Create(size_t num) override { \
             return new ObjectType[num]; \
         } \
-		virtual Iterator* CreateIterator(size_t num) { \
+		virtual Iterator* CreateIterator(size_t num) override { \
 			return new ObjectType##Iterator(new ObjectType[num](), num); \
+		} \
+		virtual void DeleteIterator(Iterator* it) override { \
+			ObjectType##Iterator* itToDelete = (ObjectType##Iterator*)it; \
+			delete itToDelete; \
 		} \
 }; \
 static ObjectType##Factory global_##ObjectType##Factory; \
@@ -74,6 +82,7 @@ public:
 	virtual IComponent* Create() = 0;
 	virtual IComponent* Create(size_t num) = 0;
 	virtual Iterator* CreateIterator(size_t num) = 0;
+	virtual void DeleteIterator(Iterator* it) = 0;
 };
 
 class IComponent
@@ -88,6 +97,7 @@ public:
 	static IComponent* Create(ComponentType objType, size_t num);
 
 	static Iterator* CreateIterator(ComponentType objType, size_t num);
+	static void DeleteIterator(ComponentType objType, Iterator* it);
 
 	uint32_t m_entityId;
 

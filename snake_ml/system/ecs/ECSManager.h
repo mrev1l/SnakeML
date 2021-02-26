@@ -14,7 +14,8 @@ namespace system
 class ECSManager : public patterns::Singleton<ECSManager>
 {
 public:
-	ECSManager();
+	ECSManager() = default;
+	~ECSManager() = default;
 
 	inline ComponentsPool& GetComponentsPool() { return m_components; }
 	inline std::vector<Entity>& GetEntities() { return m_entities; }

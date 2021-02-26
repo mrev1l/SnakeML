@@ -8,9 +8,6 @@ namespace snakeml
 namespace system
 {
 
-ECSManager::ECSManager()
-{
-}
 
 void ECSManager::ExecuteSystem(ISystem* system)
 {
