@@ -14,6 +14,7 @@ namespace system
 class DX12RenderComponent : public IComponent
 {
 public:
+	virtual ~DX12RenderComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::DX12RenderComponent; }
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;

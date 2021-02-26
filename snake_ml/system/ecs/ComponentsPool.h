@@ -13,18 +13,31 @@ class ComponentsPool
 {
 public:
 	ComponentsPool() = default;
+	~ComponentsPool()
+	{
+		DeleteComponents();
+	}
 
 	void InsertComponents(ComponentType type, Iterator* it)
 	{
 		ASSERT(!m_componentsPool.contains(type), "Inserting into an existing component pool");
 		m_componentsPool.insert({type, it});
 	}
+
 	Iterator* GetComponents(ComponentType type) const
 	{
 		return m_componentsPool.at(type);
 	}
 
 private:
+	void DeleteComponents()
+	{
+		for (auto& component : m_componentsPool)
+		{
+			IComponent::DeleteIterator(component.first, component.second);
+		}
+	}
+
 	std::unordered_map<ComponentType, Iterator*> m_componentsPool;
 };
 

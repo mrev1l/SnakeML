@@ -23,6 +23,7 @@ public:
 		D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL;
 	};
 
+	virtual ~DX12MaterialComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::DX12MaterialComponent; }
 
 	std::vector<std::pair<math::vec3<float>, math::vec3<float>>> m_vertices;

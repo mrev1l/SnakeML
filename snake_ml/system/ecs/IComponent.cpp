@@ -28,6 +28,11 @@ Iterator* IComponent::CreateIterator(ComponentType objType, size_t num)
 	return factories.at(objType)->CreateIterator(num);
 }
 
+void IComponent::DeleteIterator(ComponentType objType, Iterator* it)
+{
+	factories.at(objType)->DeleteIterator(it);
+}
+
 }
 }
 

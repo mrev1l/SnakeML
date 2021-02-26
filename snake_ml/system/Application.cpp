@@ -76,6 +76,8 @@ void Application::Run()
 
 void Application::Shutdown()
 {
+	delete system::ECSManager::GetInstance();
+
 	system::IRenderDriver::GetInstance()->Shutdown();
 
 	delete system::IOSDriver::GetInstance();
