@@ -20,25 +20,26 @@ void Render2DSystem::Execute()
 {
 	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
 	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
+	
+	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Direct);
+	if (!commandQueue)
+	{
+		return;
+	}
+	auto commandList = commandQueue->GetCommandList();
+
+	// Clear the render targets.
+	{
+		FLOAT clearColor[] = { 0.f, 0.f, 0.f, 1.0f };
+
+		commandList->ClearTexture(dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::Color0), clearColor);
+		commandList->ClearDepthStencilTexture(dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::DepthStencil), D3D12_CLEAR_FLAG_DEPTH);
+	}
+
 	for (const Entity& entity : entities)
 	{
 		const DX12RenderComponent& renderable = *(DX12RenderComponent*)entity.m_components.at(ComponentType::DX12RenderComponent);
 		const TransformComponent& transform = *(TransformComponent*)entity.m_components.at(ComponentType::TransformComponent);
-
-		auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Direct);
-		if (!commandQueue)
-		{
-			return;
-		}
-		auto commandList = commandQueue->GetCommandList();
-
-		// Clear the render targets.
-		{
-			FLOAT clearColor[] = { 0.f, 0.f, 0.f, 1.0f };
-
-			commandList->ClearTexture(dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::Color0), clearColor);
-			commandList->ClearDepthStencilTexture(dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::DepthStencil), D3D12_CLEAR_FLAG_DEPTH);
-		}
 
 		commandList->SetPipelineState(renderable.m_pipelineState);
 		commandList->SetGraphicsRootSignature(renderable.m_rootSignature);
@@ -64,45 +65,46 @@ void Render2DSystem::Execute()
 		commandList->Draw(renderable.m_vertexBuffer.GetNumVertices());
 
 		commandQueue->ExecuteCommandList(commandList);
+	}
 
-		// Present
+	// Present
+	{
+		auto presentCommandList = commandQueue->GetCommandList();
+		auto& texture = dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::Color0);
+		auto& backBuffer = dx12Driver->m_backBufferTextures[dx12Driver->m_currentBackBufferIndex];
+
+		if (texture.IsValid())
 		{
-			auto presentCommandList = commandQueue->GetCommandList();
-			auto& texture = dx12Driver->m_renderTarget.GetTexture(win::AttachmentPoint::Color0);
-			auto& backBuffer = dx12Driver->m_backBufferTextures[dx12Driver->m_currentBackBufferIndex];
-
-			if (texture.IsValid())
+			if (texture.GetD3D12ResourceDesc().SampleDesc.Count > 1)
 			{
-				if (texture.GetD3D12ResourceDesc().SampleDesc.Count > 1)
-				{
-					presentCommandList->ResolveSubresource(backBuffer, texture);
-				}
-				else
-				{
-					presentCommandList->CopyResource(backBuffer, texture);
-				}
+				presentCommandList->ResolveSubresource(backBuffer, texture);
 			}
-
-			win::DX12RenderTarget renderTarget;
-			renderTarget.AttachTexture(win::AttachmentPoint::Color0, backBuffer);
-
-			presentCommandList->TransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT);
-			commandQueue->ExecuteCommandList(presentCommandList);
-
-			UINT syncInterval = dx12Driver->m_isVSync ? 1 : 0;
-			UINT presentFlags = dx12Driver->m_isTearingSupported && !dx12Driver->m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
-			dxutils::ThrowIfFailed(dx12Driver->m_swapChain->Present(syncInterval, presentFlags));
-
-			dx12Driver->m_frameFenceValues[dx12Driver->m_currentBackBufferIndex] = commandQueue->Signal();
-			dx12Driver->m_frameValues[dx12Driver->m_currentBackBufferIndex] = Application::s_frameCounter;
-
-			dx12Driver->m_currentBackBufferIndex = dx12Driver->m_swapChain->GetCurrentBackBufferIndex();
-
-			commandQueue->WaitForFenceValue(dx12Driver->m_frameFenceValues[dx12Driver->m_currentBackBufferIndex]);
-
-			dx12Driver->ReleaseStaleDescriptors(dx12Driver->m_frameValues[dx12Driver->m_currentBackBufferIndex]);
+			else
+			{
+				presentCommandList->CopyResource(backBuffer, texture);
+			}
 		}
 
+		win::DX12RenderTarget renderTarget;
+		renderTarget.AttachTexture(win::AttachmentPoint::Color0, backBuffer);
+
+		presentCommandList->TransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT);
+		commandQueue->ExecuteCommandList(presentCommandList);
+
+		UINT syncInterval = dx12Driver->m_isVSync ? 1 : 0;
+		UINT presentFlags = dx12Driver->m_isTearingSupported && !dx12Driver->m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
+		dxutils::ThrowIfFailed(dx12Driver->m_swapChain->Present(syncInterval, presentFlags));
+
+		dx12Driver->m_frameFenceValues[dx12Driver->m_currentBackBufferIndex] = commandQueue->Signal();
+		dx12Driver->m_frameValues[dx12Driver->m_currentBackBufferIndex] = Application::s_frameCounter;
+
+		dx12Driver->m_currentBackBufferIndex = dx12Driver->m_swapChain->GetCurrentBackBufferIndex();
+
+		commandQueue->WaitForFenceValue(dx12Driver->m_frameFenceValues[dx12Driver->m_currentBackBufferIndex]);
+
+		dx12Driver->ReleaseStaleDescriptors(dx12Driver->m_frameValues[dx12Driver->m_currentBackBufferIndex]);
+
+	}
 		/// OLD
 		/*
 		auto backBuffer = dx12Driver->m_backBuffers[dx12Driver->m_currentBackBufferIndex];
@@ -160,7 +162,6 @@ void Render2DSystem::Execute()
 
 			commandQueue->WaitForFenceValue(dx12Driver->m_frameFenceValues[dx12Driver->m_currentBackBufferIndex]);
 		}*/
-	}
 }
 
 }
