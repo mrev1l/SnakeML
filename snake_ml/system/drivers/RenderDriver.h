@@ -11,6 +11,21 @@ namespace snakeml
 namespace system
 {
 
+class Entity;
+
+class IRenderCommand
+{
+public:
+	virtual ~IRenderCommand() = default;
+};
+
+class IRenderCommandFactory
+{
+public:
+	virtual ~IRenderCommandFactory() = default;
+	virtual void BuildRenderCommands(const Entity& entity, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands) = 0;
+};
+
 class IRenderDriver
 	: public patterns::Singleton<IRenderDriver>
 {
@@ -22,12 +37,17 @@ public:
 	void Shutdown();
 	bool IsInitialized() const;
 
+	virtual void SubscribeForRendering(const Entity& renderable) = 0;
+
 	void Render();
 
 protected:
 	virtual void OnInitialize() = 0;
 	virtual void OnShutdown() = 0;
 	virtual void OnRender() = 0;
+
+	std::vector<std::unique_ptr<IRenderCommand>> m_renderCommands;
+	std::unique_ptr<IRenderCommandFactory> m_renderCommandFactory;
 
 private:
 	bool m_isInitialized = false;

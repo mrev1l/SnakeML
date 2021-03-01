@@ -199,6 +199,9 @@
     <ClCompile Include="system\drivers\win\dx\DX12Texture.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12UploadBuffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\DX12VertexBuffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\render_commands\DrawMeshCommand.cpp" />
+    <ClCompile Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.cpp" />
+    <ClCompile Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
     <ClCompile Include="system\ecs\ComponentsPool.cpp" />
     <ClCompile Include="system\ecs\ECSManager.cpp" />
@@ -209,7 +212,7 @@
     <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\platform_specific\Render2DSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\Render2DSystem.cpp" />
     <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp" />
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
@@ -238,6 +241,10 @@
     <ClInclude Include="system\drivers\win\dx\DX12TextureUsage.h" />
     <ClInclude Include="system\drivers\win\dx\DX12UploadBuffer.h" />
     <ClInclude Include="system\drivers\win\dx\DX12VertexBuffer.h" />
+    <ClInclude Include="system\drivers\win\dx\render_commands\DrawMeshCommand.h" />
+    <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommand.h" />
+    <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.h" />
+    <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
     <ClInclude Include="system\ecs\ComponentsPool.h" />
     <ClInclude Include="system\ecs\components\platform_specific\DX12MaterialComponent.h" />
@@ -251,7 +258,7 @@
     <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.h" />
-    <ClInclude Include="system\ecs\systems\platform_specific\Render2DSystem.h" />
+    <ClInclude Include="system\ecs\systems\Render2DSystem.h" />
     <ClInclude Include="system\ecs\systems\RotateCubeSystem.h" />
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />

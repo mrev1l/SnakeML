@@ -3,9 +3,17 @@
 #include "stdafx.h"
 #include "DX12Driver.h"
 
+#include "DX12CommandList.h"
 #include "DX12ResourceStateTracker.h"
 #include "DX12TextureUsage.h"
+
+#include "render_commands/DX12RenderCommandFactory.h"
+
+#include "system/Application.h"
 #include "system/drivers/win/os/WinDriver.h"
+#include "system/ecs/components/TransformComponent.h"
+#include "system/ecs/components/platform_specific/DX12RenderComponent.h"
+
 #include "utils/win_utils.h"
 
 namespace snakeml
@@ -27,11 +35,18 @@ DX12Driver::DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz)
 	{
 		m_backBufferTextures[i].SetName(L"Backbuffer[" + std::to_wstring(i) + L"]");
 	}
+
+	m_renderCommandFactory = std::make_unique<DX12RenderCommandFactory>();
 }
 
 DX12Driver::~DX12Driver()
 {
 	Flush();
+}
+
+void DX12Driver::SubscribeForRendering(const Entity& renderable)
+{
+	m_renderCommandFactory->BuildRenderCommands(renderable, m_renderCommands);
 }
 
 std::shared_ptr<DX12CommandQueue> DX12Driver::GetDX12CommandQueue(CommandQueueType type)
@@ -124,6 +139,69 @@ void DX12Driver::OnShutdown()
 
 void DX12Driver::OnRender()
 {
+	auto commandQueue = GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Direct);
+	auto commandList = commandQueue->GetCommandList();
+	
+	OnRender_ClearRenderTargets(commandList);
+
+	commandList->SetViewport(m_viewport);
+	commandList->SetScissorRect(m_scissorRect);
+	commandList->SetRenderTarget(m_renderTarget);
+
+	for (const auto& command : m_renderCommands)
+	{
+		DX12RenderCommand* dx12Command = (DX12RenderCommand*)command.get();
+		dx12Command->Execute(commandList);
+	}
+
+	commandQueue->ExecuteCommandList(commandList);
+
+	OnRender_Present(commandQueue->GetCommandList(), commandQueue);
+
+	m_renderCommands.clear();
+}
+
+void DX12Driver::OnRender_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList)
+{
+	commandList->ClearTexture(m_renderTarget.GetTexture(win::AttachmentPoint::Color0), s_defaultClearColor);
+	commandList->ClearDepthStencilTexture(m_renderTarget.GetTexture(win::AttachmentPoint::DepthStencil), D3D12_CLEAR_FLAG_DEPTH);
+}
+
+void DX12Driver::OnRender_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue)
+{
+	auto& texture = m_renderTarget.GetTexture(win::AttachmentPoint::Color0);
+	auto& backBuffer = m_backBufferTextures[m_currentBackBufferIndex];
+
+	if (texture.IsValid())
+	{
+		if (texture.GetD3D12ResourceDesc().SampleDesc.Count > 1)
+		{
+			commandList->ResolveSubresource(backBuffer, texture);
+		}
+		else
+		{
+			commandList->CopyResource(backBuffer, texture);
+		}
+	}
+
+	win::DX12RenderTarget renderTarget;
+	renderTarget.AttachTexture(win::AttachmentPoint::Color0, backBuffer);
+
+	commandList->TransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT);
+	commandQueue->ExecuteCommandList(commandList);
+
+	UINT syncInterval = m_isVSync ? 1 : 0;
+	UINT presentFlags = m_isTearingSupported && !m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
+	dxutils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
+
+	m_frameFenceValues[m_currentBackBufferIndex] = commandQueue->Signal();
+	m_frameValues[m_currentBackBufferIndex] = Application::s_frameCounter;
+
+	m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+
+	commandQueue->WaitForFenceValue(m_frameFenceValues[m_currentBackBufferIndex]);
+
+	ReleaseStaleDescriptors(m_frameValues[m_currentBackBufferIndex]);
 }
 
 void DX12Driver::Flush()
@@ -187,6 +265,13 @@ void DX12Driver::InitializeRenderTarget()
 	);
 }
 
+void DX12Driver::GetMatrices(DirectX::XMMATRIX& outView, DirectX::XMMATRIX& outProjection, DirectX::XMMATRIX& outOrthogonal)
+{
+	outView = m_viewMatrix;
+	outProjection = m_projectionMatrix;
+	outOrthogonal = m_orthogonalMatrix;
+}
+
 void DX12Driver::InitializeRenderTarget_AttachTexture(DXGI_FORMAT format, const DXGI_SAMPLE_DESC& sampleDesc, const D3D12_CLEAR_VALUE& clearValue,
 	D3D12_RESOURCE_FLAGS resourceFlags, TextureUsage usage, AttachmentPoint attachmentPoint, const std::wstring& name)
 {
@@ -213,8 +298,6 @@ void DX12Driver::InitializeMatrices()
 	float aspectRatio = static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight);
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
 }
-
-
 
 }
 }

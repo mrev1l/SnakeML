@@ -8,13 +8,13 @@
 #include "drivers/win/os/WinDriver.h"
 #include "ecs/systems/platform_specific/InitializeRenderComponentsSystem.h"
 #include "ecs/systems/platform_specific/LoadMaterialsSystem.h"
-#include "ecs/systems/platform_specific/Render2DSystem.h"
 #endif
 
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeEntitiesSystem.h"
 #include "ecs/systems/InitializeTransformComponentsSystem.h"
 #include "ecs/systems/RotateCubeSystem.h"
+#include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/TestMoveSnakeHeadSystem.h"
 #include "input/InputManager.h"
 

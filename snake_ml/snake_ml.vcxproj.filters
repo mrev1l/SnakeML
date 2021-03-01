@@ -78,9 +78,6 @@
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\platform_specific\Render2DSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\drivers\win\dx\DX12UploadBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,6 +115,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\drivers\win\dx\DX12RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\render_commands\DrawMeshCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ecs\systems\Render2DSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -212,9 +221,6 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\ecs\systems\platform_specific\Render2DSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\drivers\win\dx\DX12UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -258,6 +264,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\drivers\win\dx\DX12TextureUsage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\render_commands\DrawMeshCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\Render2DSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

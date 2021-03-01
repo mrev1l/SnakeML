@@ -5,14 +5,12 @@
 #include "DX12DescriptorAllocator.h"
 #include "DX12RenderTarget.h"
 #include "system/drivers/RenderDriver.h"
+#include "system/ecs/Entity.h"
 
 namespace snakeml
 {
 namespace system
 {
-
-class Render2DSystem;
-
 namespace win
 {
 
@@ -33,7 +31,6 @@ enum RootParameters
 class DX12Driver
 	: public IRenderDriver
 {
-	friend Render2DSystem;
 	static constexpr std::chrono::milliseconds s_DX12FenceDefaultWait = std::chrono::milliseconds::max();
 	static constexpr uint8_t s_backBufferCount = 2u;
 	static constexpr FLOAT s_defaultClearColor[4] = { 0.f,0.f,0.f,1.f };
@@ -48,6 +45,8 @@ public:
 
 	DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz);
 	~DX12Driver();
+
+	void SubscribeForRendering(const Entity& renderable);
 
 	Microsoft::WRL::ComPtr<ID3D12Device2> GetD3D12Device() { return m_device; }
 	std::shared_ptr<DX12CommandQueue> GetDX12CommandQueue(CommandQueueType type);
@@ -67,10 +66,14 @@ public:
 	 */
 	DXGI_SAMPLE_DESC GetMultisampleQualityLevels(DXGI_FORMAT format, UINT numSamples, D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE) const;
 
+	void GetMatrices(DirectX::XMMATRIX& outView, DirectX::XMMATRIX& outProjection, DirectX::XMMATRIX& outOrthogonal);
+
 private:
 	void OnInitialize() override;
 	void OnShutdown() override;
 	void OnRender() override;
+	void OnRender_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList);
+	void OnRender_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue);
 
 	void Flush();
 

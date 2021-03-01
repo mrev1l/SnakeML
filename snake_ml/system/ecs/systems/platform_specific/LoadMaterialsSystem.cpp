@@ -11,6 +11,7 @@ namespace snakeml
 namespace system
 {
 
+#ifdef _WINDOWS
 void LoadMaterialsSystem::Execute()
 {
 	constexpr uint32_t materialsNum = 1u;
@@ -156,6 +157,7 @@ void LoadMaterialsSystem::ParseVertexInputParamLayout(const rapidjson::Document&
 	outLayout.registerSpace = vsInputParamLayoutJson["registerSpace"].GetUint();
 	outLayout.visibility = static_cast<D3D12_SHADER_VISIBILITY>(vsInputParamLayoutJson["visibility"].GetInt());
 }
+#endif
 
 }
 }
