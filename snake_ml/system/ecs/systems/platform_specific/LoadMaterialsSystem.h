@@ -12,6 +12,7 @@ namespace snakeml
 namespace system
 {
 
+#ifdef _WINDOWS
 class LoadMaterialsSystem : public ISystem
 {
 public:
@@ -27,6 +28,7 @@ private:
 	static void ParseVertexInputLayout(const rapidjson::Document& json, std::vector<D3D12_INPUT_ELEMENT_DESC>& outLayout);
 	static void ParseVertexInputParamLayout(const rapidjson::Document& json, DX12MaterialComponent::VSParamLayout& outLayout);
 };
+#endif
 
 }
 }
