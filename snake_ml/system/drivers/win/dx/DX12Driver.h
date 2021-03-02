@@ -19,13 +19,13 @@ namespace win
 // to use these as root indices in the root signature.
 enum RootParameters
 {
-    MatricesCB,         // ConstantBuffer<Mat> MatCB : register(b0);
-    MaterialCB,         // ConstantBuffer<Material> MaterialCB : register( b0, space1 );
-    LightPropertiesCB,  // ConstantBuffer<LightProperties> LightPropertiesCB : register( b1 );
-    PointLights,        // StructuredBuffer<PointLight> PointLights : register( t0 );
-    SpotLights,         // StructuredBuffer<SpotLight> SpotLights : register( t1 );
-    Textures,           // Texture2D DiffuseTexture : register( t2 );
-    NumRootParameters
+	MatricesCB,		 // ConstantBuffer<Mat> MatCB : register(b0);
+	MaterialCB,		 // ConstantBuffer<Material> MaterialCB : register( b0, space1 );
+	LightPropertiesCB,  // ConstantBuffer<LightProperties> LightPropertiesCB : register( b1 );
+	PointLights,		// StructuredBuffer<PointLight> PointLights : register( t0 );
+	SpotLights,		 // StructuredBuffer<SpotLight> SpotLights : register( t1 );
+	Textures,		   // Texture2D DiffuseTexture : register( t2 );
+	NumRootParameters
 };
 
 class DX12Driver

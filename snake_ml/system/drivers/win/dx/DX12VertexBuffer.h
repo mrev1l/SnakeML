@@ -43,36 +43,36 @@ namespace win
 class DX12VertexBuffer : public DX12Buffer
 {
 public:
-    DX12VertexBuffer(const std::wstring& name = L"");
-    virtual ~DX12VertexBuffer() = default;
+	DX12VertexBuffer(const std::wstring& name = L"");
+	virtual ~DX12VertexBuffer() = default;
 
-    // Inherited from Buffer
-    virtual void CreateViews(size_t numElements, size_t elementSize) override;
+	// Inherited from Buffer
+	virtual void CreateViews(size_t numElements, size_t elementSize) override;
 
-    /**
-     * Get the vertex buffer view for binding to the Input Assembler stage.
-     */
-    D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const { return m_vertexBufferView; }
+	/**
+	 * Get the vertex buffer view for binding to the Input Assembler stage.
+	 */
+	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const { return m_vertexBufferView; }
 
-    size_t GetNumVertices() const { return m_numVertices; }
+	size_t GetNumVertices() const { return m_numVertices; }
 
-    size_t GetVertexStride() const { return m_vertexStride; }
+	size_t GetVertexStride() const { return m_vertexStride; }
 
-    /**
-    * Get the SRV for a resource.
-    */
-    virtual D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView(const D3D12_SHADER_RESOURCE_VIEW_DESC* srvDesc = nullptr) const override;
+	/**
+	* Get the SRV for a resource.
+	*/
+	virtual D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView(const D3D12_SHADER_RESOURCE_VIEW_DESC* srvDesc = nullptr) const override;
 
-    /**
-    * Get the UAV for a (sub)resource.
-    */
-    virtual D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(const D3D12_UNORDERED_ACCESS_VIEW_DESC* uavDesc = nullptr) const override;
+	/**
+	* Get the UAV for a (sub)resource.
+	*/
+	virtual D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(const D3D12_UNORDERED_ACCESS_VIEW_DESC* uavDesc = nullptr) const override;
 
 private:
-    size_t m_numVertices;
-    size_t m_vertexStride;
+	size_t m_numVertices;
+	size_t m_vertexStride;
 
-    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 };
 
 }
