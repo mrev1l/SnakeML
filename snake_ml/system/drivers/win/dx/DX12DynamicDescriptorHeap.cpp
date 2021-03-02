@@ -26,7 +26,7 @@ DX12DynamicDescriptorHeap::DX12DynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE 
 	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();	
 	m_descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize(heapType);
 	// Allocate space for staging CPU visible descriptors.
-	m_descriptorHandleCache = std::make_unique<D3D12_CPU_DESCRIPTOR_HANDLE[]>(m_numDescriptorsPerHeap);
+	m_descriptorHandleCache = std::make_unique<D3D12_CPU_DESCRIPTOR_HANDLE[]>(static_cast<size_t>(m_numDescriptorsPerHeap));
 }
 
 void DX12DynamicDescriptorHeap::StageDescriptors(uint32_t rootParameterIndex, uint32_t offset, uint32_t numDescriptors, const D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptor)
@@ -47,10 +47,10 @@ void DX12DynamicDescriptorHeap::StageDescriptors(uint32_t rootParameterIndex, ui
 		throw std::length_error("Number of descriptors exceeds the number of descriptors in the descriptor table.");
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE* dstDescriptor = (descriptorTableCache.baseDescriptor + offset);
-	for (uint32_t i = 0; i < numDescriptors; ++i)
+	D3D12_CPU_DESCRIPTOR_HANDLE* dstDescriptor = (descriptorTableCache.baseDescriptor + static_cast<size_t>(offset));
+	for (size_t i = 0; i < static_cast<size_t>(numDescriptors); ++i)
 	{
-		dstDescriptor[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(srcDescriptor, i, m_descriptorHandleIncrementSize);
+		dstDescriptor[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(srcDescriptor, static_cast<INT>(i), m_descriptorHandleIncrementSize);
 	}
 
 	// Set the root parameter index bit to make sure the descriptor table 
@@ -172,7 +172,7 @@ void DX12DynamicDescriptorHeap::ParseRootSignature(const DX12RootSignature& root
 
 		DescriptorTableCache& descriptorTableCache = m_descriptorTableCache[rootIndex];
 		descriptorTableCache.numDescriptors = numDescriptors;
-		descriptorTableCache.baseDescriptor = m_descriptorHandleCache.get() + currentOffset;
+		descriptorTableCache.baseDescriptor = m_descriptorHandleCache.get() + static_cast<size_t>(currentOffset);
 
 		currentOffset += numDescriptors;
 

@@ -262,9 +262,11 @@ public:
     template<typename T>
     void SetDynamicIndexBuffer(const std::vector<T>& indexBufferData)
     {
-        static_assert(sizeof(T) == 2 || sizeof(T) == 4);
+        constexpr size_t sizeofR16 = 2u;
+        constexpr size_t sizeofR32 = 4u;
+        static_assert(sizeof(T) == sizeofR16 || sizeof(T) == sizeofR32);
 
-        DXGI_FORMAT indexFormat = (sizeof(T) == 2) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+        DXGI_FORMAT indexFormat = (sizeof(T) == sizeofR16) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
         SetDynamicIndexBuffer(indexBufferData.size(), indexFormat, indexBufferData.data());
     }
 
@@ -411,7 +413,7 @@ private:
 
     // Keep track of the currently bound root signatures to minimize root
     // signature changes.
-    ID3D12RootSignature* m_rootSignature;
+    ID3D12RootSignature* m_rootSignature = nullptr;
 
     // Resource created in an upload heap. Useful for drawing of dynamic geometry
     // or for uploading constant buffer data that changes every draw call.

@@ -42,8 +42,8 @@ namespace system
 namespace win
 {
 
-#define _KB(x) (x * 1024)
-#define _MB(x) (x * 1024 * 1024)
+#define _KB(x) ((x) * 1024)
+#define _MB(x) ((x) * 1024 * 1024)
 
 #define _64KB _KB(64)
 #define _1MB _MB(1)

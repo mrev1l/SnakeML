@@ -3,9 +3,10 @@
 #pragma once
 #include "lib_includes/directX_includes.h"
 
+#pragma warning(push)
 #pragma warning( disable : 4820)
 #include <chrono>
-#pragma warning( default : 4820)
+#pragma warning(pop)
 
 namespace snakeml
 {

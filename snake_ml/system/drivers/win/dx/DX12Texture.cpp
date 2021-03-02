@@ -40,12 +40,14 @@ DX12Texture::DX12Texture(Microsoft::WRL::ComPtr<ID3D12Resource> resource, Textur
 
 DX12Texture::DX12Texture(const DX12Texture& copy)
 	: DX12Resource(copy)
+	, m_textureUsage(copy.m_textureUsage)
 {
 	CreateViews();
 }
 
 DX12Texture::DX12Texture(DX12Texture&& copy)
 	: DX12Resource(copy)
+	, m_textureUsage(copy.m_textureUsage)
 {
 	CreateViews();
 }
@@ -322,6 +324,7 @@ DXGI_FORMAT DX12Texture::GetTypelessFormat(DXGI_FORMAT format)
 	case DXGI_FORMAT_R16_SNORM:
 	case DXGI_FORMAT_R16_SINT:
 		typelessFormat = DXGI_FORMAT_R16_TYPELESS;
+		break;
 	case DXGI_FORMAT_R8_UNORM:
 	case DXGI_FORMAT_R8_UINT:
 	case DXGI_FORMAT_R8_SNORM:

@@ -70,7 +70,7 @@ bool DX12DescriptorAllocation::IsNull() const
 D3D12_CPU_DESCRIPTOR_HANDLE DX12DescriptorAllocation::GetDescriptorHandle(uint32_t offset) const
 {
     ASSERT(offset < m_numHandles, "DX12DescriptorAllocation::GetDescriptorHandle");
-    return { m_descriptor.ptr + (m_descriptorSize * offset) };
+    return { m_descriptor.ptr + static_cast<SIZE_T>(m_descriptorSize) * static_cast<SIZE_T>(offset) };
 }
 
 uint32_t DX12DescriptorAllocation::GetNumHandles() const

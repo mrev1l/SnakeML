@@ -28,7 +28,7 @@ DX12Driver::DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz)
 	, m_osWindowHandle(windowHandle)
 	, m_clientWidth(static_cast<FLOAT>(windowSz.m_x))
 	, m_clientHeight(static_cast<FLOAT>(windowSz.m_y))
-	, m_viewport(CD3DX12_VIEWPORT(0.0f, 0.0f, windowSz.m_x, windowSz.m_y))
+	, m_viewport(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<FLOAT>(windowSz.m_x), static_cast<FLOAT>(windowSz.m_y)))
 	, m_scissorRect(CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX))
 {
 	for (int i = 0; i < s_backBufferCount; ++i)
@@ -140,7 +140,12 @@ void DX12Driver::OnShutdown()
 void DX12Driver::OnRender()
 {
 	auto commandQueue = GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Direct);
-	auto commandList = commandQueue->GetCommandList();
+	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
+	if (!commandList || !commandQueue)
+	{
+		ASSERT(false, " ACHTUNG Command Queue is missing!");
+		return;
+	}
 	
 	OnRender_ClearRenderTargets(commandList);
 
@@ -276,7 +281,7 @@ void DX12Driver::InitializeRenderTarget_AttachTexture(DXGI_FORMAT format, const 
 	D3D12_RESOURCE_FLAGS resourceFlags, TextureUsage usage, AttachmentPoint attachmentPoint, const std::wstring& name)
 {
 	auto colorDesc = CD3DX12_RESOURCE_DESC::Tex2D(format,
-		m_clientWidth, m_clientHeight,
+		static_cast<UINT64>(m_clientWidth), static_cast<UINT>(m_clientHeight),
 		1, 1,
 		sampleDesc.Count, sampleDesc.Quality,
 		resourceFlags);
