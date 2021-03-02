@@ -43,16 +43,16 @@ namespace win
 class DX12Buffer : public DX12Resource
 {
 public:
-    DX12Buffer(const std::wstring& name = L"");
-    DX12Buffer(const D3D12_RESOURCE_DESC& resDesc,
-        size_t numElements, size_t elementSize,
-        const std::wstring& name = L"");
+	DX12Buffer(const std::wstring& name = L"");
+	DX12Buffer(const D3D12_RESOURCE_DESC& resDesc,
+		size_t numElements, size_t elementSize,
+		const std::wstring& name = L"");
 
-    /**
-        * Create the views for the buffer resource.
-        * Used by the CommandList when setting the buffer contents.
-        */
-    virtual void CreateViews(size_t numElements, size_t elementSize) = 0;
+	/**
+		* Create the views for the buffer resource.
+		* Used by the CommandList when setting the buffer contents.
+		*/
+	virtual void CreateViews(size_t numElements, size_t elementSize) = 0;
 };
 
 }

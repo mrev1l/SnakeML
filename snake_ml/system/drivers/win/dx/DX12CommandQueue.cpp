@@ -83,7 +83,7 @@ uint64_t DX12CommandQueue::ExecuteCommandLists(const std::vector<std::shared_ptr
 
 	// Command lists that need to put back on the command list queue.
 	std::vector<std::shared_ptr<DX12CommandList>> toBeQueued;
-	toBeQueued.reserve(commandLists.size() * 2);        // 2x since each command list will have a pending command list.
+	toBeQueued.reserve(commandLists.size() * 2);		// 2x since each command list will have a pending command list.
 
 	// Generate mips command lists.
 	std::vector<std::shared_ptr<DX12CommandList>> generateMipsCommandLists;

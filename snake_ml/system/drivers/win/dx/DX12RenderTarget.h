@@ -47,53 +47,53 @@ namespace win
 // array indices.
 enum AttachmentPoint
 {
-    Color0,
-    Color1,
-    Color2,
-    Color3,
-    Color4,
-    Color5,
-    Color6,
-    Color7,
-    DepthStencil,
-    NumAttachmentPoints
+	Color0,
+	Color1,
+	Color2,
+	Color3,
+	Color4,
+	Color5,
+	Color6,
+	Color7,
+	DepthStencil,
+	NumAttachmentPoints
 };
 
 class DX12RenderTarget
 {
 public:
-    // Create an empty render target.
-    DX12RenderTarget();
+	// Create an empty render target.
+	DX12RenderTarget();
 
-    DX12RenderTarget(const DX12RenderTarget& copy) = default;
-    DX12RenderTarget(DX12RenderTarget&& copy) = default;
+	DX12RenderTarget(const DX12RenderTarget& copy) = default;
+	DX12RenderTarget(DX12RenderTarget&& copy) = default;
 
-    DX12RenderTarget& operator=(const DX12RenderTarget& other) = default;
-    DX12RenderTarget& operator=(DX12RenderTarget&& other) = default;
+	DX12RenderTarget& operator=(const DX12RenderTarget& other) = default;
+	DX12RenderTarget& operator=(DX12RenderTarget&& other) = default;
 
-    // Attach a texture to the render target.
-    // The texture will be copied into the texture array.
-    void AttachTexture(AttachmentPoint attachmentPoint, const DX12Texture& texture);
-    const DX12Texture& GetTexture(AttachmentPoint attachmentPoint) const;
+	// Attach a texture to the render target.
+	// The texture will be copied into the texture array.
+	void AttachTexture(AttachmentPoint attachmentPoint, const DX12Texture& texture);
+	const DX12Texture& GetTexture(AttachmentPoint attachmentPoint) const;
 
-    // Resize all of the textures associated with the render target.
-    void Resize(uint32_t width, uint32_t height);
+	// Resize all of the textures associated with the render target.
+	void Resize(uint32_t width, uint32_t height);
 
-    // Get a list of the textures attached to the render target.
-    // This method is primarily used by the CommandList when binding the
-    // render target to the output merger stage of the rendering pipeline.
-    const std::vector<DX12Texture>& GetTextures() const;
+	// Get a list of the textures attached to the render target.
+	// This method is primarily used by the CommandList when binding the
+	// render target to the output merger stage of the rendering pipeline.
+	const std::vector<DX12Texture>& GetTextures() const;
 
-    // Get the render target formats of the textures currently 
-    // attached to this render target object.
-    // This is needed to configure the Pipeline state object.
-    D3D12_RT_FORMAT_ARRAY GetRenderTargetFormats() const;
+	// Get the render target formats of the textures currently 
+	// attached to this render target object.
+	// This is needed to configure the Pipeline state object.
+	D3D12_RT_FORMAT_ARRAY GetRenderTargetFormats() const;
 
-    // Get the format of the attached depth/stencil buffer.
-    DXGI_FORMAT GetDepthStencilFormat() const;
+	// Get the format of the attached depth/stencil buffer.
+	DXGI_FORMAT GetDepthStencilFormat() const;
 
 private:
-    std::vector<DX12Texture> m_textures;
+	std::vector<DX12Texture> m_textures;
 };
 
 }

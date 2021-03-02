@@ -55,33 +55,33 @@ class DX12DescriptorAllocator
 {
 public:
 	DX12DescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptorsPerHeap = 16);// 256);
-    virtual ~DX12DescriptorAllocator() = default;
+	virtual ~DX12DescriptorAllocator() = default;
 
-    /**
-     * Allocate a number of contiguous descriptors from a CPU visible descriptor heap.
-     *
-     * @param numDescriptors The number of contiguous descriptors to allocate.
-     * Cannot be more than the number of descriptors per descriptor heap.
-     */
-    DX12DescriptorAllocation Allocate(uint32_t numDescriptors = 1);
+	/**
+	 * Allocate a number of contiguous descriptors from a CPU visible descriptor heap.
+	 *
+	 * @param numDescriptors The number of contiguous descriptors to allocate.
+	 * Cannot be more than the number of descriptors per descriptor heap.
+	 */
+	DX12DescriptorAllocation Allocate(uint32_t numDescriptors = 1);
 
-    /**
-     * When the frame has completed, the stale descriptors can be released.
-     */
-    void ReleaseStaleDescriptors(uint64_t frameNumber);
+	/**
+	 * When the frame has completed, the stale descriptors can be released.
+	 */
+	void ReleaseStaleDescriptors(uint64_t frameNumber);
 
 private:
-    using DescriptorHeapPool = std::vector<std::shared_ptr<DX12DescriptorAllocatorPage>>;
+	using DescriptorHeapPool = std::vector<std::shared_ptr<DX12DescriptorAllocatorPage>>;
 
-    // Create a new heap with a specific number of descriptors.
-    std::shared_ptr<DX12DescriptorAllocatorPage> CreateAllocatorPage();
+	// Create a new heap with a specific number of descriptors.
+	std::shared_ptr<DX12DescriptorAllocatorPage> CreateAllocatorPage();
 
-    D3D12_DESCRIPTOR_HEAP_TYPE m_heapType;
-    uint32_t m_numDescriptorsPerHeap;
-    DescriptorHeapPool m_heapPool;
-    // Indices of available heaps in the heap pool.
-    std::set<size_t> m_availableHeaps;
-    std::mutex m_allocationMutex;
+	D3D12_DESCRIPTOR_HEAP_TYPE m_heapType;
+	uint32_t m_numDescriptorsPerHeap;
+	DescriptorHeapPool m_heapPool;
+	// Indices of available heaps in the heap pool.
+	std::set<size_t> m_availableHeaps;
+	std::mutex m_allocationMutex;
 };
 
 }

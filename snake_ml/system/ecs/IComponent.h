@@ -32,18 +32,18 @@ enum class ComponentType : uint32_t
 		} \
 	}; \
 	\
-    class ObjectType##Factory : public Factory { \
-    public: \
-        ObjectType##Factory() \
-        { \
-            IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
-        } \
-        virtual IComponent* Create() override { \
-            return new ObjectType(); \
-        } \
-        virtual IComponent* Create(size_t num) override { \
-            return new ObjectType[num]; \
-        } \
+	class ObjectType##Factory : public Factory { \
+	public: \
+		ObjectType##Factory() \
+		{ \
+			IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
+		} \
+		virtual IComponent* Create() override { \
+			return new ObjectType(); \
+		} \
+		virtual IComponent* Create(size_t num) override { \
+			return new ObjectType[num]; \
+		} \
 		virtual Iterator* CreateIterator(size_t num) override { \
 			return new ObjectType##Iterator(new ObjectType[num](), num); \
 		} \
