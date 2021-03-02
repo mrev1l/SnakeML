@@ -76,13 +76,17 @@ void Application::Run()
 
 void Application::Shutdown()
 {
-	delete system::ECSManager::GetInstance();
+	system::ECSManager* ecsManager = system::ECSManager::GetInstance();
+	system::IRenderDriver* renderDriver = system::IRenderDriver::GetInstance();
+	system::IOSDriver* osDriver = system::IOSDriver::GetInstance();
+	InputManager* inputMgr = InputManager::GetInstance();
 
-	system::IRenderDriver::GetInstance()->Shutdown();
+	renderDriver->Shutdown();
 
-	delete system::IOSDriver::GetInstance();
-
-	delete InputManager::GetInstance(); //-V586
+	delete ecsManager;
+	delete renderDriver;
+	delete osDriver;
+	delete inputMgr;
 }
 
 void Application::Update()

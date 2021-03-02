@@ -202,7 +202,6 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 
 void DX12CommandList::CopyTextureSubresource(DX12Texture& texture, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData)
 {
-    auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
     auto destinationResource = texture.GetD3D12Resource();
     if (destinationResource)
     {
@@ -212,6 +211,7 @@ void DX12CommandList::CopyTextureSubresource(DX12Texture& texture, uint32_t firs
 
         UINT64 requiredSize = GetRequiredIntermediateSize(destinationResource.Get(), firstSubresource, numSubresources);
 
+        auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
         // Create a temporary (intermediate) resource for uploading the subresources
         Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource;
         CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
@@ -279,7 +279,9 @@ void DX12CommandList::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, 
 
 void DX12CommandList::SetDynamicIndexBuffer(size_t numIndicies, DXGI_FORMAT indexFormat, const void* indexBufferData)
 {
-    size_t indexSizeInBytes = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
+    constexpr size_t sizeofR16 = 2u;
+    constexpr size_t sizeofR32 = 4u;
+    size_t indexSizeInBytes = indexFormat == DXGI_FORMAT_R16_UINT ? sizeofR16 : sizeofR32;
     size_t bufferSize = numIndicies * indexSizeInBytes;
 
     auto heapAllocation = m_uploadBuffer->Allocate(bufferSize, indexSizeInBytes);
@@ -435,7 +437,7 @@ void DX12CommandList::SetRenderTarget(const DX12RenderTarget& renderTarget)
         if (texture.IsValid())
         {
             TransitionBarrier(texture, D3D12_RESOURCE_STATE_RENDER_TARGET);
-            renderTargetDescriptors.push_back(texture.GetRenderTargetView());
+            renderTargetDescriptors.emplace_back(texture.GetRenderTargetView());
 
             TrackResource(texture);
         }
@@ -561,8 +563,6 @@ void DX12CommandList::TrackResource(const DX12Resource& res)
 
 void DX12CommandList::CopyBuffer(DX12Buffer& buffer, size_t numElements, size_t elementSize, const void* bufferData, D3D12_RESOURCE_FLAGS flags)
 {
-    auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
-
     size_t bufferSize = numElements * elementSize;
 
     Microsoft::WRL::ComPtr<ID3D12Resource> d3d12Resource;
@@ -572,6 +572,7 @@ void DX12CommandList::CopyBuffer(DX12Buffer& buffer, size_t numElements, size_t 
     }
     else
     {
+        auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
         CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
         CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, flags);
         dxutils::ThrowIfFailed(device->CreateCommittedResource(

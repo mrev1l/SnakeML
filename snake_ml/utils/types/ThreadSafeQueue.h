@@ -45,6 +45,7 @@ class ThreadSafeQueue
 public:
     ThreadSafeQueue();
     ThreadSafeQueue(const ThreadSafeQueue& copy);
+    ThreadSafeQueue& operator=(const ThreadSafeQueue& copy);
 
     /**
      * Push a value into the back of the queue.
@@ -81,6 +82,22 @@ ThreadSafeQueue<T>::ThreadSafeQueue(const ThreadSafeQueue<T>& copy)
 {
     std::lock_guard<std::mutex> lock(copy.m_mutex);
     m_queue = copy.m_queue;
+}
+
+template<typename T>
+inline ThreadSafeQueue<T>& ThreadSafeQueue<T>::operator=(const ThreadSafeQueue<T>& copy)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    {
+        std::queue<T> emptyQueue;
+        std::swap(emptyQueue, m_queue);
+    }
+
+    std::lock_guard<std::mutex> lock(copy.m_mutex);
+    m_queue = copy.m_queue;
+
+    return *this;
 }
 
 template<typename T>

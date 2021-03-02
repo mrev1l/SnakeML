@@ -24,7 +24,7 @@ void DrawMeshCommand::Execute(std::shared_ptr<DX12CommandList> commandList)
 {
 	commandList->SetPrimitiveTopology(m_topology);
 	commandList->SetVertexBuffer(0, m_vertexBuffer);
-	commandList->Draw(m_vertexBuffer.GetNumVertices());
+	commandList->Draw(static_cast<uint32_t>(m_vertexBuffer.GetNumVertices()));
 }
 
 }
