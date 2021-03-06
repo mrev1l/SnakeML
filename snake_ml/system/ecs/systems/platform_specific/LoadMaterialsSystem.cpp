@@ -6,6 +6,11 @@
 #include "system/ecs/ECSManager.h"
 #include "utils/win_utils.h"
 
+#include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/DX12CommandList.h"
+#include "system/drivers/win/dx/DX12Texture.h"
+
+
 namespace snakeml
 {
 namespace system
@@ -33,6 +38,18 @@ void LoadMaterialsSystem::Execute()
 	ParsePSName(jsonDocument, material->m_ps);
 	ParseVertexInputLayout(jsonDocument, material->m_vsInputLayout);
 	ParseVertexInputParamLayout(jsonDocument, material->m_vsParamLayout);
+
+	const bool hasTexturePath = jsonDocument.HasMember("texture");
+	const bool isString = jsonDocument["texture"].IsString();
+	std::string texturePath = jsonDocument["texture"].GetString();
+
+	win::DX12Driver* dx12Driver = ((win::DX12Driver*)win::DX12Driver::GetInstance());
+	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
+	auto commandList = commandQueue->GetCommandList();
+	win::DX12Texture texture;
+	wchar_t* wPath = nullptr;
+	WinUtils::StringToWstring(texturePath.c_str(), wPath);
+	commandList->LoadTextureFromFile(texture, wPath);
 
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12MaterialComponent, it);
 }

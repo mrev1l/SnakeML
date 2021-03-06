@@ -47,6 +47,7 @@ namespace win
 
 class DX12Buffer;
 class DX12DynamicDescriptorHeap;
+class DX12GenerateMipsPSO;
 class DX12RenderTarget;
 class DX12Resource;
 class DX12ResourceStateTracker;
@@ -387,13 +388,12 @@ private:
 	void TrackObject(Microsoft::WRL::ComPtr<ID3D12Object> object);
 	void TrackResource(const DX12Resource& res);
 
-	// TODO : Integrate textures
-	//// Generate mips for UAV compatible textures.
-	//void GenerateMips_UAV(Texture& texture);
-	//// Generate mips for BGR textures.
-	//void GenerateMips_BGR(Texture& texture);
-	//// Generate mips for sRGB textures.
-	//void GenerateMips_sRGB(Texture& texture);
+	// Generate mips for UAV compatible textures.
+	void GenerateMips_UAV(DX12Texture& texture);
+	// Generate mips for BGR textures.
+	void GenerateMips_BGR(DX12Texture& texture);
+	// Generate mips for sRGB textures.
+	void GenerateMips_sRGB(DX12Texture& texture);
 
 	// Copy the contents of a CPU buffer to a GPU buffer (possibly replacing the previous buffer contents).
 	void CopyBuffer(DX12Buffer& buffer, size_t numElements, size_t elementSize, const void* bufferData, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
@@ -433,11 +433,11 @@ private:
 	// heaps if they are different than the currently bound descriptor heaps.
 	ID3D12DescriptorHeap* m_descriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
 
-	// TODO : integrate textures
-	//// Pipeline state object for Mip map generation.
-	//std::unique_ptr<GenerateMipsPSO> m_GenerateMipsPSO;
+	// Pipeline state object for Mip map generation.
+	std::unique_ptr<DX12GenerateMipsPSO> m_GenerateMipsPSO;
+	// TODO : Integrate
 	//// Pipeline state object for converting panorama (equirectangular) to cubemaps
-	//std::unique_ptr<PanoToCubemapPSO> m_PanoToCubemapPSO;
+	////std::unique_ptr<PanoToCubemapPSO> m_PanoToCubemapPSO;
 
 	// Objects that are being tracked by a command list that is "in-flight" on 
 	// the command-queue and cannot be deleted. To ensure objects are not deleted 

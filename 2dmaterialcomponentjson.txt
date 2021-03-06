@@ -36,5 +36,6 @@
     "shaderRegister":0,
     "registerSpace":0,
     "visibility":1
-  }
+  },
+  "texture": "data/assets/textures/Directx9.png"
 }

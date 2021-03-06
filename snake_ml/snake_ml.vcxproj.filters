@@ -129,6 +129,9 @@
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\DX12GenerateMipsPSO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -281,9 +284,13 @@
     <ClInclude Include="system\ecs\systems\Render2DSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\DX12GenerateMipsPSO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
     <FxCompile Include="resources\shaders\PS_Color.hlsl" />
+    <FxCompile Include="resources\shaders\GenerateMips_CS.hlsl" />
   </ItemGroup>
 </Project>

@@ -25,7 +25,11 @@ WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle,
 
 WinDriver::~WinDriver()
 {
-	delete system::IRenderDriver::GetInstance();
+	IRenderDriver* renderDriver = IRenderDriver::GetInstance();
+	renderDriver->Shutdown();
+	delete renderDriver;
+
+	CoUninitialize();
 }
 
 void WinDriver::OnInitialize()
@@ -38,6 +42,8 @@ void WinDriver::OnInitialize()
 		PathRemoveFileSpecW(path);
 		SetCurrentDirectoryW(path);
 	}
+
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
 	new system::win::DX12Driver(m_windowHandle, m_windowSz);
 	system::IRenderDriver::GetInstance()->Initialize();
