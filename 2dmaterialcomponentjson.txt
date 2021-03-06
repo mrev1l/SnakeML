@@ -1,15 +1,15 @@
 {
   "entityId": 0,
   "vertices": [
-    {"pos" : [ -360.0, 360.0, 1.0 ], "color" : [0.0, 0.0, 0.0]},
-    {"pos" : [ 360.0, -360.0, 1.0 ], "color" : [0.0, 1.0, 0.0]},
-    {"pos" : [ -360.0, -360.0, 1.0 ], "color" : [1.0, 1.0, 0.0]},
-    {"pos" : [ -360.0, 360.0, 1.0 ], "color" : [1.0, 0.0, 0.0]},
-    {"pos" : [ 360.0, 360.0, 1.0 ], "color" : [0.0, 0.0, 1.0]},
-    {"pos" : [ 360.0, -360.0, 1.0 ], "color" : [0.0, 1.0, 1.0]}
+    {"pos" : [ -360.0, 360.0, 1.0 ], "uv" : [0.0, 0.0]},
+    {"pos" : [ 360.0, -360.0, 1.0 ], "uv" : [1.0, 1.0]},
+    {"pos" : [ -360.0, -360.0, 1.0 ], "uv" : [0.0, 1.0]},
+    {"pos" : [ -360.0, 360.0, 1.0 ], "uv" : [0.0, 0.0]},
+    {"pos" : [ 360.0, 360.0, 1.0 ], "uv" : [1.0, 0.0]},
+    {"pos" : [ 360.0, -360.0, 1.0 ], "uv" : [1.0, 1.0]}
   ],
-  "vs": "VS_MvpColor.cso",
-  "ps": "PS_Color.cso",
+  "vs": "VS_MvpUV.cso",
+  "ps": "PS_UV.cso",
   "vertex_input_layout": [
     {
       "semanticName":"POSITION",
@@ -21,9 +21,9 @@
       "instanceDataStepRate":0
     },
     {
-      "semanticName":"COLOR",
+      "semanticName":"TEXCOORD",
       "semanticIdx":0,
-      "format":6,
+      "format":16,
       "inputSlot":0,
       "alignedByteOffset":4294967295,
       "inputSlotClass":0,

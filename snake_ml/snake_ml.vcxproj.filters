@@ -292,5 +292,7 @@
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
     <FxCompile Include="resources\shaders\PS_Color.hlsl" />
     <FxCompile Include="resources\shaders\GenerateMips_CS.hlsl" />
+    <FxCompile Include="resources\shaders\VS_MvpUV.hlsl" />
+    <FxCompile Include="resources\shaders\PS_UV.hlsl" />
   </ItemGroup>
 </Project>

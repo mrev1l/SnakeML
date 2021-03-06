@@ -46,10 +46,14 @@ void LoadMaterialsSystem::Execute()
 	win::DX12Driver* dx12Driver = ((win::DX12Driver*)win::DX12Driver::GetInstance());
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue->GetCommandList();
-	win::DX12Texture texture;
+	
 	wchar_t* wPath = nullptr;
 	WinUtils::StringToWstring(texturePath.c_str(), wPath);
-	commandList->LoadTextureFromFile(texture, wPath);
+	
+	commandList->LoadTextureFromFile(material->m_texture, wPath);
+
+	auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+	commandQueue->WaitForFenceValue(fenceValue);
 
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12MaterialComponent, it);
 }
@@ -67,7 +71,8 @@ void LoadMaterialsSystem::ParseEntityId(const rapidjson::Document& json, uint32_
 	outId = json["entityId"].GetUint();
 }
 
-void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec3<float>>>& outVertices)
+//void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec3<float>>>& outVertices)
+void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec2<float>>>& outVertices)
 {
 	ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
 
@@ -78,13 +83,16 @@ void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, st
 	for (auto& vertex : outVertices)
 	{
 		ASSERT(vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u, "Invalid vertices json");
-		ASSERT(vertexIt->HasMember("color") && (*vertexIt)["color"].IsArray() && (*vertexIt)["color"].Size() == 3u, "Invalid vertices json");
+		//ASSERT(vertexIt->HasMember("color") && (*vertexIt)["color"].IsArray() && (*vertexIt)["color"].Size() == 3u, "Invalid vertices json");
+		ASSERT(vertexIt->HasMember("uv") && (*vertexIt)["uv"].IsArray() && (*vertexIt)["uv"].Size() == 2u, "Invalid vertices json");
 
 		const rapidjson::GenericArray<true, rapidjson::Value>& pos = (*vertexIt)["pos"].GetArray();
-		const rapidjson::GenericArray<true, rapidjson::Value>& color = (*vertexIt)["color"].GetArray();
+		//const rapidjson::GenericArray<true, rapidjson::Value>& color = (*vertexIt)["color"].GetArray();
+		const rapidjson::GenericArray<true, rapidjson::Value>& uv = (*vertexIt)["uv"].GetArray();
 
 		vertex.first = { pos[0].GetFloat(), pos[1].GetFloat(), pos[2].GetFloat() };
-		vertex.second = { color[0].GetFloat(), color[1].GetFloat(), color[2].GetFloat() };
+		//vertex.second = { color[0].GetFloat(), color[1].GetFloat(), color[2].GetFloat() };
+		vertex.second = { uv[0].GetFloat(), uv[1].GetFloat()};
 
 		++vertexIt;
 	}

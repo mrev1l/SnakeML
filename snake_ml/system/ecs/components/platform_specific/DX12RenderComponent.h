@@ -5,6 +5,7 @@
 #include "system/ecs/IComponent.h"
 #include "system/drivers/win/dx/DX12VertexBuffer.h"
 #include "system/drivers/win/dx/DX12RootSignature.h"
+#include "system/drivers/win/dx/DX12Texture.h"
 
 namespace snakeml
 {
@@ -20,6 +21,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 	win::DX12VertexBuffer m_vertexBuffer;
 	win::DX12RootSignature m_rootSignature;
+	const win::DX12Texture* m_texture;
 };
 REGISTER_TYPE(DX12RenderComponent);
 

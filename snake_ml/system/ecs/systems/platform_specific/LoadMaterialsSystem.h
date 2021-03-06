@@ -21,7 +21,8 @@ public:
 private:
 	static void ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson);
 	static void ParseEntityId(const rapidjson::Document& json, uint32_t& outId);
-	static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec3<float>>>& outVertices);
+	//static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec3<float>>>& outVertices);
+	static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec2<float>>>& outVertices);
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 	static void ParseVSName(const rapidjson::Document& json, std::wstring& outVSName);
 	static void ParsePSName(const rapidjson::Document& json, std::wstring& outPSName);

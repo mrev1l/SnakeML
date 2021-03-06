@@ -37,7 +37,7 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	DirectX::XMMATRIX mvpMatrix = modelMatrix * view * orthogonal;
 
-	outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, mvpMatrix));
+	outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture, mvpMatrix));
 	outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_vertexBuffer));
 }
 
