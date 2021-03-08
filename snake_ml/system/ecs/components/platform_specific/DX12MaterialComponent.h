@@ -26,14 +26,13 @@ public:
 	virtual ~DX12MaterialComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::DX12MaterialComponent; }
 
-	//std::vector<std::pair<math::vec3<float>, math::vec3<float>>> m_vertices;
 	std::vector<std::pair<math::vec3<float>, math::vec2<float>>> m_vertices;
 	std::vector<uint16_t> m_indices;
 	std::wstring m_vs;
 	std::wstring m_ps;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> m_vsInputLayout;
 	VSParamLayout m_vsParamLayout;
-	win::DX12Texture m_texture;
+	std::wstring m_texturePath;
 };
 REGISTER_TYPE(DX12MaterialComponent);
 

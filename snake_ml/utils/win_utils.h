@@ -18,6 +18,7 @@ public:
 	* This function allocates dest array
 	*/
 	static void StringToWstring(const char* source, wchar_t*& dest);
+	static void StringToWstring(const char* source, std::wstring& dest);
 	static void LoadFileIntoBuffer(const char* filename, std::string& buffer);
 
 private:

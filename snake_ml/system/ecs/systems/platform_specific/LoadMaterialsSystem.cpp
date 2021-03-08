@@ -20,7 +20,7 @@ namespace system
 void LoadMaterialsSystem::Execute()
 {
 	constexpr uint32_t materialsNum = 1u;
-	constexpr const char* jsonName = "D:\\Projects_Library\\snakeml_repo\\2dmaterialcomponentjson.txt"; // fix full path
+	constexpr const char* jsonName = "D:\\Projects_Library\\snakeml_repo\\2dmaterialcomponentjson.txt"; // TODO: fix full path
 
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
@@ -29,31 +29,15 @@ void LoadMaterialsSystem::Execute()
 	ParseJsonString(jsonString.c_str(), jsonDocument);
 
 	DX12MaterialComponentIterator* it = (DX12MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::DX12MaterialComponent, materialsNum);
-	DX12MaterialComponent* material = (DX12MaterialComponent*)it->At(0);
+	DX12MaterialComponent& material = *(DX12MaterialComponent*)it->At(0);
 
-	ParseEntityId(jsonDocument, material->m_entityId);
-	ParseVerticesArray(jsonDocument, material->m_vertices);
-	//ParseIndicesArray(jsonDocument, material->m_indices);
-	ParseVSName(jsonDocument, material->m_vs);
-	ParsePSName(jsonDocument, material->m_ps);
-	ParseVertexInputLayout(jsonDocument, material->m_vsInputLayout);
-	ParseVertexInputParamLayout(jsonDocument, material->m_vsParamLayout);
-
-	const bool hasTexturePath = jsonDocument.HasMember("texture");
-	const bool isString = jsonDocument["texture"].IsString();
-	std::string texturePath = jsonDocument["texture"].GetString();
-
-	win::DX12Driver* dx12Driver = ((win::DX12Driver*)win::DX12Driver::GetInstance());
-	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
-	auto commandList = commandQueue->GetCommandList();
-	
-	wchar_t* wPath = nullptr;
-	WinUtils::StringToWstring(texturePath.c_str(), wPath);
-	
-	commandList->LoadTextureFromFile(material->m_texture, wPath);
-
-	auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-	commandQueue->WaitForFenceValue(fenceValue);
+	ParseEntityId(jsonDocument, material.m_entityId);
+	ParseVerticesArray(jsonDocument, material.m_vertices);
+	ParseVSName(jsonDocument, material.m_vs);
+	ParsePSName(jsonDocument, material.m_ps);
+	ParseVertexInputLayout(jsonDocument, material.m_vsInputLayout);
+	ParseVertexInputParamLayout(jsonDocument, material.m_vsParamLayout);
+	ParseTexturePath(jsonDocument, material.m_texturePath);
 
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12MaterialComponent, it);
 }
@@ -71,7 +55,6 @@ void LoadMaterialsSystem::ParseEntityId(const rapidjson::Document& json, uint32_
 	outId = json["entityId"].GetUint();
 }
 
-//void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec3<float>>>& outVertices)
 void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec2<float>>>& outVertices)
 {
 	ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
@@ -117,10 +100,7 @@ void LoadMaterialsSystem::ParseVSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
 
 	std::string vs = json["vs"].GetString();
-	wchar_t* wVSName = nullptr;
-	snakeml::WinUtils::StringToWstring(vs.c_str(), wVSName);
-	outVSName = std::wstring(wVSName); // TODO: we don't actually copy it in ctor do we?
-	delete wVSName;
+	snakeml::WinUtils::StringToWstring(vs.c_str(), outVSName);
 }
 
 void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstring& outPSName)
@@ -128,10 +108,7 @@ void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
 
 	std::string ps = json["ps"].GetString();
-	wchar_t* wPSName = nullptr;
-	snakeml::WinUtils::StringToWstring(ps.c_str(), wPSName);
-	outPSName = std::wstring(wPSName); // TODO: we don't actually copy it in ctor do we?
-	delete wPSName;
+	snakeml::WinUtils::StringToWstring(ps.c_str(), outPSName);
 }
 
 void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json, std::vector<D3D12_INPUT_ELEMENT_DESC>& outLayout)
@@ -182,6 +159,17 @@ void LoadMaterialsSystem::ParseVertexInputParamLayout(const rapidjson::Document&
 	outLayout.registerSpace = vsInputParamLayoutJson["registerSpace"].GetUint();
 	outLayout.visibility = static_cast<D3D12_SHADER_VISIBILITY>(vsInputParamLayoutJson["visibility"].GetInt());
 }
+
+void LoadMaterialsSystem::ParseTexturePath(const rapidjson::Document& json, std::wstring& outTexturePath)
+{
+	const bool hasTexturePath = json.HasMember("texture");
+	const bool isString = json["texture"].IsString();
+	if (hasTexturePath && isString)
+	{
+		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
+	}
+}
+
 #endif
 
 }

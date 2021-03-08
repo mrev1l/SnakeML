@@ -35,7 +35,8 @@ void InitializeRenderComponentsSystem::Execute()
 		const DX12MaterialComponent& materialComponent = materials[i];
 
 		renderComponent.m_entityId = materialComponent.m_entityId;
-		renderComponent.m_texture = &materialComponent.m_texture;
+
+		commandList->LoadTextureFromFile(renderComponent.m_texture, materialComponent.m_texturePath);
 
 		commandList->CopyVertexBuffer(renderComponent.m_vertexBuffer, materialComponent.m_vertices);
 

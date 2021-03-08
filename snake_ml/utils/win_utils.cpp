@@ -86,6 +86,14 @@ void WinUtils::StringToWstring(const char* source, wchar_t*& dest)
 	MultiByteToWideChar(CP_UTF8, 0, source, -1, dest, destSz);
 }
 
+void WinUtils::StringToWstring(const char* source, std::wstring& dest)
+{
+	wchar_t* wStr = nullptr;
+	WinUtils::StringToWstring(source, wStr);
+	dest = std::wstring(wStr); // TODO: we don't actually copy it in ctor do we?
+	delete wStr;
+}
+
 void WinUtils::LoadFileIntoBuffer(const char* filename, std::string& fileBuffer)
 {
 	std::ifstream materialJsonFile(filename, std::ios_base::in);

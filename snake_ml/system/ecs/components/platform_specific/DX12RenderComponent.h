@@ -21,7 +21,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 	win::DX12VertexBuffer m_vertexBuffer;
 	win::DX12RootSignature m_rootSignature;
-	const win::DX12Texture* m_texture;
+	win::DX12Texture m_texture;
 };
 REGISTER_TYPE(DX12RenderComponent);
 
