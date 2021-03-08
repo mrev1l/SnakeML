@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "system/drivers/win/dx/DX12Texture.h"
+#include "lib_includes/directX_includes.h"
 #include "system/ecs/IComponent.h"
 #include "utils/snake_math.h"
 
