@@ -213,7 +213,7 @@ void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstri
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources(scratchImage.GetImageCount());
 		const DirectX::Image* pImages = scratchImage.GetImages();
-		for (int i = 0; i < scratchImage.GetImageCount(); ++i)
+		for (size_t i = 0; i < scratchImage.GetImageCount(); ++i)
 		{
 			auto& subresource = subresources[i];
 			subresource.RowPitch = pImages[i].rowPitch;
@@ -735,7 +735,8 @@ void DX12CommandList::GenerateMips_UAV(DX12Texture& texture)
 		_BitScanForward(&mipCount, (dstWidth == 1 ? dstHeight : dstWidth) |
 			(dstHeight == 1 ? dstWidth : dstHeight));
 		// Maximum number of mips to generate is 4.
-		mipCount = std::min<DWORD>(4, mipCount + 1);
+		constexpr DWORD maxMipsNum = 4;
+		mipCount = std::min<DWORD>(maxMipsNum, mipCount + 1);
 		// Clamp to total number of mips left over.
 		mipCount = (srcMip + mipCount) > resourceDesc.MipLevels ?
 			resourceDesc.MipLevels - srcMip : mipCount;
@@ -763,9 +764,9 @@ void DX12CommandList::GenerateMips_UAV(DX12Texture& texture)
 			SetUnorderedAccessView(GenerateMips::OutMip, mip, stagingTexture, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, srcMip + mip + 1, 1, &uavDesc);
 		}
 		// Pad any unused mip levels with a default UAV. Doing this keeps the DX12 runtime happy.
-		if (mipCount < 4)
+		if (mipCount < maxMipsNum)
 		{
-			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(GenerateMips::OutMip, mipCount, 4 - mipCount, m_GenerateMipsPSO->GetDefaultUAV());
+			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(GenerateMips::OutMip, mipCount, maxMipsNum - mipCount, m_GenerateMipsPSO->GetDefaultUAV());
 		}
 
 		Dispatch(math::DivideByMultiple(dstWidth, 8), math::DivideByMultiple(dstHeight, 8));

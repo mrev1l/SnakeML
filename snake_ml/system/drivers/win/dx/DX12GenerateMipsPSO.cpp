@@ -25,11 +25,12 @@ DX12GenerateMipsPSO::DX12GenerateMipsPSO()
         featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
     }
 
+    constexpr UINT mipsNum = 4;
     CD3DX12_DESCRIPTOR_RANGE1 srcMip( D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE );
-    CD3DX12_DESCRIPTOR_RANGE1 outMip( D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 4, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE );
+    CD3DX12_DESCRIPTOR_RANGE1 outMip( D3D12_DESCRIPTOR_RANGE_TYPE_UAV, mipsNum, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE );
 
-    CD3DX12_ROOT_PARAMETER1 rootParameters[GenerateMips::NumRootParameters];
-    rootParameters[GenerateMips::GenerateMipsCB].InitAsConstants( sizeof( DX12GenerateMipsCB ) / 4, 0 );
+    CD3DX12_ROOT_PARAMETER1 rootParameters[GenerateMips::NumRootParameters] = {};
+    rootParameters[GenerateMips::GenerateMipsCB].InitAsConstants(sizeof(DX12GenerateMipsCB) / sizeof(DX12GenerateMipsCB::Padding), 0 );
     rootParameters[GenerateMips::SrcMip].InitAsDescriptorTable( 1, &srcMip );
     rootParameters[GenerateMips::OutMip].InitAsDescriptorTable( 1, &outMip );
 
@@ -62,10 +63,10 @@ DX12GenerateMipsPSO::DX12GenerateMipsPSO()
     dxutils::ThrowIfFailed( device->CreatePipelineState( &pipelineStateStreamDesc, IID_PPV_ARGS( &m_pipelineState ) ) );
 
     // Create some default texture UAV's to pad any unused UAV's during mip map generation.
-    m_defaultUAV = dx12Driver->AllocateDescriptors( D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 4 );
+    m_defaultUAV = dx12Driver->AllocateDescriptors( D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, mipsNum);
     UINT descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV );
 
-    for ( UINT i = 0; i < 4; ++i )
+    for ( UINT i = 0; i < mipsNum; ++i )
     {
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
         uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
