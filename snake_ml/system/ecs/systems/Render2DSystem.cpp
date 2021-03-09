@@ -17,7 +17,10 @@ void Render2DSystem::Execute()
 	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
 	for (const Entity& entity : entities)
 	{
-		renderDriver->SubscribeForRendering(entity);
+		if (entity.m_components.contains(ComponentType::DX12RenderComponent))
+		{
+			renderDriver->SubscribeForRendering(entity);
+		}
 	}
 }
 

@@ -213,6 +213,7 @@
     <ClCompile Include="system\ecs\Entity.cpp" />
     <ClCompile Include="system\ecs\IComponent.cpp" />
     <ClCompile Include="system\ecs\ISystem.cpp" />
+    <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
     <ClInclude Include="system\ecs\ComponentsPool.h" />
+    <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\platform_specific\DX12MaterialComponent.h" />
     <ClInclude Include="system\ecs\components\platform_specific\DX12RenderComponent.h" />
     <ClInclude Include="system\ecs\components\TransformComponent.h" />
@@ -260,6 +262,7 @@
     <ClInclude Include="system\ecs\Entity.h" />
     <ClInclude Include="system\ecs\IComponent.h" />
     <ClInclude Include="system\ecs\ISystem.h" />
+    <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.h" />
