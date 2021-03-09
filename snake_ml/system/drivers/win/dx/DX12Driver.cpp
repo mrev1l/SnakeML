@@ -9,7 +9,6 @@
 
 #include "render_commands/DX12RenderCommandFactory.h"
 
-#include "system/Application.h"
 #include "system/drivers/win/os/WinDriver.h"
 #include "system/ecs/components/TransformComponent.h"
 #include "system/ecs/components/platform_specific/DX12RenderComponent.h"
@@ -200,7 +199,7 @@ void DX12Driver::OnRender_Present(std::shared_ptr<DX12CommandList> commandList, 
 	dxutils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
 
 	m_frameFenceValues[m_currentBackBufferIndex] = commandQueue->Signal();
-	m_frameValues[m_currentBackBufferIndex] = Application::s_frameCounter;
+	m_frameValues[m_currentBackBufferIndex] = GetFrameCount();
 
 	m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
 

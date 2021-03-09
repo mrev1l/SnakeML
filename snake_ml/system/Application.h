@@ -19,8 +19,6 @@ public:
 	void Run();
 	void Shutdown();
 
-	static uint64_t s_frameCounter;
-
 private:
 	void Update();
 	void Render();

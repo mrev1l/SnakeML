@@ -29,6 +29,7 @@ bool IRenderDriver::IsInitialized() const
 void IRenderDriver::Render()
 {
 	OnRender();
+	++m_frameCounter;
 }
 
 }

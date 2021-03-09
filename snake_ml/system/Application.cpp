@@ -24,7 +24,6 @@
 
 namespace snakeml
 {
-uint64_t Application::s_frameCounter = 0;
 
 Application::Application() : Singleton()
 {
@@ -114,7 +113,6 @@ void Application::Update()
 
 	system::ECSManager::GetInstance()->Update();
 	Render();
-	++s_frameCounter;
 }
 
 void Application::Render()

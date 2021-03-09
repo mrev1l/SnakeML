@@ -33,6 +33,8 @@ public:
 	IRenderDriver() = default;
 	virtual ~IRenderDriver() = default;
 
+	uint64_t GetFrameCount() { return m_frameCounter; }
+
 	void Initialize();
 	void Shutdown();
 	bool IsInitialized() const;
@@ -51,6 +53,7 @@ protected:
 
 private:
 	bool m_isInitialized = false;
+	uint64_t m_frameCounter = 0u;
 };
 
 }

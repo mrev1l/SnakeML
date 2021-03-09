@@ -4,7 +4,7 @@
 #include "DX12DescriptorAllocation.h"
 
 #include "DX12DescriptorAllocatorPage.h"
-#include "system/Application.h"
+#include "system/drivers/RenderDriver.h"
 
 namespace snakeml
 {
@@ -87,7 +87,7 @@ void DX12DescriptorAllocation::Free()
 {
 	if (!IsNull() && m_page)
 	{
-		m_page->Free(std::move(*this), Application::GetInstance()->s_frameCounter);
+		m_page->Free(std::move(*this), IRenderDriver::GetInstance()->GetFrameCount());
 
 		m_descriptor.ptr = 0;
 		m_numHandles = 0;
