@@ -11,16 +11,17 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
-WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, math::vec2<uint32_t> windowSz)
+WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::vec2<uint32_t> windowSz)
 	: IOSDriver()
 	, m_windowSz(windowSz)
 {
 	const HINSTANCE hInstance = GetHInstance();
-	WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
-	m_windowHandle = WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.m_x, windowSz.m_y);
+	winutils::WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
+	m_windowHandle = winutils::WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.m_x, windowSz.m_y);
 }
 
 WinDriver::~WinDriver()
@@ -114,5 +115,6 @@ void WinDriver::OnQuit()
 }
 
 }
+#endif
 }
 }

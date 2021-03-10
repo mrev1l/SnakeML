@@ -14,9 +14,9 @@ public:
 	virtual ~CameraComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::CameraComponent; }
 
-	math::vec4<float> m_eyePosition;
-	math::vec4<float> m_focusPoint;
-	math::vec4<float> m_upDirection;
+	types::vec4<float> m_eyePosition;
+	types::vec4<float> m_focusPoint;
+	types::vec4<float> m_upDirection;
 };
 REGISTER_TYPE(CameraComponent);
 

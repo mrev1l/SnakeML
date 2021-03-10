@@ -60,12 +60,6 @@
     <ClCompile Include="system\ecs\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -135,6 +129,12 @@
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -200,19 +200,7 @@
     <ClInclude Include="system\ecs\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\ecs\components\platform_specific\DX12MaterialComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\components\platform_specific\DX12RenderComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\ecs\components\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h">
@@ -294,6 +282,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\types\arithmetic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\platform_specific\win\DX12MaterialComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

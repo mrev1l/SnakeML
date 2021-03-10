@@ -8,8 +8,10 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
+
 using WindowHandle = HWND;
 
 /*
@@ -21,7 +23,7 @@ class WinDriver
 	: public IOSDriver
 {
 public:
-	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, math::vec2<uint32_t> windowSz);
+	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::vec2<uint32_t> windowSz);
 	~WinDriver();
 
 private:
@@ -33,9 +35,10 @@ private:
 	void OnQuit() override;
 
 	HWND m_windowHandle;
-	math::vec2<uint32_t> m_windowSz;
+	types::vec2<uint32_t> m_windowSz;
 };
 
 }
+#endif
 }
 }

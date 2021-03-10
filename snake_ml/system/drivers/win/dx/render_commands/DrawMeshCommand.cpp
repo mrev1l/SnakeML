@@ -10,6 +10,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -28,5 +29,6 @@ void DrawMeshCommand::Execute(std::shared_ptr<DX12CommandList> commandList)
 }
 
 }
+#endif
 }
 }

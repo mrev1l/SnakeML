@@ -5,16 +5,18 @@
 
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/DX12CommandList.h"
-#include "system/ecs/components/platform_specific/DX12MaterialComponent.h"
-#include "system/ecs/components/platform_specific/DX12RenderComponent.h"
+#include "system/ecs/components/platform_specific/win/DX12MaterialComponent.h"
+#include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 #include "system/ecs/ECSManager.h"
 
 namespace snakeml
 {
 namespace system
 {
-
 #ifdef _WINDOWS
+namespace win
+{
+
 void InitializeRenderComponentsSystem::Execute()
 {
 	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::DX12MaterialComponent);
@@ -24,9 +26,9 @@ void InitializeRenderComponentsSystem::Execute()
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
 	DX12RenderComponent* renderComponents = (DX12RenderComponent*)renderComponentsIt->GetData();
 
-	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
+	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
-	auto commandQueue = dx12Driver->GetDX12CommandQueue(win::DX12Driver::CommandQueueType::Copy);
+	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
 	for (size_t i = 0; i < materialComponents->Num(); ++i)
@@ -75,9 +77,9 @@ void InitializeRenderComponentsSystem::CreateRootSignature(
 	UINT inputLayout_shaderRegister,
 	UINT inputLayout_registerSpace,
 	D3D12_SHADER_VISIBILITY inputLayout_visibility,
-	win::DX12RootSignature& _outRootSignature)
+	DX12RootSignature& _outRootSignature)
 {
-	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
+	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 
 	D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
@@ -136,7 +138,7 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 		CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC SampleDesc;
 	} pipelineStateStream;
 
-	win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
+	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 	// Check the best multisample quality level that can be used for the given back buffer format.
 	DXGI_SAMPLE_DESC sampleDesc = dx12Driver->GetMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, D3D12_MAX_MULTISAMPLE_SAMPLE_COUNT);
@@ -159,7 +161,8 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 	};
 	dxutils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
 }
-#endif
 
+}
+#endif
 }
 }

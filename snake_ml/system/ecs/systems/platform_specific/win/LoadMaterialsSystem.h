@@ -4,15 +4,17 @@
 
 #include "lib_includes/directX_includes.h"
 #include "rapidjson/document.h" // rapidjson's DOM-style API
-#include "system/ecs/components/platform_specific/DX12MaterialComponent.h"
+#include "system/ecs/components/platform_specific/win/DX12MaterialComponent.h"
 #include "system/ecs/ISystem.h"
 
 namespace snakeml
 {
 namespace system
 {
-
 #ifdef _WINDOWS
+namespace win
+{
+
 class LoadMaterialsSystem : public ISystem
 {
 public:
@@ -21,7 +23,7 @@ public:
 private:
 	static void ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson);
 	static void ParseEntityId(const rapidjson::Document& json, uint32_t& outId);
-	static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec2<float>>>& outVertices);
+	static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices);
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 	static void ParseVSName(const rapidjson::Document& json, std::wstring& outVSName);
 	static void ParsePSName(const rapidjson::Document& json, std::wstring& outPSName);
@@ -29,7 +31,8 @@ private:
 	static void ParseVertexInputParamLayout(const rapidjson::Document& json, DX12MaterialComponent::VSParamLayout& outLayout);
 	static void ParseTexturePath(const rapidjson::Document& json, std::wstring& outTexturePath);
 };
-#endif
 
+}
+#endif
 }
 }

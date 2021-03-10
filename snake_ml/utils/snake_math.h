@@ -40,33 +40,6 @@ namespace math
 
 constexpr float default_epsilon = 1e-4f;
 
-template<typename T>
-class vec2
-{
-public:
-	T m_x;
-	T m_y;
-};
-
-template<typename T>
-class vec3
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-};
-
-template<typename T>
-class vec4
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-	T m_w;
-};
-
 /***************************************************************************
 	* These functions were taken from the MiniEngine.
 	* Source code available here:

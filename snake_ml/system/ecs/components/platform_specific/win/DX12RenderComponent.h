@@ -11,6 +11,9 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
+namespace win
+{
 
 class DX12RenderComponent : public IComponent
 {
@@ -19,11 +22,13 @@ public:
 	ComponentType GetComponentType() const override { return ComponentType::DX12RenderComponent; }
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
-	win::DX12VertexBuffer m_vertexBuffer;
-	win::DX12RootSignature m_rootSignature;
-	win::DX12Texture m_texture;
+	DX12VertexBuffer m_vertexBuffer;
+	DX12RootSignature m_rootSignature;
+	DX12Texture m_texture;
 };
 REGISTER_TYPE(DX12RenderComponent);
 
+}
+#endif
 }
 }

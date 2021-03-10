@@ -37,6 +37,14 @@
   */
 #pragma endregion
 
+namespace snakeml
+{
+namespace system
+{
+#ifdef _WINDOWS
+namespace win
+{
+
 enum class TextureUsage
 {
 	Albedo,
@@ -46,3 +54,8 @@ enum class TextureUsage
 	Normalmap,
 	RenderTarget,		   // Texture is used as a render target.
 };
+
+}
+#endif
+}
+}

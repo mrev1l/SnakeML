@@ -11,6 +11,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -43,7 +44,7 @@ public:
 		Copy
 	};
 
-	DX12Driver(HWND windowHandle, math::vec2<uint32_t> windowSz);
+	DX12Driver(HWND windowHandle, types::vec2<uint32_t> windowSz);
 	~DX12Driver();
 
 	void SubscribeForRendering(const Entity& renderable);
@@ -129,5 +130,6 @@ private:
 };
 
 }
+#endif
 }
 }

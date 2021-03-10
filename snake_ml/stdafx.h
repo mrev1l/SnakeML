@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "utils/snake_math.h"
+#include "utils/types/arithmetic.h"
 
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);

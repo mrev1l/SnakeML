@@ -15,12 +15,12 @@
 #include "DX12UploadBuffer.h"
 #include "third_party/win/DirectXTex/DirectXTex/DirectXTex.h"
 #include <filesystem>
-//#include <DirectXTex.h>
 
 namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -1022,5 +1022,6 @@ void DX12CommandList::BindDescriptorHeaps()
 }
 
 }
+#endif
 }
 }

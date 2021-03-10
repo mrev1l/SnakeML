@@ -7,6 +7,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -39,5 +40,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE DX12VertexBuffer::GetUnorderedAccessView(const D3D12
 }
 
 }
+#endif
 }
 }

@@ -10,6 +10,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -261,5 +262,6 @@ D3D12_RESOURCE_STATES DX12ResourceStateTracker::ResourceState::GetSubresourceSta
 }
 
 }
+#endif
 }
 }

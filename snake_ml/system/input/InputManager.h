@@ -5,6 +5,8 @@
 
 namespace snakeml
 {
+namespace system
+{
 
 class InputManager
 	: public patterns::Singleton<InputManager>
@@ -17,4 +19,5 @@ private:
 	void ProcessInput(uint64_t inputKey);
 };
 
+}
 }

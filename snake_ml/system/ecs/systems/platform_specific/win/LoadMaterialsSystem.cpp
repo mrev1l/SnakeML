@@ -15,8 +15,10 @@ namespace snakeml
 {
 namespace system
 {
-
 #ifdef _WINDOWS
+namespace win
+{
+
 void LoadMaterialsSystem::Execute()
 {
 	constexpr uint32_t materialsNum = 1u;
@@ -24,7 +26,7 @@ void LoadMaterialsSystem::Execute()
 
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
-	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
+	winutils::WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
 	ParseJsonString(jsonString.c_str(), jsonDocument);
 
@@ -55,14 +57,14 @@ void LoadMaterialsSystem::ParseEntityId(const rapidjson::Document& json, uint32_
 	outId = json["entityId"].GetUint();
 }
 
-void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<math::vec3<float>, math::vec2<float>>>& outVertices)
+void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices)
 {
 	ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
 
 	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
 	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
 
-	outVertices.resize(static_cast<std::vector<std::pair<math::vec3<float>, math::vec3<float>>>::size_type>(verticesArray.Size()));
+	outVertices.resize(static_cast<std::vector<std::pair<types::vec3<float>, types::vec3<float>>>::size_type>(verticesArray.Size()));
 	for (auto& vertex : outVertices)
 	{
 		ASSERT(vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u, "Invalid vertices json");
@@ -100,7 +102,7 @@ void LoadMaterialsSystem::ParseVSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
 
 	std::string vs = json["vs"].GetString();
-	snakeml::WinUtils::StringToWstring(vs.c_str(), outVSName);
+	winutils::WinUtils::StringToWstring(vs.c_str(), outVSName);
 }
 
 void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstring& outPSName)
@@ -108,7 +110,7 @@ void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
 
 	std::string ps = json["ps"].GetString();
-	snakeml::WinUtils::StringToWstring(ps.c_str(), outPSName);
+	winutils::WinUtils::StringToWstring(ps.c_str(), outPSName);
 }
 
 void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json, std::vector<D3D12_INPUT_ELEMENT_DESC>& outLayout)
@@ -166,11 +168,12 @@ void LoadMaterialsSystem::ParseTexturePath(const rapidjson::Document& json, std:
 	const bool isString = json["texture"].IsString();
 	if (hasTexturePath && isString)
 	{
-		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
+		winutils::WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
 	}
 }
 
-#endif
 
+}
+#endif
 }
 }

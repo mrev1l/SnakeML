@@ -6,8 +6,8 @@
 #ifdef _WINDOWS
 #include "drivers/win/dx/DX12Driver.h"
 #include "drivers/win/os/WinDriver.h"
-#include "ecs/systems/platform_specific/InitializeRenderComponentsSystem.h"
-#include "ecs/systems/platform_specific/LoadMaterialsSystem.h"
+#include "ecs/systems/platform_specific/win/InitializeRenderComponentsSystem.h"
+#include "ecs/systems/platform_specific/win/LoadMaterialsSystem.h"
 #endif
 
 #include "ecs/ECSManager.h"
@@ -24,6 +24,8 @@
 
 namespace snakeml
 {
+namespace system
+{
 
 Application::Application() : Singleton()
 {
@@ -37,34 +39,34 @@ void Application::Initialize()
 {
 	constexpr std::wstring_view windowClassName(L"SnakeML_WindowClass");
 	constexpr std::wstring_view windowTitle(L"snake_ml");
-	constexpr math::vec2<uint32_t> windowSz = {720, 720};
+	constexpr types::vec2<uint32_t> windowSz = {720, 720};
 
 #ifdef _WINDOWS
-	new system::win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
+	new win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
 #endif
 	new InputManager();
 
-	system::IOSDriver::GetInstance()->Initialize();
+	IOSDriver::GetInstance()->Initialize();
 
-	system::IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this));
+	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this));
 
-	new system::ECSManager();
+	new ECSManager();
 	// TODO : Clean up
 	//system::InitializeCubeMaterialSystem* sys1 = new system::InitializeCubeMaterialSystem();
-	system::InitializeRenderComponentsSystem* sys2 = new system::InitializeRenderComponentsSystem();
-	system::InitializeTransformComponentsSystem* sys3 = new system::InitializeTransformComponentsSystem();
-	system::InitializeCameraSystem initCameraSystem;
-	system::InitializeEntitiesSystem* sys4 = new system::InitializeEntitiesSystem();
-	system::LoadMaterialsSystem* sys5 = new system::LoadMaterialsSystem();
+	system::win::InitializeRenderComponentsSystem* sys2 = new win::InitializeRenderComponentsSystem();
+	InitializeTransformComponentsSystem* sys3 = new InitializeTransformComponentsSystem();
+	InitializeCameraSystem initCameraSystem;
+	InitializeEntitiesSystem* sys4 = new InitializeEntitiesSystem();
+	win::LoadMaterialsSystem* sys5 = new win::LoadMaterialsSystem();
 	//system::ECSManager::GetInstance()->ExecuteSystem(sys1);
-	system::ECSManager::GetInstance()->ExecuteSystem(sys5);
-	system::ECSManager::GetInstance()->ExecuteSystem(sys2);
-	system::ECSManager::GetInstance()->ExecuteSystem(sys3);
-	system::ECSManager::GetInstance()->ExecuteSystem(&initCameraSystem);
-	system::ECSManager::GetInstance()->ExecuteSystem(sys4);
+	ECSManager::GetInstance()->ExecuteSystem(sys5);
+	ECSManager::GetInstance()->ExecuteSystem(sys2);
+	ECSManager::GetInstance()->ExecuteSystem(sys3);
+	ECSManager::GetInstance()->ExecuteSystem(&initCameraSystem);
+	ECSManager::GetInstance()->ExecuteSystem(sys4);
 	//system::ECSManager::GetInstance()->ScheduleSystem(new system::RotateCubeSystem());
-	system::ECSManager::GetInstance()->ScheduleSystem(new system::TestMoveSnakeHeadSystem());
-	system::ECSManager::GetInstance()->ScheduleSystem(new system::Render2DSystem());
+	ECSManager::GetInstance()->ScheduleSystem(new TestMoveSnakeHeadSystem());
+	ECSManager::GetInstance()->ScheduleSystem(new Render2DSystem());
 	//delete sys1;
 	delete sys2;
 	delete sys3;
@@ -79,8 +81,8 @@ void Application::Run()
 
 void Application::Shutdown()
 {
-	system::ECSManager* ecsManager = system::ECSManager::GetInstance();
-	system::IOSDriver* osDriver = system::IOSDriver::GetInstance();
+	ECSManager* ecsManager = ECSManager::GetInstance();
+	IOSDriver* osDriver = IOSDriver::GetInstance();
 	InputManager* inputMgr = InputManager::GetInstance();
 
 	delete ecsManager;
@@ -111,13 +113,13 @@ void Application::Update()
 		elapsedSeconds = 0.0;
 	}
 
-	system::ECSManager::GetInstance()->Update();
+	ECSManager::GetInstance()->Update();
 	Render();
 }
 
 void Application::Render()
 {
-	system::IRenderDriver::GetInstance()->Render();
+	IRenderDriver::GetInstance()->Render();
 }
 
 void Application::Resize(uint32_t width, uint32_t height)
@@ -125,4 +127,5 @@ void Application::Resize(uint32_t width, uint32_t height)
 	//system::IRenderDriver::GetInstance()->Resize(width, height);
 }
 
+}
 }

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "system/ecs/IComponent.h"
-#include "utils/snake_math.h"
 
 namespace snakeml
 {
@@ -16,9 +15,9 @@ public:
 	virtual ~TransformComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::TransformComponent; }
 
-	math::vec4<float> m_position;
-	math::vec4<float> m_rotation;
-	math::vec4<float> m_scale;
+	types::vec4<float> m_position;
+	types::vec4<float> m_rotation;
+	types::vec4<float> m_scale;
 };
 REGISTER_TYPE(TransformComponent);
 

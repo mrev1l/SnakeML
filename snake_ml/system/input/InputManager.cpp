@@ -8,20 +8,24 @@
 
 namespace snakeml
 {
-	InputManager::InputManager()
-	{
-		system::IOSDriver::GetInstance()->m_onInputEvent.Subscribe(this, std::bind(&InputManager::ProcessInput, this, std::placeholders::_1));
-	}
-
-	void InputManager::ProcessInput(uint64_t inputKey)
+namespace system
 {
-	switch (static_cast<SupportedKey>(inputKey))
+
+InputManager::InputManager()
+{
+	IOSDriver::GetInstance()->m_onInputEvent.Subscribe(this, std::bind(&InputManager::ProcessInput, this, std::placeholders::_1));
+}
+
+void InputManager::ProcessInput(uint64_t inputKey)
+{
+	switch (static_cast<winutils::SupportedKey>(inputKey))
 	{
-	case SupportedKey::ESC: system::IOSDriver::GetInstance()->Quit(); break;
+	case winutils::SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
 	//case SupportedKey::F11: system::RenderDriver::GetInstance()->SetFullscreenMode(!system::RenderDriver::GetInstance()->IsInFullscreen(), system::OSDriver::GetInstance()->GetWindowHandle()); break;
 	default:
 		break;
 	}
 }
 
+}
 }

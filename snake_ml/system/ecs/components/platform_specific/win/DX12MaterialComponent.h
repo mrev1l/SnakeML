@@ -4,12 +4,13 @@
 
 #include "lib_includes/directX_includes.h"
 #include "system/ecs/IComponent.h"
-#include "utils/snake_math.h"
-
 
 namespace snakeml
 {
 namespace system
+{
+#ifdef _WINDOWS
+namespace win
 {
 
 class DX12MaterialComponent : public IComponent
@@ -26,7 +27,7 @@ public:
 	virtual ~DX12MaterialComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::DX12MaterialComponent; }
 
-	std::vector<std::pair<math::vec3<float>, math::vec2<float>>> m_vertices;
+	std::vector<std::pair<types::vec3<float>, types::vec2<float>>> m_vertices;
 	std::vector<uint16_t> m_indices;
 	std::wstring m_vs;
 	std::wstring m_ps;
@@ -36,5 +37,7 @@ public:
 };
 REGISTER_TYPE(DX12MaterialComponent);
 
+}
+#endif
 }
 }

@@ -9,13 +9,11 @@ namespace snakeml
 {
 namespace system
 {
-
 #ifdef _WINDOWS
-
 namespace win
 {
-	class DX12RootSignature;
-}
+
+class DX12RootSignature;
 
 class InitializeRenderComponentsSystem : public ISystem
 {
@@ -28,7 +26,7 @@ private:
 		UINT inputLayout_shaderRegister,
 		UINT inputLayout_registerSpace,
 		D3D12_SHADER_VISIBILITY inputLayout_visibility,
-		win::DX12RootSignature& _outRootSignature);
+		DX12RootSignature& _outRootSignature);
 	static void CreatePipelineState(
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout,
@@ -37,7 +35,8 @@ private:
 		Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outPipelineState);
 
 };
-#endif
 
+}
+#endif
 }
 }

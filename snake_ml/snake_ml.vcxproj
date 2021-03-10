@@ -216,8 +216,8 @@
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp" />
     <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp" />
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
@@ -255,8 +255,8 @@
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
     <ClInclude Include="system\ecs\ComponentsPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
-    <ClInclude Include="system\ecs\components\platform_specific\DX12MaterialComponent.h" />
-    <ClInclude Include="system\ecs\components\platform_specific\DX12RenderComponent.h" />
+    <ClInclude Include="system\ecs\components\platform_specific\win\DX12MaterialComponent.h" />
+    <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h" />
     <ClInclude Include="system\ecs\components\TransformComponent.h" />
     <ClInclude Include="system\ecs\ECSManager.h" />
     <ClInclude Include="system\ecs\Entity.h" />
@@ -265,8 +265,8 @@
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h" />
-    <ClInclude Include="system\ecs\systems\platform_specific\InitializeRenderComponentsSystem.h" />
-    <ClInclude Include="system\ecs\systems\platform_specific\LoadMaterialsSystem.h" />
+    <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
+    <ClInclude Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.h" />
     <ClInclude Include="system\ecs\systems\Render2DSystem.h" />
     <ClInclude Include="system\ecs\systems\RotateCubeSystem.h" />
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
@@ -276,6 +276,7 @@
     <ClInclude Include="utils\patterns\event.h" />
     <ClInclude Include="utils\patterns\singleton.h" />
     <ClInclude Include="utils\snake_math.h" />
+    <ClInclude Include="utils\types\arithmetic.h" />
     <ClInclude Include="utils\types\ThreadSafeQueue.h" />
     <ClInclude Include="utils\win_utils.h" />
   </ItemGroup>

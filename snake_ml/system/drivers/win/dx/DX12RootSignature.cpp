@@ -8,6 +8,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -156,5 +157,6 @@ void DX12RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& r
 }
 
 }
+#endif
 }
 }

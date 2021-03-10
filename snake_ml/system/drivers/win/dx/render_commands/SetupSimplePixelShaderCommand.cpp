@@ -10,6 +10,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -31,5 +32,6 @@ void SetupSimplePixelShaderCommand::Execute(std::shared_ptr<DX12CommandList> com
 }
 
 }
+#endif
 }
 }

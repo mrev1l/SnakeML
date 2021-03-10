@@ -10,6 +10,7 @@
 
 namespace snakeml
 {
+#ifdef _WINDOWS
 namespace dxutils
 {
 
@@ -188,4 +189,5 @@ inline Microsoft::WRL::ComPtr<IDXGISwapChain4> CreateSwapChain(HWND hWnd,
 }
 
 }
+#endif
 }

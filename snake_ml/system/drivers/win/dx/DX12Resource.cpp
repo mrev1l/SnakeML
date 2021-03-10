@@ -9,6 +9,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 DX12Resource::DX12Resource(const std::wstring& name)
@@ -131,5 +132,6 @@ void DX12Resource::Reset()
 }
 
 }
+#endif
 }
 }

@@ -7,6 +7,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -68,5 +69,6 @@ DXGI_FORMAT DX12RenderTarget::GetDepthStencilFormat() const
 }
 
 }
+#endif
 }
 }

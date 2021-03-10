@@ -12,10 +12,9 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
-
-
 
 DX12Texture::DX12Texture(TextureUsage textureUsage, const std::wstring& name)
 	: DX12Resource(name)
@@ -393,5 +392,6 @@ DX12DescriptorAllocation DX12Texture::CreateUnorderedAccessView(const D3D12_UNOR
 }
 
 }
+#endif
 }
 }

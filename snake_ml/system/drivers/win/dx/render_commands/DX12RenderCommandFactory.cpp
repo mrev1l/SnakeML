@@ -9,7 +9,7 @@
 #include "system/drivers/win/dx/DX12CommandList.h"
 #include "system/drivers/win/dx/DX12Driver.h"
 
-#include "system/ecs/components/platform_specific/DX12RenderComponent.h"
+#include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 #include "system/ecs/components/CameraComponent.h"
 #include "system/ecs/components/TransformComponent.h"
 #include "system/ecs/ECSManager.h"
@@ -19,6 +19,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -50,5 +51,6 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 }
 
 }
+#endif
 }
 }

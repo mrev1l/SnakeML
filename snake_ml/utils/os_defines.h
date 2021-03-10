@@ -6,11 +6,11 @@ namespace system
 {
 
 #ifdef _WINDOWS
-		namespace win
-		{
-			class WinDriver;
-		}
-		using OSImplementation = class win::WinDriver;
+namespace win
+{
+	class WinDriver;
+}
+using OSImplementation = class win::WinDriver;
 #endif
 
 }

@@ -10,6 +10,7 @@ namespace snakeml
 {
 namespace system
 {
+#ifdef _WINDOWS
 namespace win
 {
 
@@ -198,5 +199,6 @@ void DX12DescriptorAllocatorPage::FreeBlock(uint32_t offset, uint32_t numDescrip
 }
 
 }
+#endif
 }
 }
