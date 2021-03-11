@@ -1,0 +1,41 @@
+{
+  "entityId": 0,
+  "vertices": [
+    {"pos" : [ -360.0, 360.0, 1.0 ], "uv" : [0.0, 0.0]},
+    {"pos" : [ 360.0, -360.0, 1.0 ], "uv" : [1.0, 1.0]},
+    {"pos" : [ -360.0, -360.0, 1.0 ], "uv" : [0.0, 1.0]},
+    {"pos" : [ -360.0, 360.0, 1.0 ], "uv" : [0.0, 0.0]},
+    {"pos" : [ 360.0, 360.0, 1.0 ], "uv" : [1.0, 0.0]},
+    {"pos" : [ 360.0, -360.0, 1.0 ], "uv" : [1.0, 1.0]}
+  ],
+  "vs": "VS_MvpUV.cso",
+  "ps": "PS_UV.cso",
+  "vertex_input_layout": [
+    {
+      "semanticName":"POSITION",
+      "semanticIdx":0,
+      "format":6,
+      "inputSlot":0,
+      "alignedByteOffset":4294967295,
+      "inputSlotClass":0,
+      "instanceDataStepRate":0
+    },
+    {
+      "semanticName":"TEXCOORD",
+      "semanticIdx":0,
+      "format":16,
+      "inputSlot":0,
+      "alignedByteOffset":4294967295,
+      "inputSlotClass":0,
+      "instanceDataStepRate":0
+    }
+  ],
+  "vertex_input_param_layout":
+  {
+    "num32BitValues":16,
+    "shaderRegister":0,
+    "registerSpace":0,
+    "visibility":1
+  },
+  "texture": "data/assets/textures/Directx9.png"
+}
