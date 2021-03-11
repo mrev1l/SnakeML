@@ -74,9 +74,19 @@ public:
 private:
 	void OnInitialize() override;
 	void OnShutdown() override;
+
+	// ******* Frame Rendering *******
 	void OnRender() override;
-	void OnRender_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList);
-	void OnRender_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue);
+	// Begin Frame
+	void OnRender_BeginFrame(std::shared_ptr<DX12CommandList> commandList);
+	void OnRender_BeginFrame_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList);
+	void OnRender_BeginFrame_SetupRenderTargets(std::shared_ptr<DX12CommandList> commandList);
+	// Execute Frame
+	void OnRender_ExecuteFrame(std::shared_ptr<DX12CommandQueue> commandQueue, std::shared_ptr<DX12CommandList> commandList);
+	// End Frame
+	void OnRender_EndFrame(std::shared_ptr<DX12CommandQueue> commandQueue, std::shared_ptr<DX12CommandList> commandList);
+	void OnRender_EndFrame_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue);
+	// ******* ******* ******* *******
 
 	void Flush();
 

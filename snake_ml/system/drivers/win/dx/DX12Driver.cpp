@@ -145,13 +145,33 @@ void DX12Driver::OnRender()
 		ASSERT(false, " ACHTUNG Command Queue is missing!");
 		return;
 	}
-	
-	OnRender_ClearRenderTargets(commandList);
 
+	OnRender_BeginFrame(commandList);
+	OnRender_ExecuteFrame(commandQueue, commandList);
+	OnRender_EndFrame(commandQueue, commandList);
+}
+
+void DX12Driver::OnRender_BeginFrame(std::shared_ptr<DX12CommandList> commandList)
+{
+	OnRender_BeginFrame_ClearRenderTargets(commandList);
+	OnRender_BeginFrame_SetupRenderTargets(commandList);
+}
+
+void DX12Driver::OnRender_BeginFrame_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList)
+{
+	commandList->ClearTexture(m_renderTarget.GetTexture(win::AttachmentPoint::Color0), s_defaultClearColor);
+	commandList->ClearDepthStencilTexture(m_renderTarget.GetTexture(win::AttachmentPoint::DepthStencil), D3D12_CLEAR_FLAG_DEPTH);
+}
+
+void DX12Driver::OnRender_BeginFrame_SetupRenderTargets(std::shared_ptr<DX12CommandList> commandList)
+{
 	commandList->SetViewport(m_viewport);
 	commandList->SetScissorRect(m_scissorRect);
 	commandList->SetRenderTarget(m_renderTarget);
+}
 
+void DX12Driver::OnRender_ExecuteFrame(std::shared_ptr<DX12CommandQueue> commandQueue, std::shared_ptr<DX12CommandList> commandList)
+{
 	for (const auto& command : m_renderCommands)
 	{
 		DX12RenderCommand* dx12Command = (DX12RenderCommand*)command.get();
@@ -159,19 +179,16 @@ void DX12Driver::OnRender()
 	}
 
 	commandQueue->ExecuteCommandList(commandList);
+}
 
-	OnRender_Present(commandQueue->GetCommandList(), commandQueue);
+void DX12Driver::OnRender_EndFrame(std::shared_ptr<DX12CommandQueue> commandQueue, std::shared_ptr<DX12CommandList> commandList)
+{
+	OnRender_EndFrame_Present(commandQueue->GetCommandList(), commandQueue);
 
 	m_renderCommands.clear();
 }
 
-void DX12Driver::OnRender_ClearRenderTargets(std::shared_ptr<DX12CommandList> commandList)
-{
-	commandList->ClearTexture(m_renderTarget.GetTexture(win::AttachmentPoint::Color0), s_defaultClearColor);
-	commandList->ClearDepthStencilTexture(m_renderTarget.GetTexture(win::AttachmentPoint::DepthStencil), D3D12_CLEAR_FLAG_DEPTH);
-}
-
-void DX12Driver::OnRender_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue)
+void DX12Driver::OnRender_EndFrame_Present(std::shared_ptr<DX12CommandList> commandList, std::shared_ptr<DX12CommandQueue> commandQueue)
 {
 	auto& texture = m_renderTarget.GetTexture(win::AttachmentPoint::Color0);
 	auto& backBuffer = m_backBufferTextures[m_currentBackBufferIndex];
