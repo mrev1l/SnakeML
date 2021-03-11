@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "DX12RootSignature.h"
+
 #include "DX12Driver.h"
 
 namespace snakeml

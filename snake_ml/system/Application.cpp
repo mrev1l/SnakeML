@@ -17,6 +17,7 @@
 #include "ecs/systems/RotateCubeSystem.h"
 #include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/TestMoveSnakeHeadSystem.h"
+
 #include "input/InputManager.h"
 
 #include <functional>

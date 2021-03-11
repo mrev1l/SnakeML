@@ -2,8 +2,10 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "InputManager.h"
+
 #include "system/drivers/OSDriver.h"
 #include "system/drivers/RenderDriver.h"
+
 #include "utils/win_utils.h"
 
 namespace snakeml

@@ -6,6 +6,7 @@
 #include "DX12Driver.h"
 #include "DX12CommandList.h"
 #include "DX12ResourceStateTracker.h"
+
 #include "utils/win_utils.h"
 
 namespace snakeml

@@ -4,13 +4,15 @@
 #include "DX12CommandQueue.h"
 #include "DX12DescriptorAllocator.h"
 #include "DX12RenderTarget.h"
+
 #include "system/drivers/RenderDriver.h"
-#include "system/ecs/Entity.h"
 
 namespace snakeml
 {
 namespace system
 {
+class Entity;
+
 #ifdef _WINDOWS
 namespace win
 {

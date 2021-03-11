@@ -46,6 +46,7 @@
 #pragma endregion
 
 #include "lib_includes/directX_includes.h"
+
 #include <map>
 #include <mutex>
 #include <unordered_map>

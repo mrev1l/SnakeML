@@ -1,10 +1,13 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
+
 #include "system/Application.h"
 
 #include "lib_includes/directX_includes.h"
+
 #include <dxgidebug.h>
+
 void ReportLiveObjects()
 {
 	Microsoft::WRL::ComPtr<IDXGIDebug1> dxgiDebug;

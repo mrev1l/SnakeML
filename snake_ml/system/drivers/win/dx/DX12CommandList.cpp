@@ -13,7 +13,9 @@
 #include "DX12Texture.h"
 #include "DX12VertexBuffer.h"
 #include "DX12UploadBuffer.h"
+
 #include "third_party/win/DirectXTex/DirectXTex/DirectXTex.h"
+
 #include <filesystem>
 
 namespace snakeml

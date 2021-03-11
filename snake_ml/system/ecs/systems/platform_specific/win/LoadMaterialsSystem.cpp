@@ -4,11 +4,8 @@
 #include "LoadMaterialsSystem.h"
 
 #include "system/ecs/ECSManager.h"
-#include "utils/win_utils.h"
 
-#include "system/drivers/win/dx/DX12Driver.h"
-#include "system/drivers/win/dx/DX12CommandList.h"
-#include "system/drivers/win/dx/DX12Texture.h"
+#include "utils/win_utils.h"
 
 
 namespace snakeml

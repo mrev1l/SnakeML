@@ -3,6 +3,7 @@
 #pragma once
 
 #include "lib_includes/directX_includes.h"
+
 #include "system/ecs/IComponent.h"
 
 namespace snakeml

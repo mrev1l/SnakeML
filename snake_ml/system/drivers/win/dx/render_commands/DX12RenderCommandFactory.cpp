@@ -6,7 +6,6 @@
 #include "DrawMeshCommand.h"
 #include "SetupSimplePixelShaderCommand.h"
 
-#include "system/drivers/win/dx/DX12CommandList.h"
 #include "system/drivers/win/dx/DX12Driver.h"
 
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"

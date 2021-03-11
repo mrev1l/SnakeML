@@ -39,7 +39,6 @@
 #pragma endregion
 
 #include "DX12DescriptorAllocation.h"
-#include "lib_includes/directX_includes.h"
 
 #include <set>
 #include <mutex>

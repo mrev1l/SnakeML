@@ -36,6 +36,7 @@
 #pragma endregion
 
 #include "lib_includes/directX_includes.h"
+
 #include <functional>
 #include <queue>
 

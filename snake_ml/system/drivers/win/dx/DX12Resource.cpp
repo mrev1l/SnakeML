@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "DX12Resource.h"
+
 #include "DX12Driver.h"
 #include "DX12ResourceStateTracker.h"
 

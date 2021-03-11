@@ -4,6 +4,7 @@
 #include "utils/patterns/singleton.h"
 #include "utils/patterns/event.h"
 #include "utils/os_defines.h"
+
 #include <functional>
 
 namespace snakeml

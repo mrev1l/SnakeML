@@ -32,6 +32,7 @@
 #pragma endregion
 
 #include "lib_includes/directX_includes.h"
+
 #include <deque>
 #include <wrl.h>
 

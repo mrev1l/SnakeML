@@ -4,6 +4,7 @@
 #include "ComponentsPool.h"
 #include "Entity.h"
 #include "ISystem.h"
+
 #include "utils/patterns/singleton.h"
 
 namespace snakeml

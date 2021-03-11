@@ -33,6 +33,7 @@
 #pragma endregion
 
 #include "lib_includes/directX_includes.h"
+
 #include <string>
 
 namespace snakeml
