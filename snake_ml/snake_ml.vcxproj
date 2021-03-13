@@ -188,9 +188,14 @@
     <ClCompile Include="system\Application.cpp" />
     <ClCompile Include="system\drivers\OSDriver.cpp" />
     <ClCompile Include="system\drivers\RenderDriver.cpp" />
+    <ClCompile Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource\DX12Buffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandList.cpp" />
     <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandQueue.cpp" />
+    <ClCompile Include="system\drivers\win\dx\resource\DX12ByteAddressBuffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\resource\DX12ConstantBuffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\resource\DX12IndexBuffer.cpp" />
+    <ClCompile Include="system\drivers\win\dx\resource\DX12StructuredBuffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocation.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocator.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocatorPage.cpp" />
@@ -222,6 +227,7 @@
     <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp" />
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
+    <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="utils\win_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +237,14 @@
     <ClInclude Include="system\Application.h" />
     <ClInclude Include="system\drivers\OSDriver.h" />
     <ClInclude Include="system\drivers\RenderDriver.h" />
+    <ClInclude Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.h" />
     <ClInclude Include="system\drivers\win\dx\resource\DX12Buffer.h" />
     <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandList.h" />
     <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandQueue.h" />
+    <ClInclude Include="system\drivers\win\dx\resource\DX12ByteAddressBuffer.h" />
+    <ClInclude Include="system\drivers\win\dx\resource\DX12ConstantBuffer.h" />
+    <ClInclude Include="system\drivers\win\dx\resource\DX12IndexBuffer.h" />
+    <ClInclude Include="system\drivers\win\dx\resource\DX12StructuredBuffer.h" />
     <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocation.h" />
     <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocator.h" />
     <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocatorPage.h" />
@@ -277,6 +288,7 @@
     <ClInclude Include="utils\patterns\singleton.h" />
     <ClInclude Include="utils\snake_math.h" />
     <ClInclude Include="utils\types\arithmetic.h" />
+    <ClInclude Include="utils\types\HighResolutionClock.h" />
     <ClInclude Include="utils\types\ThreadSafeQueue.h" />
     <ClInclude Include="utils\win_utils.h" />
   </ItemGroup>
@@ -294,6 +306,24 @@
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">g_GenerateMips_CS</VariableName>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_GenerateMips_CS</VariableName>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_GenerateMips_CS</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\PanoToCubemap_CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">g_PanoToCubemap_CS</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">g_PanoToCubemap_CS</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_PanoToCubemap_CS</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_PanoToCubemap_CS</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\!VS_TMP\Build\$(PlatformToolset)\$(Configuration)\$(Platform)\data\shaders\%(Filename).h</HeaderFileOutput>

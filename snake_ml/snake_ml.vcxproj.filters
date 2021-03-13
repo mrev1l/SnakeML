@@ -135,6 +135,24 @@
     <ClCompile Include="system\drivers\win\dx\resource_management\DX12UploadBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12ByteAddressBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12ConstantBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\types\HighResolutionClock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12StructuredBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -299,6 +317,24 @@
     <ClInclude Include="system\drivers\win\dx\resource_management\DX12UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12ByteAddressBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12ConstantBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\types\HighResolutionClock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12StructuredBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -306,5 +342,6 @@
     <FxCompile Include="resources\shaders\GenerateMips_CS.hlsl" />
     <FxCompile Include="resources\shaders\VS_MvpUV.hlsl" />
     <FxCompile Include="resources\shaders\PS_UV.hlsl" />
+    <FxCompile Include="resources\shaders\PanoToCubemap_CS.hlsl" />
   </ItemGroup>
 </Project>
