@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "rapidjson/document.h" // rapidjson's DOM-style API
+#include "third_party/rapidjson/document.h" // rapidjson's DOM-style API
 
 #include "system/ecs/components/platform_specific/win/DX12MaterialComponent.h"
 #include "system/ecs/ISystem.h"
