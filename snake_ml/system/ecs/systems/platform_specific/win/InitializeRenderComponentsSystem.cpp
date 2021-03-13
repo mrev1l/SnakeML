@@ -4,10 +4,11 @@
 #include "InitializeRenderComponentsSystem.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
-#include "system/drivers/win/dx/DX12CommandList.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+
+#include "system/ecs/ECSManager.h"
 #include "system/ecs/components/platform_specific/win/DX12MaterialComponent.h"
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
-#include "system/ecs/ECSManager.h"
 
 namespace snakeml
 {

@@ -3,9 +3,9 @@
 #include "stdafx.h"
 #include "DX12DynamicDescriptorHeap.h"
 
-#include "DX12CommandList.h"
-#include "DX12Driver.h"
-#include "DX12RootSignature.h"
+#include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
 
 namespace snakeml
 {

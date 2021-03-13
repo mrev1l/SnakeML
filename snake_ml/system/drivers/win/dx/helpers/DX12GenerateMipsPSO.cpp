@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "DX12GenerateMipsPSO.h"
 
-#include "DX12Driver.h"
+#include "system/drivers/win/dx/DX12Driver.h"
 
 #include "data/shaders/GenerateMips_CS.h"
 

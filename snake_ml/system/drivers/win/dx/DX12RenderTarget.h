@@ -34,7 +34,7 @@
   */
 #pragma endregion
 
-#include "DX12Texture.h"
+#include "system/drivers/win/dx/resource/DX12Texture.h"
 
 namespace snakeml
 {

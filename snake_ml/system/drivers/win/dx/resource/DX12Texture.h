@@ -39,9 +39,9 @@
   */
 #pragma endregion
 
-#include "DX12DescriptorAllocation.h"
-#include "DX12Resource.h"
-#include "DX12TextureUsage.h"
+#include "system/drivers/win/dx/resource/DX12Resource.h"
+#include "system/drivers/win/dx/resource/DX12TextureUsage.h"
+#include "system/drivers/win/dx/resource_management/DX12DescriptorAllocation.h"
 
 #include <mutex>
 #include <unordered_map>

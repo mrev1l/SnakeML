@@ -1,9 +1,11 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
-#include "DX12CommandQueue.h"
-#include "DX12DescriptorAllocator.h"
 #include "DX12RenderTarget.h"
+
+#include "system/drivers/win/dx/pipeline/DX12CommandQueue.h"
+#include "system/drivers/win/dx/resource/DX12Texture.h"
+#include "system/drivers/win/dx/resource_management/DX12DescriptorAllocator.h"
 
 #include "system/drivers/RenderDriver.h"
 

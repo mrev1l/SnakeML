@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "DX12Resource.h"
 
-#include "DX12Driver.h"
-#include "DX12ResourceStateTracker.h"
+#include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
 namespace snakeml
 {

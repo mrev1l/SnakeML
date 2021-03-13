@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "SetupSimplePixelShaderCommand.h"
 
-#include "system/drivers/win/dx/DX12CommandList.h"
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 
 namespace snakeml
 {

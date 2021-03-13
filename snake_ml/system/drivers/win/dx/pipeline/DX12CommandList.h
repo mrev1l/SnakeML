@@ -33,8 +33,10 @@
   */
 #pragma endregion
 
-#include "DX12TextureUsage.h"
 #include "lib_includes/directX_includes.h"
+
+#include "system/drivers/win/dx/resource/DX12TextureUsage.h"
+
 #include <map>
 #include <mutex>
 

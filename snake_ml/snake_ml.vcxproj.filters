@@ -42,9 +42,6 @@
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12CommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\ecs\ECSManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,42 +69,6 @@
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12UploadBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12DescriptorAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12RootSignature.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12Resource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12Buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12ResourceStateTracker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12CommandList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\drivers\win\dx\DX12RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,9 +84,6 @@
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\drivers\win\dx\DX12GenerateMipsPSO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -133,6 +91,48 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12Resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocatorPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12DynamicDescriptorHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\helpers\DX12GenerateMipsPSO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12ResourceStateTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\pipeline\DX12RootSignature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource\DX12VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\resource_management\DX12UploadBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,9 +182,6 @@
     <ClInclude Include="system\drivers\win\os\WinDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12CommandQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\ecs\ECSManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -215,49 +212,10 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12UploadBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocatorPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12DescriptorAllocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12RootSignature.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12DynamicDescriptorHeap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12Buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12VertexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12ResourceStateTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12CommandList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utils\types\ThreadSafeQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\drivers\win\dx\DX12RenderTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12TextureUsage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommand.h">
@@ -273,9 +231,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\Render2DSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\drivers\win\dx\DX12GenerateMipsPSO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\CameraComponent.h">
@@ -297,6 +252,51 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12DescriptorAllocatorPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12DynamicDescriptorHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\helpers\DX12GenerateMipsPSO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12ResourceStateTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\pipeline\DX12RootSignature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12TextureUsage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource\DX12VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\resource_management\DX12UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

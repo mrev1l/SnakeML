@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "DrawMeshCommand.h"
 
-#include "system/drivers/win/dx/DX12CommandList.h"
-#include "system/drivers/win/dx/Dx12VertexBuffer.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/resource/Dx12VertexBuffer.h"
 
 namespace snakeml
 {

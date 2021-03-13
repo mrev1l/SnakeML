@@ -31,8 +31,8 @@
   */
 #pragma endregion
 
-#include "DX12RootSignature.h"
-#include "DX12DescriptorAllocation.h"
+#include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
+#include "system/drivers/win/dx/resource_management/DX12DescriptorAllocation.h"
 
 namespace snakeml
 {

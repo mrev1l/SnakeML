@@ -1,5 +1,6 @@
 #pragma once
 #include "lib_includes/directX_includes.h"
+
 #include "utils/types/ThreadSafeQueue.h"
 
 namespace snakeml

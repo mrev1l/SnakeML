@@ -3,13 +3,12 @@
 #include "stdafx.h"
 #include "DX12Driver.h"
 
-#include "DX12CommandList.h"
-#include "DX12ResourceStateTracker.h"
-#include "DX12TextureUsage.h"
-
 #include "render_commands/DX12RenderCommandFactory.h"
 
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 #include "system/drivers/win/os/WinDriver.h"
+
 #include "system/ecs/components/TransformComponent.h"
 
 #include "utils/win_utils.h"

@@ -3,9 +3,10 @@
 #pragma once
 
 #include "system/ecs/IComponent.h"
-#include "system/drivers/win/dx/DX12VertexBuffer.h"
-#include "system/drivers/win/dx/DX12RootSignature.h"
-#include "system/drivers/win/dx/DX12Texture.h"
+
+#include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
+#include "system/drivers/win/dx/resource/DX12VertexBuffer.h"
+#include "system/drivers/win/dx/resource/DX12Texture.h"
 
 namespace snakeml
 {

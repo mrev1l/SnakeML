@@ -3,9 +3,9 @@
 #include "stdafx.h"
 #include "DX12CommandQueue.h"
 
-#include "DX12Driver.h"
-#include "DX12CommandList.h"
-#include "DX12ResourceStateTracker.h"
+#include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
 #include "utils/win_utils.h"
 
