@@ -52,27 +52,16 @@ void Application::Initialize()
 	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this));
 
 	new ECSManager();
+
 	// TODO : Clean up
-	//system::InitializeCubeMaterialSystem* sys1 = new system::InitializeCubeMaterialSystem();
-	system::win::InitializeRenderComponentsSystem* sys2 = new win::InitializeRenderComponentsSystem();
-	InitializeTransformComponentsSystem* sys3 = new InitializeTransformComponentsSystem();
-	InitializeCameraSystem initCameraSystem;
-	InitializeEntitiesSystem* sys4 = new InitializeEntitiesSystem();
-	win::LoadMaterialsSystem* sys5 = new win::LoadMaterialsSystem();
-	//system::ECSManager::GetInstance()->ExecuteSystem(sys1);
-	ECSManager::GetInstance()->ExecuteSystem(sys5);
-	ECSManager::GetInstance()->ExecuteSystem(sys2);
-	ECSManager::GetInstance()->ExecuteSystem(sys3);
-	ECSManager::GetInstance()->ExecuteSystem(&initCameraSystem);
-	ECSManager::GetInstance()->ExecuteSystem(sys4);
-	//system::ECSManager::GetInstance()->ScheduleSystem(new system::RotateCubeSystem());
-	ECSManager::GetInstance()->ScheduleSystem(new TestMoveSnakeHeadSystem());
-	ECSManager::GetInstance()->ScheduleSystem(new Render2DSystem());
-	//delete sys1;
-	delete sys2;
-	delete sys3;
-	delete sys4;
-	delete sys5;
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::LoadMaterialsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeEntitiesSystem>());
+
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<TestMoveSnakeHeadSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
 
 void Application::Run()

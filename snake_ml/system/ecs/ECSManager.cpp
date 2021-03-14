@@ -8,26 +8,23 @@ namespace snakeml
 namespace system
 {
 
-
-void ECSManager::ExecuteSystem(ISystem* system)
+void ECSManager::ExecuteSystem(const std::unique_ptr<ISystem>& system)
 {
 	system->Execute();
 }
 
-void ECSManager::ScheduleSystem(ISystem* system)
+void ECSManager::ScheduleSystem(std::unique_ptr<ISystem>&& system)
 {
-	m_systems.push_back(system);
+	m_systems.emplace_back(std::move(system));
 }
 
 void ECSManager::Update()
 {
-	for (ISystem* system : m_systems)
+	for (const std::unique_ptr<ISystem>& system : m_systems)
 	{
 		system->Execute();
 	}
 }
-
-
 
 }
 }

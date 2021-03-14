@@ -21,15 +21,15 @@ public:
 	inline ComponentsPool& GetComponentsPool() { return m_components; }
 	inline std::vector<Entity>& GetEntities() { return m_entities; }
 
-	void ExecuteSystem(ISystem* system);
-	void ScheduleSystem(ISystem* system);
+	void ExecuteSystem(const std::unique_ptr<ISystem>& system);
+	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 
 	void Update();
 
 private:
 	ComponentsPool m_components;
 	std::vector<Entity> m_entities;
-	std::vector<ISystem*> m_systems;
+	std::vector<std::unique_ptr<ISystem>> m_systems;
 };
 
 }

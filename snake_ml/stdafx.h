@@ -2,11 +2,12 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include <cassert>
-#include <stdint.h>
-
 #include "utils/snake_math.h"
 #include "utils/types/arithmetic.h"
+
+#include <cassert>
+#include <stdint.h>
+#include <memory>
 
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);
