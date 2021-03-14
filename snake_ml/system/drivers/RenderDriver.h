@@ -2,9 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 #include "utils/patterns/singleton.h"
-#include "utils/directX_utils.h"
 
-#include <array>
+#include <vector>
 
 namespace snakeml
 {

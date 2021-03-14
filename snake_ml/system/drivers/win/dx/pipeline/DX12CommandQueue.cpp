@@ -4,6 +4,7 @@
 #include "DX12CommandQueue.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
@@ -30,8 +31,8 @@ DX12CommandQueue::DX12CommandQueue(D3D12_COMMAND_LIST_TYPE type)
 	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	desc.NodeMask = 0;
 
-	dxutils::ThrowIfFailed(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_d3d12CommandQueue)));
-	dxutils::ThrowIfFailed(device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_d3d12Fence)));
+	DX12Utils::ThrowIfFailed(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_d3d12CommandQueue)));
+	DX12Utils::ThrowIfFailed(device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_d3d12Fence)));
 
 	switch (type)
 	{

@@ -1,6 +1,8 @@
 #pragma once
 #include "DX12RenderCommand.h"
 
+#include "lib_includes/directX_includes.h"
+
 namespace snakeml
 {
 namespace system

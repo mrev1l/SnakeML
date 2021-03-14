@@ -227,6 +227,7 @@
     <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp" />
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
+    <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="utils\win_utils.cpp" />
   </ItemGroup>
@@ -282,7 +283,7 @@
     <ClInclude Include="system\ecs\systems\RotateCubeSystem.h" />
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
-    <ClInclude Include="utils\directX_utils.h" />
+    <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
     <ClInclude Include="utils\os_defines.h" />
     <ClInclude Include="utils\patterns\event.h" />
     <ClInclude Include="utils\patterns\singleton.h" />

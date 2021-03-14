@@ -3,10 +3,11 @@
 #include "stdafx.h"
 #include "DX12Driver.h"
 
-#include "render_commands/DX12RenderCommandFactory.h"
-
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/render_commands/DX12RenderCommandFactory.h"
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
+
 #include "system/drivers/win/os/WinDriver.h"
 
 #include "system/ecs/components/TransformComponent.h"
@@ -103,23 +104,23 @@ void DX12Driver::OnInitialize()
 	// be rendered in a DPI sensitive fashion.
 	SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-	dxutils::EnableDebugLayer();
+	DX12Utils::EnableDebugLayer();
 
-	m_isTearingSupported = dxutils::CheckTearingSupport();
+	m_isTearingSupported = DX12Utils::CheckTearingSupport();
 	// Check for DirectX Math library support.
 	if (!DirectX::XMVerifyCPUSupport())
 	{
 		MessageBoxA(NULL, "Failed to verify DirectX Math library support.", "Error", MB_OK | MB_ICONERROR);
 	}
 
-	Microsoft::WRL::ComPtr<IDXGIAdapter4> dxgiAdapter4 = dxutils::GetAdapter(m_isUsingWarp);
-	m_device = dxutils::CreateDevice(dxgiAdapter4);
+	Microsoft::WRL::ComPtr<IDXGIAdapter4> dxgiAdapter4 = DX12Utils::GetAdapter(m_isUsingWarp);
+	m_device = DX12Utils::CreateDevice(dxgiAdapter4);
 
 	m_directCommandQueue = std::make_shared<DX12CommandQueue>(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	m_computeCommandQueue = std::make_shared<DX12CommandQueue>(D3D12_COMMAND_LIST_TYPE_COMPUTE);
 	m_copyCommandQueue = std::make_shared<DX12CommandQueue>(D3D12_COMMAND_LIST_TYPE_COPY);
 	
-	m_swapChain = dxutils::CreateSwapChain(m_osWindowHandle, m_directCommandQueue->GetD3D12CommandQueue(), 
+	m_swapChain = DX12Utils::CreateSwapChain(m_osWindowHandle, m_directCommandQueue->GetD3D12CommandQueue(), 
 		static_cast<uint32_t>(m_clientWidth), static_cast<uint32_t>(m_clientHeight), s_backBufferCount);
 	
 	m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
@@ -212,7 +213,7 @@ void DX12Driver::OnRender_EndFrame_Present(std::shared_ptr<DX12CommandList> comm
 
 	UINT syncInterval = m_isVSync ? 1 : 0;
 	UINT presentFlags = m_isTearingSupported && !m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
-	dxutils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
+	DX12Utils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
 
 	m_frameFenceValues[m_currentBackBufferIndex] = commandQueue->Signal();
 	m_frameValues[m_currentBackBufferIndex] = GetFrameCount();
@@ -244,7 +245,7 @@ void DX12Driver::InitializeBackBufferTextures()
 	for (uint8_t i = 0; i < s_backBufferCount; ++i)
 	{
 		Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
-		dxutils::ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
+		DX12Utils::ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
 
 		DX12ResourceStateTracker::AddGlobalResourceState(backBuffer.Get(), D3D12_RESOURCE_STATE_COMMON);
 

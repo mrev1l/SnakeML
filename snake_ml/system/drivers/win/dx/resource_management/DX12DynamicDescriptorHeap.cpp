@@ -4,6 +4,7 @@
 #include "DX12DynamicDescriptorHeap.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 #include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
 
@@ -229,7 +230,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DX12DynamicDescriptorHeap::CreateDe
 	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-	dxutils::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap)));
+	DX12Utils::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap)));
 
 	return descriptorHeap;
 }

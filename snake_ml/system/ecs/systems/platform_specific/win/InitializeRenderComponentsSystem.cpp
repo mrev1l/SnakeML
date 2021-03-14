@@ -4,6 +4,7 @@
 #include "InitializeRenderComponentsSystem.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 
 #include "system/ecs/ECSManager.h"
@@ -45,10 +46,10 @@ void InitializeRenderComponentsSystem::Execute()
 
 		// Load the vertex shader.
 		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob;
-		dxutils::ThrowIfFailed(D3DReadFileToBlob(materialComponent.m_vs.data(), &vertexShaderBlob));
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(materialComponent.m_vs.data(), &vertexShaderBlob));
 		// Load the pixel shader.
 		Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob;
-		dxutils::ThrowIfFailed(D3DReadFileToBlob(materialComponent.m_ps.data(), &pixelShaderBlob));
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(materialComponent.m_ps.data(), &pixelShaderBlob));
 
 		CreateRootSignature(
 			materialComponent.m_vsParamLayout.num32BitValues,
@@ -160,7 +161,7 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 	D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 		sizeof(PipelineStateStream), &pipelineStateStream
 	};
-	dxutils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
+	DX12Utils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
 }
 
 }

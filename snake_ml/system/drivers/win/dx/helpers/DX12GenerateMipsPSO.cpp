@@ -4,6 +4,7 @@
 #include "DX12GenerateMipsPSO.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 
 #include "data/shaders/GenerateMips_CS.h"
 
@@ -62,7 +63,7 @@ DX12GenerateMipsPSO::DX12GenerateMipsPSO()
 		sizeof( PipelineStateStream ), &pipelineStateStream
 	};
 
-	dxutils::ThrowIfFailed( device->CreatePipelineState( &pipelineStateStreamDesc, IID_PPV_ARGS( &m_pipelineState ) ) );
+	DX12Utils::ThrowIfFailed( device->CreatePipelineState( &pipelineStateStreamDesc, IID_PPV_ARGS( &m_pipelineState ) ) );
 
 	// Create some default texture UAV's to pad any unused UAV's during mip map generation.
 	m_defaultUAV = dx12Driver->AllocateDescriptors( D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, mipsNum);

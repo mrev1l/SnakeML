@@ -4,6 +4,7 @@
 #include "DX12Texture.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
 #include <functional>
@@ -82,7 +83,7 @@ void DX12Texture::Resize(uint32_t width, uint32_t height, uint32_t depthOrArrayS
 		auto device = dx12Driver->GetD3D12Device();
 
 		CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-		dxutils::ThrowIfFailed(device->CreateCommittedResource(
+		DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDesc,
@@ -111,7 +112,7 @@ void DX12Texture::CreateViews()
 
 		D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport;
 		formatSupport.Format = desc.Format;
-		dxutils::ThrowIfFailed(device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatSupport, sizeof(D3D12_FEATURE_DATA_FORMAT_SUPPORT)));
+		DX12Utils::ThrowIfFailed(device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatSupport, sizeof(D3D12_FEATURE_DATA_FORMAT_SUPPORT)));
 
 		if ((desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) != 0 &&
 			CheckRTVSupport(formatSupport.Support1))

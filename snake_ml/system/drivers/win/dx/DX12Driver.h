@@ -4,10 +4,11 @@
 #include "DX12RenderTarget.h"
 
 #include "system/drivers/win/dx/pipeline/DX12CommandQueue.h"
-#include "system/drivers/win/dx/resource/DX12Texture.h"
 #include "system/drivers/win/dx/resource_management/DX12DescriptorAllocator.h"
 
 #include "system/drivers/RenderDriver.h"
+
+#include <array>
 
 namespace snakeml
 {

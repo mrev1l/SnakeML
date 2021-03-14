@@ -1,20 +1,17 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-#pragma once
-#include "lib_includes/directX_includes.h"
-
-#pragma warning(push)
-#pragma warning( disable : 4820)
-#include <chrono>
-#pragma warning(pop)
+#include "stdafx.h"
+#include "directX_utils.h"
 
 namespace snakeml
 {
+namespace system
+{
 #ifdef _WINDOWS
-namespace dxutils
+namespace win
 {
 
-inline void ThrowIfFailed(HRESULT hr)
+void DX12Utils::ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))
 	{
@@ -22,7 +19,7 @@ inline void ThrowIfFailed(HRESULT hr)
 	}
 }
 
-inline void EnableDebugLayer()
+void DX12Utils::EnableDebugLayer()
 {
 #if defined(_DEBUG)
 	// Always enable the debug layer before doing anything DX12 related
@@ -31,10 +28,13 @@ inline void EnableDebugLayer()
 	Microsoft::WRL::ComPtr<ID3D12Debug> debugInterface;
 	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugInterface)));
 	debugInterface->EnableDebugLayer();
+
+	// Register DX memory leaks reporting
+	atexit(&DX12Utils::ReportLiveObjects);
 #endif
 }
 
-inline Microsoft::WRL::ComPtr<IDXGIAdapter4> GetAdapter(bool useWarp)
+Microsoft::WRL::ComPtr<IDXGIAdapter4> DX12Utils::GetAdapter(bool useWarp)
 {
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
 	UINT createFactoryFlags = 0;
@@ -76,7 +76,7 @@ inline Microsoft::WRL::ComPtr<IDXGIAdapter4> GetAdapter(bool useWarp)
 	return dxgiAdapter4;
 }
 
-inline Microsoft::WRL::ComPtr<ID3D12Device2> CreateDevice(Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter)
+Microsoft::WRL::ComPtr<ID3D12Device2> DX12Utils::CreateDevice(Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter)
 {
 	Microsoft::WRL::ComPtr<ID3D12Device2> d3d12Device2;
 	ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
@@ -119,7 +119,7 @@ inline Microsoft::WRL::ComPtr<ID3D12Device2> CreateDevice(Microsoft::WRL::ComPtr
 	return d3d12Device2;
 }
 
-inline bool CheckTearingSupport()
+bool DX12Utils::CheckTearingSupport()
 {
 	BOOL allowTearing = FALSE;
 
@@ -145,9 +145,7 @@ inline bool CheckTearingSupport()
 	return allowTearing != FALSE;
 }
 
-inline Microsoft::WRL::ComPtr<IDXGISwapChain4> CreateSwapChain(HWND hWnd,
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue,
-	uint32_t width, uint32_t height, uint32_t bufferCount)
+Microsoft::WRL::ComPtr<IDXGISwapChain4> DX12Utils::CreateSwapChain(HWND hWnd, Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue, uint32_t width, uint32_t height, uint32_t bufferCount)
 {
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain4;
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory4;
@@ -188,6 +186,16 @@ inline Microsoft::WRL::ComPtr<IDXGISwapChain4> CreateSwapChain(HWND hWnd,
 	return dxgiSwapChain4;
 }
 
+void DX12Utils::ReportLiveObjects()
+{
+	Microsoft::WRL::ComPtr<IDXGIDebug1> dxgiDebug;
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+	{
+		dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+	}
+}
+
 }
 #endif
+}
 }

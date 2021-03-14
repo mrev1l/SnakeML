@@ -4,6 +4,7 @@
 #include "DX12Resource.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
 namespace snakeml
@@ -28,7 +29,7 @@ DX12Resource::DX12Resource(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_
 	}
 
 	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-	dxutils::ThrowIfFailed(device->CreateCommittedResource(
+	DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,

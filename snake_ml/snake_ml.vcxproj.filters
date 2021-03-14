@@ -153,15 +153,15 @@
     <ClCompile Include="system\drivers\win\dx\resource\DX12StructuredBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib_includes\win_includes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\directX_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\win_utils.h">
@@ -333,6 +333,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\drivers\win\dx\resource\DX12StructuredBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
