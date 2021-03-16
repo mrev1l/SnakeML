@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "LoadMaterialsSystem.h"
 
+#include "system/drivers/win/dx/helpers/directX_utils.h"
+
 #include "system/ecs/ECSManager.h"
 
 #include "utils/win_utils.h"
@@ -120,7 +122,7 @@ void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json
 
 	for (auto& inputElement : outLayout)
 	{
-		ASSERT(vsInputLayoutIt->HasMember("semanticName") && (*vsInputLayoutIt)["semanticName"].IsString(), "Invalid vertex_input_layout json");
+		ASSERT(vsInputLayoutIt->HasMember("semanticName") && (*vsInputLayoutIt)["semanticName"].IsUint(), "Invalid vertex_input_layout json");
 		ASSERT(vsInputLayoutIt->HasMember("semanticIdx") && (*vsInputLayoutIt)["semanticIdx"].IsUint(), "Invalid vertex_input_layout json");
 		ASSERT(vsInputLayoutIt->HasMember("format") && (*vsInputLayoutIt)["format"].IsInt(), "Invalid vertex_input_layout json");
 		ASSERT(vsInputLayoutIt->HasMember("inputSlot") && (*vsInputLayoutIt)["inputSlot"].IsUint(), "Invalid vertex_input_layout json");
@@ -128,10 +130,8 @@ void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json
 		ASSERT(vsInputLayoutIt->HasMember("inputSlotClass") && (*vsInputLayoutIt)["inputSlotClass"].IsInt(), "Invalid vertex_input_layout json");
 		ASSERT(vsInputLayoutIt->HasMember("instanceDataStepRate") && (*vsInputLayoutIt)["instanceDataStepRate"].IsUint(), "Invalid vertex_input_layout json");
 
-		const std::string name = (*vsInputLayoutIt)["semanticName"].GetString();
-		inputElement.SemanticName = new char[name.size() + 1]; // TODO: make sure to delete
-		strcpy_s((char*)(inputElement.SemanticName), name.size() + 1, name.c_str());
-
+		DX12Utils::DX12ShaderSemanticName semanticNameId = static_cast<DX12Utils::DX12ShaderSemanticName>((*vsInputLayoutIt)["semanticName"].GetUint());
+		inputElement.SemanticName = DX12Utils::GetShaderSemanticNameStr(semanticNameId);
 		inputElement.SemanticIndex = (*vsInputLayoutIt)["semanticIdx"].GetUint();
 		inputElement.Format = static_cast<DXGI_FORMAT>((*vsInputLayoutIt)["format"].GetInt());
 		inputElement.InputSlot = (*vsInputLayoutIt)["inputSlot"].GetUint();

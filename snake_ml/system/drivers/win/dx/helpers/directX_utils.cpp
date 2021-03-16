@@ -11,6 +11,12 @@ namespace system
 namespace win
 {
 
+std::map<DX12Utils::DX12ShaderSemanticName, const char*> DX12Utils::s_semanticNameMap =
+{
+	{ DX12ShaderSemanticName::Position, "POSITION" },
+	{ DX12ShaderSemanticName::TexCoord, "TEXCOORD" },
+};
+
 void DX12Utils::ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))

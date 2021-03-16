@@ -49,11 +49,10 @@ void Application::Initialize()
 
 	IOSDriver::GetInstance()->Initialize();
 
-	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this));
+	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this, std::placeholders::_1));
 
 	new ECSManager();
 
-	// TODO : Clean up
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::LoadMaterialsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
@@ -80,7 +79,7 @@ void Application::Shutdown()
 	delete inputMgr;
 }
 
-void Application::Update()
+void Application::Update(double dt)
 {
 	static uint64_t frameCounter = 0;
 	static double elapsedSeconds = 0.0;

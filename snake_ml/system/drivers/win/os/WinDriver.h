@@ -4,6 +4,7 @@
 #include "system/drivers/OSDriver.h"
 
 #include "utils/win_utils.h"
+#include "utils/types/HighResolutionClock.h"
 
 namespace snakeml
 {
@@ -14,11 +15,6 @@ namespace win
 {
 
 using WindowHandle = HWND;
-
-/*
-* TODO:
-* - Update callback includes dt.
-*/
 
 class WinDriver
 	: public IOSDriver
@@ -35,8 +31,11 @@ private:
 	void OnRunOSMainLoop() override;
 	void OnQuit() override;
 
+	void OnUpdate() override;
+
 	HWND m_windowHandle;
 	types::vec2<uint32_t> m_windowSz;
+	types::HighResolutionClock m_updateClock;
 };
 
 }

@@ -93,7 +93,7 @@ void WinUtils::StringToWstring(const char* source, std::wstring& dest)
 {
 	wchar_t* wStr = nullptr;
 	WinUtils::StringToWstring(source, wStr);
-	dest = std::wstring(wStr); // TODO: we don't actually copy it in ctor do we?
+	dest = std::wstring(wStr);
 	delete wStr;
 }
 

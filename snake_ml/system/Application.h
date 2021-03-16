@@ -22,7 +22,7 @@ public:
 	void Shutdown();
 
 private:
-	void Update();
+	void Update(double dt);
 	void Render();
 	void Resize(uint32_t width, uint32_t height);
 };

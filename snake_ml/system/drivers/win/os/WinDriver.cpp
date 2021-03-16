@@ -83,7 +83,7 @@ LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 		switch (message)
 		{
 		case WM_PAINT:
-			osDriver->m_onUpdateEvent.Dispatch();
+			osDriver->Update();
 			break;
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
@@ -112,6 +112,12 @@ LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 void WinDriver::OnQuit()
 {
 	::PostQuitMessage(0);
+}
+
+void WinDriver::OnUpdate()
+{
+	m_updateClock.Tick();
+	m_onUpdateEvent.Dispatch(m_updateClock.GetDeltaSeconds());
 }
 
 }

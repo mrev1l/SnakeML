@@ -12,7 +12,7 @@
   "ps": "PS_UV.cso",
   "vertex_input_layout": [
     {
-      "semanticName":"POSITION",
+      "semanticName":0,
       "semanticIdx":0,
       "format":6,
       "inputSlot":0,
@@ -21,7 +21,7 @@
       "instanceDataStepRate":0
     },
     {
-      "semanticName":"TEXCOORD",
+      "semanticName":1,
       "semanticIdx":0,
       "format":16,
       "inputSlot":0,

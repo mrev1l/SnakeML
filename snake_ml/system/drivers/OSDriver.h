@@ -23,13 +23,17 @@ public:
 
 	void Quit()				{ OnQuit(); }
 
+	void Update()			{ OnUpdate(); }
+
 	patterns::Event<OSImplementation, uint64_t>	m_onInputEvent;
-	patterns::Event<OSImplementation, void>		m_onUpdateEvent;
+	patterns::Event<OSImplementation, double>	m_onUpdateEvent;
 
 protected:
 	virtual void OnInitialize() = 0;
 	virtual void OnRunOSMainLoop() = 0;
 	virtual void OnQuit() = 0;
+
+	virtual void OnUpdate() = 0;
 };
 
 }

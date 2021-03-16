@@ -5,10 +5,14 @@
 
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/helpers/DX12GenerateMipsPSO.h"
+#include "system/drivers/win/dx/helpers/DX12PanoToCubemapPSO.h"
 #include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
+#include "system/drivers/win/dx/resource/DX12ByteAddressBuffer.h"
 #include "system/drivers/win/dx/resource/DX12Buffer.h"
+#include "system/drivers/win/dx/resource/DX12IndexBuffer.h"
 #include "system/drivers/win/dx/resource/DX12Resource.h"
+#include "system/drivers/win/dx/resource/DX12StructuredBuffer.h"
 #include "system/drivers/win/dx/resource/DX12Texture.h"
 #include "system/drivers/win/dx/resource/DX12VertexBuffer.h"
 #include "system/drivers/win/dx/resource_management/DX12DynamicDescriptorHeap.h"
@@ -126,6 +130,23 @@ void DX12CommandList::ResolveSubresource(DX12Resource& dstRes, const DX12Resourc
 void DX12CommandList::CopyVertexBuffer(DX12VertexBuffer& vertexBuffer, size_t numVertices, size_t vertexStride, const void* vertexBufferData)
 {
 	CopyBuffer(vertexBuffer, numVertices, vertexStride, vertexBufferData);
+}
+
+void DX12CommandList::CopyIndexBuffer(DX12IndexBuffer& indexBuffer, size_t numIndicies, DXGI_FORMAT indexFormat, const void* indexBufferData)
+{
+	constexpr size_t indexSize2byte = 2u, indexSize4byte = 4u;
+	size_t indexSizeInBytes = indexFormat == DXGI_FORMAT_R16_UINT ? indexSize2byte : indexSize4byte;
+	CopyBuffer(indexBuffer, numIndicies, indexSizeInBytes, indexBufferData);
+}
+
+void DX12CommandList::CopyByteAddressBuffer(DX12ByteAddressBuffer& byteAddressBuffer, size_t bufferSize, const void* bufferData)
+{
+	CopyBuffer(byteAddressBuffer, 1, bufferSize, bufferData, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+}
+
+void DX12CommandList::CopyStructuredBuffer(DX12StructuredBuffer& structuredBuffer, size_t numElements, size_t elementSize, const void* bufferData)
+{
+	CopyBuffer(structuredBuffer, numElements, elementSize, bufferData, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 }
 
 void DX12CommandList::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
@@ -300,7 +321,105 @@ void DX12CommandList::GenerateMips(DX12Texture& texture)
 
 void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pano)
 {
-	ASSERT(false, "Not implemented.");
+	if (m_d3d12CommandListType == D3D12_COMMAND_LIST_TYPE_COPY)
+	{
+		if (!m_computeCommandList)
+		{
+			m_computeCommandList = ((DX12Driver*)DX12Driver::GetInstance())->GetDX12CommandQueue(DX12Driver::CommandQueueType::Compute)->GetCommandList();
+		}
+		m_computeCommandList->PanoToCubemap(cubemap, pano);
+		return;
+	}
+
+	if (!m_PanoToCubemapPSO)
+	{
+		m_PanoToCubemapPSO = std::make_unique<DX12PanoToCubemapPSO>();
+	}
+
+	auto cubemapResource = cubemap.GetD3D12Resource();
+	if (!cubemapResource) return;
+
+	CD3DX12_RESOURCE_DESC cubemapDesc(cubemapResource->GetDesc());
+
+	auto stagingResource = cubemapResource;
+	DX12Texture stagingTexture(stagingResource);
+	// If the passed-in resource does not allow for UAV access
+	// then create a staging resource that is used to generate
+	// the cubemap.
+	if ((cubemapDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0)
+	{
+		auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
+		auto stagingDesc = cubemapDesc;
+		stagingDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
+		DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+			&heapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&stagingDesc,
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			nullptr,
+			IID_PPV_ARGS(&stagingResource)
+
+		));
+
+		DX12ResourceStateTracker::AddGlobalResourceState(stagingResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST);
+
+		stagingTexture.SetD3D12Resource(stagingResource);
+		stagingTexture.CreateViews();
+		stagingTexture.SetName(L"Pano to Cubemap Staging Texture");
+
+		CopyResource(stagingTexture, cubemap);
+	}
+
+	TransitionBarrier(stagingTexture, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	m_d3d12CommandList->SetPipelineState(m_PanoToCubemapPSO->GetPipelineState().Get());
+	SetComputeRootSignature(m_PanoToCubemapPSO->GetRootSignature());
+
+	PanoToCubemapCB panoToCubemapCB;
+
+	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+	uavDesc.Format = cubemapDesc.Format;
+	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
+	uavDesc.Texture2DArray.FirstArraySlice = 0;
+	uavDesc.Texture2DArray.ArraySize = 6;
+
+	for (uint32_t mipSlice = 0; mipSlice < cubemapDesc.MipLevels; )
+	{
+		// Maximum number of mips to generate per pass is 5.
+		uint32_t numMips = std::min<uint32_t>(5, cubemapDesc.MipLevels - mipSlice);
+
+		panoToCubemapCB.FirstMip = mipSlice;
+		panoToCubemapCB.CubemapSize = std::max<uint32_t>(static_cast<uint32_t>(cubemapDesc.Width), cubemapDesc.Height) >> mipSlice;
+		panoToCubemapCB.NumMips = numMips;
+
+		SetCompute32BitConstants(PanoToCubemapRS::PanoToCubemapCB, panoToCubemapCB);
+
+		SetShaderResourceView(PanoToCubemapRS::SrcTexture, 0, pano, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+
+		for (uint32_t mip = 0; mip < numMips; ++mip)
+		{
+			uavDesc.Texture2DArray.MipSlice = mipSlice + mip;
+			SetUnorderedAccessView(PanoToCubemapRS::DstMips, mip, stagingTexture, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, 0, 0, &uavDesc);
+		}
+
+		if (numMips < 5)
+		{
+			// Pad unused mips. This keeps DX12 runtime happy.
+			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(PanoToCubemapRS::DstMips, panoToCubemapCB.NumMips, 5 - numMips, m_PanoToCubemapPSO->GetDefaultUAV());
+		}
+
+		const uint32_t numGroup = math::DivideByMultiple(panoToCubemapCB.CubemapSize, 16);
+		Dispatch(numGroup, numGroup, 6);
+
+		mipSlice += numMips;
+	}
+
+	if (stagingResource != cubemapResource)
+	{
+		CopyResource(cubemap, stagingTexture);
+	}
 }
 
 void DX12CommandList::CopyTextureSubresource(DX12Texture& texture, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* subresourceData)
@@ -378,6 +497,17 @@ void DX12CommandList::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, 
 	vertexBufferView.StrideInBytes = static_cast<UINT>(vertexSize);
 
 	m_d3d12CommandList->IASetVertexBuffers(slot, 1, &vertexBufferView);
+}
+
+void DX12CommandList::SetIndexBuffer(const DX12IndexBuffer& indexBuffer)
+{
+	TransitionBarrier(indexBuffer, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+
+	auto indexBufferView = indexBuffer.GetIndexBufferView();
+
+	m_d3d12CommandList->IASetIndexBuffer(&indexBufferView);
+
+	TrackResource(indexBuffer);
 }
 
 void DX12CommandList::SetDynamicIndexBuffer(size_t numIndicies, DXGI_FORMAT indexFormat, const void* indexBufferData)

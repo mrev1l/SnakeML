@@ -21,6 +21,12 @@ namespace win
 class DX12Utils
 {
 public:
+	enum class DX12ShaderSemanticName : uint32_t
+	{
+		Position = 0,
+		TexCoord = 1
+	};
+
 	static void ThrowIfFailed(HRESULT hr);
 	static void EnableDebugLayer();
 	static Microsoft::WRL::ComPtr<IDXGIAdapter4> GetAdapter(bool useWarp);
@@ -29,8 +35,12 @@ public:
 	static Microsoft::WRL::ComPtr<IDXGISwapChain4> CreateSwapChain(HWND hWnd, Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue,
 		uint32_t width, uint32_t height, uint32_t bufferCount);
 
+	static const char* GetShaderSemanticNameStr(DX12ShaderSemanticName nameId) { return s_semanticNameMap.at(nameId); }
+
 private:
 	static void ReportLiveObjects();
+
+	static std::map<DX12ShaderSemanticName, const char*> s_semanticNameMap;
 };
 
 

@@ -48,13 +48,17 @@ namespace system
 namespace win
 {
 
+class DX12ByteAddressBuffer;
 class DX12Buffer;
 class DX12DynamicDescriptorHeap;
 class DX12GenerateMipsPSO;
+class DX12IndexBuffer;
+class DX12PanoToCubemapPSO;
 class DX12RenderTarget;
 class DX12Resource;
 class DX12ResourceStateTracker;
 class DX12RootSignature;
+class DX12StructuredBuffer;
 class DX12Texture;
 class DX12VertexBuffer;
 class DX12UploadBuffer;
@@ -132,41 +136,39 @@ public:
 		CopyVertexBuffer(vertexBuffer, vertexBufferData.size(), sizeof(T), vertexBufferData.data());
 	}
 
-	// TODO : To integrate index buffer
-	///**
-	// * Copy the contents to a index buffer in GPU memory.
-	// */
-	//void CopyIndexBuffer(IndexBuffer& indexBuffer, size_t numIndicies, DXGI_FORMAT indexFormat, const void* indexBufferData);
-	//template<typename T>
-	//void CopyIndexBuffer(IndexBuffer& indexBuffer, const std::vector<T>& indexBufferData)
-	//{
-	//	assert(sizeof(T) == 2 || sizeof(T) == 4);
-	//
-	//	DXGI_FORMAT indexFormat = (sizeof(T) == 2) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
-	//	CopyIndexBuffer(indexBuffer, indexBufferData.size(), indexFormat, indexBufferData.data());
-	//}
+	/**
+	 * Copy the contents to a index buffer in GPU memory.
+	 */
+	void CopyIndexBuffer(DX12IndexBuffer& indexBuffer, size_t numIndicies, DXGI_FORMAT indexFormat, const void* indexBufferData);
+	template<typename T>
+	void CopyIndexBuffer(DX12IndexBuffer& indexBuffer, const std::vector<T>& indexBufferData)
+	{
+		constexpr size_t indexSize2byte = 2u, indexSize4byte = 4u;
+		assert(sizeof(T) == indexSize2byte || sizeof(T) == indexSize4byte);
+	
+		DXGI_FORMAT indexFormat = (sizeof(T) == 2) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+		CopyIndexBuffer(indexBuffer, indexBufferData.size(), indexFormat, indexBufferData.data());
+	}
 
-	// TODO : To integrate ByteAddressBuffer
-	///**
-	// * Copy the contents to a byte address buffer in GPU memory.
-	// */
-	//void CopyByteAddressBuffer(ByteAddressBuffer& byteAddressBuffer, size_t bufferSize, const void* bufferData);
-	//template<typename T>
-	//void CopyByteAddressBuffer(ByteAddressBuffer& byteAddressBuffer, const T& data)
-	//{
-	//	CopyByteAddressBuffer(byteAddressBuffer, sizeof(T), &data);
-	//}
+	/**
+	 * Copy the contents to a byte address buffer in GPU memory.
+	 */
+	void CopyByteAddressBuffer(DX12ByteAddressBuffer& byteAddressBuffer, size_t bufferSize, const void* bufferData);
+	template<typename T>
+	void CopyByteAddressBuffer(DX12ByteAddressBuffer& byteAddressBuffer, const T& data)
+	{
+		CopyByteAddressBuffer(byteAddressBuffer, sizeof(T), &data);
+	}
 
-	// TODO : To itegrate Structured buffer
-	///**
-	// * Copy the contents to a structured buffer in GPU memory.
-	// */
-	//void CopyStructuredBuffer(StructuredBuffer& structuredBuffer, size_t numElements, size_t elementSize, const void* bufferData);
-	//template<typename T>
-	//void CopyStructuredBuffer(StructuredBuffer& structuredBuffer, const std::vector<T>& bufferData)
-	//{
-	//	CopyStructuredBuffer(structuredBuffer, bufferData.size(), sizeof(T), bufferData.data());
-	//}
+	/**
+	 * Copy the contents to a structured buffer in GPU memory.
+	 */
+	void CopyStructuredBuffer(DX12StructuredBuffer& structuredBuffer, size_t numElements, size_t elementSize, const void* bufferData);
+	template<typename T>
+	void CopyStructuredBuffer(DX12StructuredBuffer& structuredBuffer, const std::vector<T>& bufferData)
+	{
+		CopyStructuredBuffer(structuredBuffer, bufferData.size(), sizeof(T), bufferData.data());
+	}
 
 	/**
 	 * Set the current primitive topology for the rendering pipeline.
@@ -253,11 +255,10 @@ public:
 		SetDynamicVertexBuffer(slot, vertexBufferData.size(), sizeof(T), vertexBufferData.data());
 	}
 
-	// TODO : Integrate index buffer
-	///**
-	// * Bind the index buffer to the rendering pipeline.
-	// */
-	//void SetIndexBuffer(const IndexBuffer& indexBuffer);
+	/**
+	 * Bind the index buffer to the rendering pipeline.
+	 */
+	void SetIndexBuffer(const DX12IndexBuffer& indexBuffer);
 
 	/**
 	 * Bind dynamic index buffer data to the rendering pipeline.
@@ -438,9 +439,9 @@ private:
 
 	// Pipeline state object for Mip map generation.
 	std::unique_ptr<DX12GenerateMipsPSO> m_GenerateMipsPSO;
-	// TODO : Integrate
-	//// Pipeline state object for converting panorama (equirectangular) to cubemaps
-	////std::unique_ptr<PanoToCubemapPSO> m_PanoToCubemapPSO;
+	
+	// Pipeline state object for converting panorama (equirectangular) to cubemaps
+	std::unique_ptr<DX12PanoToCubemapPSO> m_PanoToCubemapPSO;
 
 	// Objects that are being tracked by a command list that is "in-flight" on 
 	// the command-queue and cannot be deleted. To ensure objects are not deleted 
