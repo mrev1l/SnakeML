@@ -101,13 +101,13 @@ void InitializeRenderComponentsSystem::CreateRootSignature(
 	CD3DX12_DESCRIPTOR_RANGE1 descriptorRage(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// A single 32-bit constant root parameter that is used by the vertex shader.
-	CD3DX12_ROOT_PARAMETER1 rootParameters[2] = { };
-	rootParameters[0].InitAsConstants(
+	CD3DX12_ROOT_PARAMETER1 rootParameters[RootParameters::NumRootParameters] = { };
+	rootParameters[RootParameters::MatricesCB].InitAsConstants(
 		inputLayout_num32BitValues,
 		inputLayout_shaderRegister,
 		inputLayout_registerSpace,
 		inputLayout_visibility);
-	rootParameters[1].InitAsDescriptorTable(
+	rootParameters[RootParameters::Textures].InitAsDescriptorTable(
 		1,
 		&descriptorRage,
 		D3D12_SHADER_VISIBILITY_PIXEL

@@ -3,8 +3,9 @@
 #include "stdafx.h"
 #include "SetupSimplePixelShaderCommand.h"
 
-#include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
+#include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
+#include "system/drivers/win/dx/resource/DX12Texture.h"
 
 namespace snakeml
 {
@@ -28,7 +29,7 @@ void SetupSimplePixelShaderCommand::Execute(std::shared_ptr<DX12CommandList> com
 	commandList->SetPipelineState(m_pipelineState);
 	commandList->SetGraphicsRootSignature(m_rootSignature);
 	commandList->SetGraphics32BitConstants(RootParameters::MatricesCB, m_mvpMatrix);
-	commandList->SetShaderResourceView(1, 0, m_texture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	commandList->SetShaderResourceView(RootParameters::Textures, 0, m_texture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 }
