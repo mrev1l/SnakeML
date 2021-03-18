@@ -8,8 +8,8 @@
     {"pos" : [ 360.0, 360.0, 1.0 ], "uv" : [1.0, 0.0]},
     {"pos" : [ 360.0, -360.0, 1.0 ], "uv" : [1.0, 1.0]}
   ],
-  "vs": "VS_MvpUV.cso",
-  "ps": "PS_UV.cso",
+  "vs": "data/shaders/VS_MvpUV.cso",
+  "ps": "data/shaders/PS_UV.cso",
   "vertex_input_layout": [
     {
       "semanticName":0,
