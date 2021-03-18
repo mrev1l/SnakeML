@@ -9,7 +9,7 @@
 #include <directxmath.h>
 
 // d3d12 extension library.
-#include <d3dx12.h>
+#include <third_party/win/directX/d3dx12.h>
 #pragma warning( default : 4820 4061 4365 4668 26812 6319 6011)
 
 #if defined(max)
