@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <map>
 #include <memory>
+#include <vector>
 
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);

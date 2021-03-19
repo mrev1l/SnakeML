@@ -13,7 +13,5 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	snake_ml.Run();
 	snake_ml.Shutdown();
 
-	
-
 	return 0;
 }
