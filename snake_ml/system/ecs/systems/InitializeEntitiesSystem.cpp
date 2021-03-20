@@ -16,7 +16,7 @@ void InitializeEntitiesSystem::Execute()
 	const ComponentsPool& componentsPool = ECSManager::GetInstance()->GetComponentsPool();
 	std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
 
-	for (size_t i = static_cast<size_t>(ComponentType::DX12MaterialComponent);
+	for (size_t i = static_cast<size_t>(ComponentType::MaterialComponent);
 		i < static_cast<size_t>(ComponentType::Size);
 		++i)
 	{

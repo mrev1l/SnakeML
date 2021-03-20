@@ -10,32 +10,5 @@
   ],
   "vs": "data/shaders/VS_MvpUV.cso",
   "ps": "data/shaders/PS_UV.cso",
-  "vertex_input_layout": [
-    {
-      "semanticName":0,
-      "semanticIdx":0,
-      "format":6,
-      "inputSlot":0,
-      "alignedByteOffset":4294967295,
-      "inputSlotClass":0,
-      "instanceDataStepRate":0
-    },
-    {
-      "semanticName":1,
-      "semanticIdx":0,
-      "format":16,
-      "inputSlot":0,
-      "alignedByteOffset":4294967295,
-      "inputSlotClass":0,
-      "instanceDataStepRate":0
-    }
-  ],
-  "vertex_input_param_layout":
-  {
-    "num32BitValues":16,
-    "shaderRegister":0,
-    "registerSpace":0,
-    "visibility":1
-  },
   "texture": "data/assets/textures/Directx9.png"
 }

@@ -15,6 +15,7 @@ std::map<DX12Utils::DX12ShaderSemanticName, const char*> DX12Utils::s_semanticNa
 {
 	{ DX12ShaderSemanticName::Position, "POSITION" },
 	{ DX12ShaderSemanticName::TexCoord, "TEXCOORD" },
+	{ DX12ShaderSemanticName::Color,	"COLOR" },
 };
 
 void DX12Utils::ThrowIfFailed(HRESULT hr)

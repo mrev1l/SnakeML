@@ -23,8 +23,9 @@ class DX12Utils
 public:
 	enum class DX12ShaderSemanticName : uint32_t
 	{
-		Position = 0,
-		TexCoord = 1
+		Position	= 0,
+		TexCoord	= 1,
+		Color		= 2
 	};
 
 	static void ThrowIfFailed(HRESULT hr);

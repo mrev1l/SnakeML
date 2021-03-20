@@ -7,13 +7,13 @@
 #include "drivers/win/dx/DX12Driver.h"
 #include "drivers/win/os/WinDriver.h"
 #include "ecs/systems/platform_specific/win/InitializeRenderComponentsSystem.h"
-#include "ecs/systems/platform_specific/win/LoadMaterialsSystem.h"
 #endif
 
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeCameraSystem.h"
 #include "ecs/systems/InitializeEntitiesSystem.h"
 #include "ecs/systems/InitializeTransformComponentsSystem.h"
+#include "ecs/systems/LoadMaterialsSystem.h"
 #include "ecs/systems/RotateCubeSystem.h"
 #include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/TestMoveSnakeHeadSystem.h"
@@ -53,7 +53,7 @@ void Application::Initialize()
 
 	new ECSManager();
 
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::LoadMaterialsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LoadMaterialsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());

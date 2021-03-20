@@ -2,9 +2,11 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "lib_includes/directX_includes.h"
+#include "system/drivers/win/dx/helpers/directX_utils.h"
+#include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
 
 #include "system/ecs/ISystem.h"
+#include "system/ecs/components/MaterialComponent.h"
 
 namespace snakeml
 {
@@ -22,12 +24,7 @@ public:
 	void Execute() override;
 
 private:
-	static void CreateRootSignature(
-		UINT inputLayout_num32BitValues,
-		UINT inputLayout_shaderRegister,
-		UINT inputLayout_registerSpace,
-		D3D12_SHADER_VISIBILITY inputLayout_visibility,
-		DX12RootSignature& _outRootSignature);
+	static void CreateRootSignature(DX12RootSignature& _outRootSignature);
 	static void CreatePipelineState(
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout,
@@ -35,6 +32,11 @@ private:
 		Microsoft::WRL::ComPtr<ID3DBlob> psBlob,
 		Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outPipelineState);
 
+	static DXGI_FORMAT GetInputLayoutFormat(MaterialComponent::InputLayoutEntries layoutEntry);
+	static DX12Utils::DX12ShaderSemanticName GetShaderSemanticName(MaterialComponent::InputLayoutEntries layoutEntry);
+	static void GenerateInputLayout(const std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries, std::vector<D3D12_INPUT_ELEMENT_DESC>& outInputLayout);
+	static UINT GetRootParameterNumValues(RootParameters paramType);
+	static D3D12_SHADER_VISIBILITY GetRootParameterShaderVisibility(RootParameters paramType);
 };
 
 }

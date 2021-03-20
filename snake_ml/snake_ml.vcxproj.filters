@@ -87,9 +87,6 @@
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\drivers\win\dx\resource\DX12Resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -154,6 +151,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ecs\systems\LoadMaterialsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -257,13 +257,7 @@
     <ClInclude Include="utils\types\arithmetic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\ecs\systems\platform_specific\win\LoadMaterialsSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\components\platform_specific\win\DX12MaterialComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h">
@@ -336,6 +330,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\drivers\win\os\helpers\win_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\MaterialComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\LoadMaterialsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

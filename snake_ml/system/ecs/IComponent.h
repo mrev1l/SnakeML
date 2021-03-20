@@ -10,7 +10,7 @@ namespace system
 
 enum class ComponentType : uint32_t
 {
-	DX12MaterialComponent = 0,
+	MaterialComponent = 0,
 	DX12RenderComponent,
 	TransformComponent,
 	CameraComponent,

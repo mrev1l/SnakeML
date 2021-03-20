@@ -4,11 +4,9 @@
 #include "InitializeRenderComponentsSystem.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
-#include "system/drivers/win/dx/helpers/directX_utils.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 
 #include "system/ecs/ECSManager.h"
-#include "system/ecs/components/platform_specific/win/DX12MaterialComponent.h"
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 
 namespace snakeml
@@ -21,8 +19,8 @@ namespace win
 
 void InitializeRenderComponentsSystem::Execute()
 {
-	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::DX12MaterialComponent);
-	DX12MaterialComponent* materials = (DX12MaterialComponent*)materialComponents->GetData();
+	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
+	MaterialComponent* materials = (MaterialComponent*)materialComponents->GetData();
 
 	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Num());
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
@@ -36,7 +34,7 @@ void InitializeRenderComponentsSystem::Execute()
 	for (size_t i = 0; i < materialComponents->Num(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponents[i];
-		const DX12MaterialComponent& materialComponent = materials[i];
+		const MaterialComponent& materialComponent = materials[i];
 
 		renderComponent.m_entityId = materialComponent.m_entityId;
 
@@ -51,17 +49,14 @@ void InitializeRenderComponentsSystem::Execute()
 		Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob;
 		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(materialComponent.m_ps.data(), &pixelShaderBlob));
 
-		CreateRootSignature(
-			materialComponent.m_vsParamLayout.num32BitValues,
-			materialComponent.m_vsParamLayout.shaderRegister,
-			materialComponent.m_vsParamLayout.registerSpace,
-			materialComponent.m_vsParamLayout.visibility,
-			renderComponent.m_rootSignature
-		);
+		CreateRootSignature(renderComponent.m_rootSignature);
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
+		GenerateInputLayout(materialComponent.m_inputLayoutEntries, inputLayout);
 
 		CreatePipelineState(
 			renderComponent.m_rootSignature.GetRootSignature(),
-			materialComponent.m_vsInputLayout,
+			inputLayout,
 			vertexShaderBlob,
 			pixelShaderBlob,
 			renderComponent.m_pipelineState);
@@ -74,12 +69,7 @@ void InitializeRenderComponentsSystem::Execute()
 	}
 }
 
-void InitializeRenderComponentsSystem::CreateRootSignature(
-	UINT inputLayout_num32BitValues,
-	UINT inputLayout_shaderRegister,
-	UINT inputLayout_registerSpace,
-	D3D12_SHADER_VISIBILITY inputLayout_visibility,
-	DX12RootSignature& _outRootSignature)
+void InitializeRenderComponentsSystem::CreateRootSignature(DX12RootSignature& _outRootSignature)
 {
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
@@ -103,14 +93,15 @@ void InitializeRenderComponentsSystem::CreateRootSignature(
 	// A single 32-bit constant root parameter that is used by the vertex shader.
 	CD3DX12_ROOT_PARAMETER1 rootParameters[RootParameters::NumRootParameters] = { };
 	rootParameters[RootParameters::MatricesCB].InitAsConstants(
-		inputLayout_num32BitValues,
-		inputLayout_shaderRegister,
-		inputLayout_registerSpace,
-		inputLayout_visibility);
+		GetRootParameterNumValues(RootParameters::MatricesCB),
+		0,
+		0,
+		GetRootParameterShaderVisibility(RootParameters::MatricesCB)
+	);
 	rootParameters[RootParameters::Textures].InitAsDescriptorTable(
-		1,
+		GetRootParameterNumValues(RootParameters::Textures),
 		&descriptorRage,
-		D3D12_SHADER_VISIBILITY_PIXEL
+		GetRootParameterShaderVisibility(RootParameters::Textures)
 	);
 
 	CD3DX12_STATIC_SAMPLER_DESC linearRepeatSampler(0, D3D12_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR);
@@ -162,6 +153,81 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 		sizeof(PipelineStateStream), &pipelineStateStream
 	};
 	DX12Utils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
+}
+
+DXGI_FORMAT InitializeRenderComponentsSystem::GetInputLayoutFormat(MaterialComponent::InputLayoutEntries layoutEntry)
+{
+	switch (layoutEntry)
+	{
+	case MaterialComponent::InputLayoutEntries::Position:	return DXGI_FORMAT_R32G32B32_FLOAT;
+	case MaterialComponent::InputLayoutEntries::Color:		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case MaterialComponent::InputLayoutEntries::UV:			return DXGI_FORMAT_R32G32_FLOAT;
+	default:
+		static_assert(static_cast<size_t>(MaterialComponent::InputLayoutEntries::Count) == 3u);
+	}
+	ASSERT(false, "InitializeRenderComponentsSystem::GetInputLayoutFormat Incorrect input param");
+	return DXGI_FORMAT_UNKNOWN;
+}
+
+DX12Utils::DX12ShaderSemanticName InitializeRenderComponentsSystem::GetShaderSemanticName(MaterialComponent::InputLayoutEntries layoutEntry)
+{
+	switch (layoutEntry)
+	{
+	case MaterialComponent::InputLayoutEntries::Position:	return DX12Utils::DX12ShaderSemanticName::Position;
+	case MaterialComponent::InputLayoutEntries::Color:		return DX12Utils::DX12ShaderSemanticName::Color;
+	case MaterialComponent::InputLayoutEntries::UV:			return DX12Utils::DX12ShaderSemanticName::TexCoord;
+	default:
+		static_assert(static_cast<size_t>(MaterialComponent::InputLayoutEntries::Count) == 3u);
+	}
+	ASSERT(false, "InitializeRenderComponentsSystem::GetShaderSemanticName Incorrect input param");
+	return DX12Utils::DX12ShaderSemanticName::Color;
+}
+
+void InitializeRenderComponentsSystem::GenerateInputLayout(const std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries, std::vector<D3D12_INPUT_ELEMENT_DESC>& outInputLayout)
+{
+	outInputLayout.resize(inputLayoutEntries.size());
+
+	for (std::vector<D3D12_INPUT_ELEMENT_DESC>::size_type idx = 0; idx < outInputLayout.size(); ++idx)
+	{
+		D3D12_INPUT_ELEMENT_DESC& inputLayourEntry = outInputLayout[idx];
+
+		inputLayourEntry = {
+			DX12Utils::GetShaderSemanticNameStr(GetShaderSemanticName(inputLayoutEntries[idx])),
+			0,
+			GetInputLayoutFormat(inputLayoutEntries[idx]),
+			0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		};
+	}
+}
+
+UINT InitializeRenderComponentsSystem::GetRootParameterNumValues(RootParameters paramType)
+{
+	constexpr UINT k_mvpNumValues = 16u;
+	switch (paramType)
+	{
+	case MatricesCB:		return k_mvpNumValues;
+	case Textures:			return 1u;
+	default:
+		static_assert(RootParameters::NumRootParameters == 2u);
+	}
+	ASSERT(false, "InitializeRenderComponentsSystem::GetRootParameterNumValues Incorrect input param");
+	return 0u;
+}
+
+D3D12_SHADER_VISIBILITY InitializeRenderComponentsSystem::GetRootParameterShaderVisibility(RootParameters paramType)
+{
+	switch (paramType)
+	{
+	case MatricesCB:		return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
+	case Textures:			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL;
+	default:
+		static_assert(RootParameters::NumRootParameters == 2u);
+	}
+	ASSERT(false, "InitializeRenderComponentsSystem::GetRootParameterShaderVisibility Incorrect input param");
+	return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
 }
 
 }
