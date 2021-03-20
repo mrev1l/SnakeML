@@ -60,15 +60,12 @@ void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, st
 	for (auto& vertex : outVertices)
 	{
 		ASSERT(vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u, "Invalid vertices json");
-		//ASSERT(vertexIt->HasMember("color") && (*vertexIt)["color"].IsArray() && (*vertexIt)["color"].Size() == 3u, "Invalid vertices json");
 		ASSERT(vertexIt->HasMember("uv") && (*vertexIt)["uv"].IsArray() && (*vertexIt)["uv"].Size() == 2u, "Invalid vertices json");
 
 		const rapidjson::GenericArray<true, rapidjson::Value>& pos = (*vertexIt)["pos"].GetArray();
-		//const rapidjson::GenericArray<true, rapidjson::Value>& color = (*vertexIt)["color"].GetArray();
 		const rapidjson::GenericArray<true, rapidjson::Value>& uv = (*vertexIt)["uv"].GetArray();
 
 		vertex.first = { pos[0].GetFloat(), pos[1].GetFloat(), pos[2].GetFloat() };
-		//vertex.second = { color[0].GetFloat(), color[1].GetFloat(), color[2].GetFloat() };
 		vertex.second = { uv[0].GetFloat(), uv[1].GetFloat()};
 
 		++vertexIt;
