@@ -68,7 +68,7 @@ std::shared_ptr<DX12CommandList> DX12CommandQueue::GetCommandList()
 	else
 	{
 		// Otherwise create a new command list.
-		commandList = std::make_shared<DX12CommandList>(m_commandListType);
+		commandList = std::make_shared<DX12CommandList>(m_commandListType); //-V106
 	}
 
 	return commandList;

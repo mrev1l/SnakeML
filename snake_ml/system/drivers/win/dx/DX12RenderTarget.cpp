@@ -18,12 +18,12 @@ DX12RenderTarget::DX12RenderTarget()
 
 void DX12RenderTarget::AttachTexture(AttachmentPoint attachmentPoint, const DX12Texture& texture)
 {
-	m_textures[attachmentPoint] = texture;
+	m_textures[static_cast<size_t>(attachmentPoint)] = texture;
 }
 
 const DX12Texture& DX12RenderTarget::GetTexture(AttachmentPoint attachmentPoint) const
 {
-	return m_textures[attachmentPoint];
+	return m_textures[static_cast<size_t>(attachmentPoint)];
 }
 
 void DX12RenderTarget::Resize(uint32_t width, uint32_t height)

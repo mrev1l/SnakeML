@@ -74,7 +74,7 @@ void DX12DescriptorAllocator::ReleaseStaleDescriptors(uint64_t frameNumber)
 
 std::shared_ptr<DX12DescriptorAllocatorPage> DX12DescriptorAllocator::CreateAllocatorPage()
 {
-	auto newPage = std::make_shared<DX12DescriptorAllocatorPage>(m_heapType, m_numDescriptorsPerHeap);
+	auto newPage = std::make_shared<DX12DescriptorAllocatorPage>(m_heapType, m_numDescriptorsPerHeap); //-V106
 
 	m_heapPool.emplace_back(newPage);
 	m_availableHeaps.insert(m_heapPool.size() - 1);
