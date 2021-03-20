@@ -4,11 +4,9 @@
 #include "LoadMaterialsSystem.h"
 
 #include "system/drivers/win/dx/helpers/directX_utils.h"
+#include "system/drivers/win/os/helpers/win_utils.h"
 
 #include "system/ecs/ECSManager.h"
-
-#include "utils/win_utils.h"
-
 
 namespace snakeml
 {
@@ -25,7 +23,7 @@ void LoadMaterialsSystem::Execute()
 
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
-	winutils::WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
+	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
 	ParseJsonString(jsonString.c_str(), jsonDocument);
 
@@ -101,7 +99,7 @@ void LoadMaterialsSystem::ParseVSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
 
 	std::string vs = json["vs"].GetString();
-	winutils::WinUtils::StringToWstring(vs.c_str(), outVSName);
+	WinUtils::StringToWstring(vs.c_str(), outVSName);
 }
 
 void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstring& outPSName)
@@ -109,7 +107,7 @@ void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstr
 	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
 
 	std::string ps = json["ps"].GetString();
-	winutils::WinUtils::StringToWstring(ps.c_str(), outPSName);
+	WinUtils::StringToWstring(ps.c_str(), outPSName);
 }
 
 void LoadMaterialsSystem::ParseVertexInputLayout(const rapidjson::Document& json, std::vector<D3D12_INPUT_ELEMENT_DESC>& outLayout)
@@ -165,7 +163,7 @@ void LoadMaterialsSystem::ParseTexturePath(const rapidjson::Document& json, std:
 	const bool isString = json["texture"].IsString();
 	if (hasTexturePath && isString)
 	{
-		winutils::WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
+		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
 	}
 }
 

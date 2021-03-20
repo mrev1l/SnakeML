@@ -7,9 +7,9 @@
 
 namespace snakeml
 {
-#ifdef _WINDOWS
-namespace winutils
+namespace system
 {
+#ifdef _WINDOWS
 
 class WinUtils
 {
@@ -36,6 +36,6 @@ enum class SupportedKey : uint64_t
 	F11 = VK_F11,
 };
 
-}
 #endif
+}
 }

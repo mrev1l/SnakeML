@@ -3,7 +3,6 @@
 #pragma once
 
 #include "utils/patterns/singleton.h"
-#include "utils/win_utils.h"
 
 namespace snakeml
 {

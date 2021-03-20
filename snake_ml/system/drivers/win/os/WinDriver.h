@@ -2,8 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 #include "system/drivers/OSDriver.h"
+#include "system/drivers/win/os/helpers/win_utils.h"
 
-#include "utils/win_utils.h"
 #include "utils/types/HighResolutionClock.h"
 
 namespace snakeml

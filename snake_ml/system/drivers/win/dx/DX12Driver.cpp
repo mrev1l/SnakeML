@@ -12,8 +12,6 @@
 
 #include "system/ecs/components/TransformComponent.h"
 
-#include "utils/win_utils.h"
-
 namespace snakeml
 {
 namespace system

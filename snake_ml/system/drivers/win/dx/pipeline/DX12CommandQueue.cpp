@@ -8,7 +8,7 @@
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 
-#include "utils/win_utils.h"
+#include "system/drivers/win/os/helpers/win_utils.h"
 
 namespace snakeml
 {
@@ -159,7 +159,7 @@ void DX12CommandQueue::WaitForFenceValue(uint64_t fenceValue)
 {
 	if (!IsFenceComplete(fenceValue))
 	{
-		auto eventHandle = winutils::WinUtils::CreateEventHandle();
+		auto eventHandle = WinUtils::CreateEventHandle();
 
 		// Is this function thread safe?
 		m_d3d12Fence->SetEventOnCompletion(fenceValue, eventHandle);

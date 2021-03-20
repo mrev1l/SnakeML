@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 
+#include "lib_includes/win_includes.h"
+
 #include "system/Application.h"
 
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)

@@ -5,8 +5,7 @@
 
 #include "system/drivers/OSDriver.h"
 #include "system/drivers/RenderDriver.h"
-
-#include "utils/win_utils.h"
+#include "system/drivers/win/os/helpers/win_utils.h"
 
 namespace snakeml
 {
@@ -20,9 +19,9 @@ InputManager::InputManager()
 
 void InputManager::ProcessInput(uint64_t inputKey)
 {
-	switch (static_cast<winutils::SupportedKey>(inputKey))
+	switch (static_cast<SupportedKey>(inputKey))
 	{
-	case winutils::SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
+	case SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
 	//case SupportedKey::F11: system::RenderDriver::GetInstance()->SetFullscreenMode(!system::RenderDriver::GetInstance()->IsInFullscreen(), system::OSDriver::GetInstance()->GetWindowHandle()); break;
 	default:
 		break;
