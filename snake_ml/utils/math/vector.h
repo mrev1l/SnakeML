@@ -29,9 +29,20 @@ public:
 	vector<T> operator*(T scalar) const;
 	void operator*=(T scalar);
 
+	vector<T> operator/(T scalar) const;
+	void operator/(T scalar);
+
 	T x = static_cast<T>(0);
 	T y = static_cast<T>(0);
 	T z = static_cast<T>(0);
+
+	static vector<T> forward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+1) };
+	static vector<T> backward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(-1) };
+	static vector<T> up			= vector<T> { static_cast<T>(+0), static_cast<T>(+1), static_cast<T>(+0) };
+	static vector<T> down		= vector<T> { static_cast<T>(+0), static_cast<T>(-1), static_cast<T>(+0) };
+	static vector<T> right		= vector<T> { static_cast<T>(+1), static_cast<T>(+0), static_cast<T>(+0) };
+	static vector<T> left		= vector<T> { static_cast<T>(-1), static_cast<T>(+0), static_cast<T>(+0) };
+	static vector<T> zero		= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+0) };
 };
 
 #include "vector.inl"
