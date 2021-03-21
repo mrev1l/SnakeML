@@ -36,13 +36,13 @@ public:
 	T y = static_cast<T>(0);
 	T z = static_cast<T>(0);
 
-	static vector<T> forward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+1) };
-	static vector<T> backward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(-1) };
-	static vector<T> up			= vector<T> { static_cast<T>(+0), static_cast<T>(+1), static_cast<T>(+0) };
-	static vector<T> down		= vector<T> { static_cast<T>(+0), static_cast<T>(-1), static_cast<T>(+0) };
-	static vector<T> right		= vector<T> { static_cast<T>(+1), static_cast<T>(+0), static_cast<T>(+0) };
-	static vector<T> left		= vector<T> { static_cast<T>(-1), static_cast<T>(+0), static_cast<T>(+0) };
-	static vector<T> zero		= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+0) };
+	static const vector<T> forward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+1) };
+	static const vector<T> backward	= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(-1) };
+	static const vector<T> up		= vector<T> { static_cast<T>(+0), static_cast<T>(+1), static_cast<T>(+0) };
+	static const vector<T> down		= vector<T> { static_cast<T>(+0), static_cast<T>(-1), static_cast<T>(+0) };
+	static const vector<T> right	= vector<T> { static_cast<T>(+1), static_cast<T>(+0), static_cast<T>(+0) };
+	static const vector<T> left		= vector<T> { static_cast<T>(-1), static_cast<T>(+0), static_cast<T>(+0) };
+	static const vector<T> zero		= vector<T> { static_cast<T>(+0), static_cast<T>(+0), static_cast<T>(+0) };
 };
 
 #include "vector.inl"
