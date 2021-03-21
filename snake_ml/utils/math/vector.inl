@@ -74,3 +74,15 @@ inline void snakeml::math::vector<T>::operator*=(T scalar)
 {
 	x *= scalar; y *= scalar; z *= scalar;
 }
+
+template<typename T>
+inline snakeml::math::vector<T> snakeml::math::vector<T>::operator/(T scalar) const
+{
+	return vector<T> {x / scalar, y / scalar, z / scalar};
+}
+
+template<typename T>
+inline void snakeml::math::vector<T>::operator/(T scalar)
+{
+	x /= scalar; y /= scalar; z /= scalar;
+}
