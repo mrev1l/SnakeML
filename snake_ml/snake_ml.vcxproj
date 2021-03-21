@@ -272,6 +272,7 @@
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
+    <ClCompile Include="utils\math\vector.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp" />
   </ItemGroup>
@@ -328,6 +329,7 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="utils\math\vector.h" />
     <ClInclude Include="utils\os_defines.h" />
     <ClInclude Include="utils\patterns\event.h" />
     <ClInclude Include="utils\patterns\singleton.h" />
@@ -439,6 +441,9 @@
     <ProjectReference Include="..\third_party\win\DirectXTex\DirectXTex\DirectXTex_Desktop_2019.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="utils\math\vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
