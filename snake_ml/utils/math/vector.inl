@@ -1,4 +1,3 @@
-#include "vector.h"
 #pragma once
 
 template<typename T>
