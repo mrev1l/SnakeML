@@ -159,6 +159,9 @@
     <ClCompile Include="utils\math\vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\math\matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -344,6 +347,9 @@
     <ClInclude Include="utils\math\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\math\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -355,6 +361,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="utils\math\vector.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="utils\math\matrix.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
