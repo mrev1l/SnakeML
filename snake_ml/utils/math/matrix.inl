@@ -170,3 +170,24 @@ inline snakeml::math::matrix ScaleMatrix(snakeml::math::vector scale)
 	scaleMatrix.m[2][2] = scale.z;
 	return scaleMatrix;
 }
+
+inline snakeml::math::matrix ScaleMatrix(float x, float y, float z)
+{
+	snakeml::math::vector scale(x, y, z);
+	return ScaleMatrix(scale);
+}
+
+inline snakeml::math::matrix TranslationMatrix(snakeml::math::vector translation)
+{
+	snakeml::math::matrix scaleMatrix;
+	scaleMatrix.m[3][0] = translation.x;
+	scaleMatrix.m[3][1] = translation.y;
+	scaleMatrix.m[3][2] = translation.z;
+	return scaleMatrix;
+}
+
+inline snakeml::math::matrix TranslationMatrix(float x, float y, float z)
+{
+	snakeml::math::vector translation(x, y, z);
+	return TranslationMatrix(translation);
+}
