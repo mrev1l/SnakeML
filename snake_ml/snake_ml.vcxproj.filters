@@ -350,6 +350,9 @@
     <ClInclude Include="utils\math\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\math\math_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
