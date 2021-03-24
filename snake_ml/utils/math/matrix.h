@@ -1,53 +1,53 @@
 #pragma once
+#include "vector.h"
 
 namespace snakeml
 {
 namespace math
 {
 
-template<typename T>
 class matrix
 {
 public:
 	matrix();
 	matrix(
-		T _00, T _01, T _02, T _03,
-		T _10, T _11, T _12, T _13,
-		T _20, T _21, T _22, T _23,
-		T _30, T _31, T _32, T _33);
+		float _00, float _01, float _02, float _03,
+		float _10, float _11, float _12, float _13,
+		float _20, float _21, float _22, float _23,
+		float _30, float _31, float _32, float _33);
 	matrix(const matrix& _m);
 	matrix(matrix&& _m);
 	~matrix() = default;
 
-	matrix<T> inverse() const;
+	matrix inverse() const;
 
-	matrix<T>& operator=(const matrix& _m);
-	matrix<T>& operator=(matrix&& _m);
+	matrix& operator=(const matrix& _m);
+	matrix& operator=(matrix&& _m);
 
-	matrix<T> operator+(const matrix<T>& _m) const;
-	void operator+=(const matrix<T>& _m);
+	matrix operator+(const matrix& _m) const;
+	void operator+=(const matrix& _m);
 
-	matrix<T> operator-(const matrix<T>& _m) const;
-	void operator-=(const matrix<T>& _m);
-	matrix<T> operator-() const;
+	matrix operator-(const matrix& _m) const;
+	void operator-=(const matrix& _m);
+	matrix operator-() const;
 
-	matrix<T> operator*(float scalar) const;
-	matrix<T> operator*(const matrix<T>& _m) const;
-	void operator*=(const matrix<T>& _m);
+	matrix operator*(float scalar) const;
+	matrix operator*(const matrix& _m) const;
+	void operator*=(const matrix& _m);
 
-	matrix<T> operator/(float scalar) const;
+	matrix operator/(float scalar) const;
 
-	static const matrix<T> identity;
+	float m[4][4];
+
+	static const matrix identity;
 
 private:
 	void copy(const matrix& _m);
-
-	T m[4][4];
 };
 
-#include "matrix.inl"
+inline matrix ScaleMatrix(vector scale);
 
-using matrixf = matrix<float>;
+#include "matrix.inl"
 
 }
 }
