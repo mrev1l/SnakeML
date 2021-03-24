@@ -1,27 +1,24 @@
 #include "matrix.h"
 #pragma once
 
-template<typename T>
-const snakeml::math::matrix<T> snakeml::math::matrix<T>::identity =
+inline const snakeml::math::matrix snakeml::math::matrix::identity =
 {
-	static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
-	static_cast<T>(0), static_cast<T>(1), static_cast<T>(0), static_cast<T>(0),
-	static_cast<T>(0), static_cast<T>(0), static_cast<T>(1), static_cast<T>(0),
-	static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)
+	1.f, 0.f, 0.f, 0.f,
+	0.f, 1.f, 0.f, 0.f,
+	0.f, 0.f, 1.f, 0.f,
+	0.f, 0.f, 0.f, 1.f
 };
 
-template<typename T>
-snakeml::math::matrix<T>::matrix()
+inline snakeml::math::matrix::matrix()
 {
 	*this = identity;
 }
 
-template<typename T>
-snakeml::math::matrix<T>::matrix(
-	T _00, T _01, T _02, T _03,
-	T _10, T _11, T _12, T _13,
-	T _20, T _21, T _22, T _23,
-	T _30, T _31, T _32, T _33
+inline snakeml::math::matrix::matrix(
+	float _00, float _01, float _02, float _03,
+	float _10, float _11, float _12, float _13,
+	float _20, float _21, float _22, float _23,
+	float _30, float _31, float _32, float _33
 )
 {
 	m[0][0] = _00; m[0][1] = _01; m[0][2] = _02; m[0][3] = _03;
@@ -31,23 +28,20 @@ snakeml::math::matrix<T>::matrix(
 }
 
 
-template<typename T>
-snakeml::math::matrix<T>::matrix(const matrix<T>& _m)
+inline snakeml::math::matrix::matrix(const matrix& _m)
 {
 	copy(_m);
 }
 
-template<typename T>
-snakeml::math::matrix<T>::matrix(matrix<T>&& _m)
+inline snakeml::math::matrix::matrix(matrix&& _m)
 {
 	std::swap(m, _m.m);
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::inverse() const
+inline snakeml::math::matrix snakeml::math::matrix::inverse() const
 {
-	matrix<T> augmented = *this;
-	matrix<T> inverse = identity;
+	matrix augmented = *this;
+	matrix inverse = identity;
 
 	auto& aug = augmented.m;
 	auto& inv = inverse.m;
@@ -81,72 +75,63 @@ inline snakeml::math::matrix<T> snakeml::math::matrix<T>::inverse() const
 	return inverse;
 }
 
-template<typename T>
-inline snakeml::math::matrix<T>& snakeml::math::matrix<T>::operator=(const matrix& _m)
+inline snakeml::math::matrix& snakeml::math::matrix::operator=(const matrix& _m)
 {
 	copy(_m);
 	return *this;
 }
 
-template<typename T>
-inline snakeml::math::matrix<T>& snakeml::math::matrix<T>::operator=(matrix&& _m)
+inline snakeml::math::matrix& snakeml::math::matrix::operator=(matrix&& _m)
 {
 	std::swap(m, _m.m);
 	return *this;
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator+(const matrix<T>& _m) const
+inline snakeml::math::matrix snakeml::math::matrix::operator+(const matrix& _m) const
 {
-	return matrix<T>(
+	return matrix(
 		m[0][0] + _m.m[0][0], m[0][1] + _m.m[0][1], m[0][2] + _m.m[0][2], m[0][3] + _m.m[0][3],
 		m[1][0] + _m.m[1][0], m[1][1] + _m.m[1][1], m[1][2] + _m.m[1][2], m[1][3] + _m.m[1][3],
 		m[2][0] + _m.m[2][0], m[2][1] + _m.m[2][1], m[2][2] + _m.m[2][2], m[2][3] + _m.m[2][3],
 		m[3][0] + _m.m[3][0], m[3][1] + _m.m[3][1], m[3][2] + _m.m[3][2], m[3][3] + _m.m[3][3]);
 }
 
-template<typename T>
-inline void snakeml::math::matrix<T>::operator+=(const matrix<T>& _m)
+inline void snakeml::math::matrix::operator+=(const matrix& _m)
 {
 	*this = (*this + _m);
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator-(const matrix<T>& _m) const
+inline snakeml::math::matrix snakeml::math::matrix::operator-(const matrix& _m) const
 {
-	return matrix<T>(
+	return matrix(
 		m[0][0] - _m.m[0][0], m[0][1] - _m.m[0][1], m[0][2] - _m.m[0][2], m[0][3] - _m.m[0][3],
 		m[1][0] - _m.m[1][0], m[1][1] - _m.m[1][1], m[1][2] - _m.m[1][2], m[1][3] - _m.m[1][3],
 		m[2][0] - _m.m[2][0], m[2][1] - _m.m[2][1], m[2][2] - _m.m[2][2], m[2][3] - _m.m[2][3],
 		m[3][0] - _m.m[3][0], m[3][1] - _m.m[3][1], m[3][2] - _m.m[3][2], m[3][3] - _m.m[3][3]);
 }
 
-template<typename T>
-inline void snakeml::math::matrix<T>::operator-=(const matrix<T>& _m)
+inline void snakeml::math::matrix::operator-=(const matrix& _m)
 {
 	*this = (*this - _m);
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator-() const
+inline snakeml::math::matrix snakeml::math::matrix::operator-() const
 {
 	return *this * -1.f;
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator*(float scalar) const
+inline snakeml::math::matrix snakeml::math::matrix::operator*(float scalar) const
 {
-	return matrix<T>(
+	return matrix(
 		m[0][0] * scalar, m[0][1] * scalar, m[0][2] * scalar, m[0][3] * scalar,
 		m[1][0] * scalar, m[1][1] * scalar, m[1][2] * scalar, m[1][3] * scalar,
 		m[2][0] * scalar, m[2][1] * scalar, m[2][2] * scalar, m[2][3] * scalar,
 		m[3][0] * scalar, m[3][1] * scalar, m[3][2] * scalar, m[3][3] * scalar);
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator*(const matrix<T>& _m) const
+inline snakeml::math::matrix snakeml::math::matrix::operator*(const matrix& _m) const
 {
-	matrix<T> res;
+	matrix res;
 	for (size_t i = 0u; i < 16u; ++i)
 	{
 		res.m[i / 4u][i % 4u] = m[i / 4u][0] * _m.m[0][i % 4u] + m[i / 4u][1] * _m.m[1][i % 4u] +
@@ -155,27 +140,33 @@ inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator*(const matrix
 	return res;
 }
 
-template<typename T>
-inline void snakeml::math::matrix<T>::operator*=(const matrix<T>& _m)
+inline void snakeml::math::matrix::operator*=(const matrix& _m)
 {
 	*this = *this * _m;
 }
 
-template<typename T>
-inline snakeml::math::matrix<T> snakeml::math::matrix<T>::operator/(float scalar) const
+inline snakeml::math::matrix snakeml::math::matrix::operator/(float scalar) const
 {
 	return *this * (1.f / scalar);
 }
 
-template<typename T>
-inline void snakeml::math::matrix<T>::copy(const matrix& _m)
+inline void snakeml::math::matrix::copy(const matrix& _m)
 {
 	for (size_t i = 0 ; i < 4; ++i)
 	{
-		const T* sourceBegin = &_m.m[i][0];
-		const T* sourceEnd = &_m.m[i][0] + 4;
-		T* destEnd = &m[i][0];
+		const float* sourceBegin = &_m.m[i][0];
+		const float* sourceEnd = &_m.m[i][0] + 4;
+		float* destEnd = &m[i][0];
 
 		std::copy(sourceBegin, sourceEnd, destEnd);
 	}
+}
+
+inline snakeml::math::matrix ScaleMatrix(snakeml::math::vector scale)
+{
+	snakeml::math::matrix scaleMatrix;
+	scaleMatrix.m[0][0] = scale.x;
+	scaleMatrix.m[1][1] = scale.y;
+	scaleMatrix.m[2][2] = scale.z;
+	return scaleMatrix;
 }
