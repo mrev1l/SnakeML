@@ -1,87 +1,81 @@
 #pragma once
 
-template<typename T>
-inline float snakeml::math::vector<T>::length() const
+const snakeml::math::vector snakeml::math::vector::forward	= vector{ +0.f, +0.f, +1.f };
+const snakeml::math::vector snakeml::math::vector::backward = vector{ +0.f, +0.f, -1.f };
+const snakeml::math::vector snakeml::math::vector::up		= vector{ +0.f, +1.f, +0.f };
+const snakeml::math::vector snakeml::math::vector::down		= vector{ +0.f, -1.f, +0.f };
+const snakeml::math::vector snakeml::math::vector::right	= vector{ +1.f, +0.f, +0.f };
+const snakeml::math::vector snakeml::math::vector::left		= vector{ -1.f, +0.f, +0.f };
+const snakeml::math::vector snakeml::math::vector::zero		= vector{ +0.f, +0.f, +0.f };
+
+inline float snakeml::math::vector::length() const
 {
 	return sqrtf(x * x + y * y + z * z);
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::getNormalized() const
+inline snakeml::math::vector snakeml::math::vector::getNormalized() const
 {
 	const float len = length();
-	return vector<T> { x / len, y / len, z / len };
+	return vector { x / len, y / len, z / len };
 }
 
-template<typename T>
-inline void snakeml::math::vector<T>::normalize()
+inline void snakeml::math::vector::normalize()
 {
 	*this = getNormalized();
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::cross(const vector<T>& a) const
+inline snakeml::math::vector snakeml::math::vector::cross(const vector& a) const
 {
-	return vector<T> {y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x };
+	return vector {y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x };
 }
 
-template<typename T>
-inline float snakeml::math::vector<T>::dot(const vector<T>& a) const
+inline float snakeml::math::vector::dot(const vector& a) const
 {
 	return x * a.x + y * a.y + z * a.z;
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::operator+(const vector<T>& a) const
+inline snakeml::math::vector snakeml::math::vector::operator+(const vector& a) const
 {
-	return vector<T>{ a.x + x, a.y + y, a.z + z };
+	return vector{ a.x + x, a.y + y, a.z + z };
 }
 
-template<typename T>
-inline void snakeml::math::vector<T>::operator+=(const vector<T>& a)
+inline void snakeml::math::vector::operator+=(const vector& a)
 {
-	x += a.x; y += a.y; z += z.z;
+	x += a.x; y += a.y; z += a.z;
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::operator-(const vector<T>& a) const
+inline snakeml::math::vector snakeml::math::vector::operator-(const vector& a) const
 {
-	return vector<T>{ x - a.x, y - a.y, z - a.z };
+	return vector{ x - a.x, y - a.y, z - a.z };
 }
 
 
-template<typename T>
-inline void snakeml::math::vector<T>::operator-=(const snakeml::math::vector<T>& a)
+inline void snakeml::math::vector::operator-=(const snakeml::math::vector& a)
 {
 	x -= a.x; y -= a.y; z -= a.z;
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::operator-()
+inline snakeml::math::vector snakeml::math::vector::operator-()
 {
-	return vector<T> {-x, -y, -z};
+	return vector {-x, -y, -z};
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::operator*(T scalar) const
+inline snakeml::math::vector snakeml::math::vector::operator*(float scalar) const
 {
-	return vector<T> { x * scalar, y * scalar, z * scalar };
+	return vector { x * scalar, y * scalar, z * scalar };
 }
 
-template<typename T>
-inline void snakeml::math::vector<T>::operator*=(T scalar)
+inline void snakeml::math::vector::operator*=(float scalar)
 {
 	x *= scalar; y *= scalar; z *= scalar;
 }
 
-template<typename T>
-inline snakeml::math::vector<T> snakeml::math::vector<T>::operator/(T scalar) const
+inline snakeml::math::vector snakeml::math::vector::operator/(float scalar) const
 {
-	return vector<T> {x / scalar, y / scalar, z / scalar};
+	return vector {x / scalar, y / scalar, z / scalar};
 }
 
-template<typename T>
-inline void snakeml::math::vector<T>::operator/(T scalar)
+inline void snakeml::math::vector::operator/(float scalar)
 {
 	x /= scalar; y /= scalar; z /= scalar;
 }
