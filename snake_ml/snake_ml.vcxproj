@@ -330,6 +330,7 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="utils\math\math_utils.h" />
     <ClInclude Include="utils\math\matrix.h" />
     <ClInclude Include="utils\math\vector.h" />
     <ClInclude Include="utils\os_defines.h" />
