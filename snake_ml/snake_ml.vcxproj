@@ -272,6 +272,7 @@
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
+    <ClCompile Include="utils\math\matrix.cpp" />
     <ClCompile Include="utils\math\vector.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="utils\math\matrix.h" />
     <ClInclude Include="utils\math\vector.h" />
     <ClInclude Include="utils\os_defines.h" />
     <ClInclude Include="utils\patterns\event.h" />
@@ -443,6 +445,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="utils\math\matrix.inl" />
     <None Include="utils\math\vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
