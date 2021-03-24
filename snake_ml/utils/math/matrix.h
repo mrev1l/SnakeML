@@ -46,6 +46,10 @@ private:
 };
 
 inline matrix ScaleMatrix(vector scale);
+inline matrix ScaleMatrix(float x, float y, float z);
+
+inline matrix TranslationMatrix(vector translation);
+inline matrix TranslationMatrix(float x, float y, float z);
 
 #include "matrix.inl"
 
