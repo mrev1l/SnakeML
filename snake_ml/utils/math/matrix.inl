@@ -191,3 +191,59 @@ inline snakeml::math::matrix TranslationMatrix(float x, float y, float z)
 	snakeml::math::vector translation(x, y, z);
 	return TranslationMatrix(translation);
 }
+
+inline snakeml::math::matrix RotationYawMatrix(float yawRad)
+{
+	/*
+	* to account for the left-handed coordinate system of DirectX,
+	* the angle needs to be flipped
+	*/
+	const float leftHandedYawRad = -yawRad;
+	snakeml::math::matrix rotationMatrix;
+	float cosYaw = cosf(leftHandedYawRad);
+	float sinYaw = sinf(leftHandedYawRad);
+	rotationMatrix.m[0][0] = cosYaw;
+	rotationMatrix.m[0][2] = sinYaw;
+	rotationMatrix.m[2][0] = -sinYaw;
+	rotationMatrix.m[2][2] = cosYaw;
+	return rotationMatrix;
+}
+
+inline snakeml::math::matrix RotationPitchMatrix(float pitchRad)
+{
+	/*
+	* to account for the left-handed coordinate system of DirectX,
+	* the angle needs to be flipped
+	*/
+	const float leftHandedPitchRad = -pitchRad;
+	snakeml::math::matrix rotationMatrix;
+	float cosPitch = cosf(leftHandedPitchRad);
+	float sinPitch = sinf(leftHandedPitchRad);
+	rotationMatrix.m[1][1] = cosPitch;
+	rotationMatrix.m[1][2] = -sinPitch;
+	rotationMatrix.m[2][1] = sinPitch;
+	rotationMatrix.m[2][2] = cosPitch;
+	return rotationMatrix;
+}
+
+inline snakeml::math::matrix RotationRollMatrix(float rollRad)
+{
+	/*
+	* to account for the left-handed coordinate system of DirectX,
+	* the angle needs to be flipped
+	*/
+	const float leftHandedRollRad = -rollRad;
+	snakeml::math::matrix rotationMatrix;
+	float cosRoll = cosf(leftHandedRollRad);
+	float sinRoll = sinf(leftHandedRollRad);
+	rotationMatrix.m[0][0] = cosRoll;
+	rotationMatrix.m[0][1] = -sinRoll;
+	rotationMatrix.m[1][0] = sinRoll;
+	rotationMatrix.m[1][1] = cosRoll;
+	return rotationMatrix;
+}
+
+inline snakeml::math::matrix RotationMatrix(float yawRad, float pitchRad, float rollRad)
+{
+	return (RotationRollMatrix(rollRad) * RotationPitchMatrix(pitchRad)) * RotationYawMatrix(yawRad);
+}

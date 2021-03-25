@@ -51,6 +51,11 @@ inline matrix ScaleMatrix(float x, float y, float z);
 inline matrix TranslationMatrix(vector translation);
 inline matrix TranslationMatrix(float x, float y, float z);
 
+inline matrix RotationYawMatrix(float yawRad);
+inline matrix RotationPitchMatrix(float pitchRad);
+inline matrix RotationRollMatrix(float rollRad);
+inline matrix RotationMatrix(float yawRad, float pitchRad, float rollRad);
+
 #include "matrix.inl"
 
 }
