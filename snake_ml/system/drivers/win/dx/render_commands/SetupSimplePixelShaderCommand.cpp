@@ -15,7 +15,7 @@ namespace system
 namespace win
 {
 
-SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture, const DirectX::XMMATRIX& mvp)
+SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture, const math::matrix& mvp)
 	: DX12RenderCommand()
 	, m_pipelineState(pipelineState)
 	, m_rootSignature(rootSignature)

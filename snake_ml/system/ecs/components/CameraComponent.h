@@ -2,8 +2,6 @@
 
 #include "system/ecs/IComponent.h"
 
-#include "utils/snake_math.h"
-
 namespace snakeml
 {
 namespace system
@@ -15,9 +13,9 @@ public:
 	virtual ~CameraComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::CameraComponent; }
 
-	types::vec4<float> m_eyePosition;
-	types::vec4<float> m_focusPoint;
-	types::vec4<float> m_upDirection;
+	math::vector m_eyePosition;
+	math::vector m_focusPoint;
+	math::vector m_upDirection;
 };
 REGISTER_TYPE(CameraComponent);
 

@@ -58,7 +58,7 @@ public:
 	 */
 	DXGI_SAMPLE_DESC GetMultisampleQualityLevels(DXGI_FORMAT format, UINT numSamples, D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE) const;
 
-	void GetMatrices(DirectX::XMMATRIX& outProjection, DirectX::XMMATRIX& outOrthogonal);
+	void GetMatrices(math::matrix& outProjection, math::matrix& outOrthogonal) const;
 
 private:
 	void OnInitialize() override;
@@ -126,8 +126,8 @@ private:
 
 	float m_foV = 45.f;
 
-	DirectX::XMMATRIX m_projectionMatrix;
-	DirectX::XMMATRIX m_orthogonalMatrix;
+	math::matrix m_projectionMatrix;
+	math::matrix m_orthogonalMatrix;
 };
 
 }
