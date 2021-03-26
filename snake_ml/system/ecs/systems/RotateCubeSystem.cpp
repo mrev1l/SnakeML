@@ -25,9 +25,9 @@ void RotateCubeSystem::Execute()
 	if (entityIt != entities.end())
 	{
 		TransformComponent& transform = *(TransformComponent*)(entityIt->m_components.at(ComponentType::TransformComponent));
-		transform.m_rotation.m_x += angle;
-		transform.m_rotation.m_y += angle;
-		transform.m_rotation.m_z += angle;
+		transform.m_rotation.x += angle;
+		transform.m_rotation.y += angle;
+		transform.m_rotation.z += angle;
 	}
 }
 

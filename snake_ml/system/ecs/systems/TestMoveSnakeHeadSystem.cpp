@@ -38,8 +38,8 @@ void TestMoveSnakeHeadSystem::Execute()
 		if (entityIt != entities.end())
 		{
 			TransformComponent& transform = *(TransformComponent*)(entityIt->m_components.at(ComponentType::TransformComponent));
-			transform.m_scale.m_x = scale;
-			transform.m_scale.m_y = scale;
+			transform.m_scale.x = scale;
+			transform.m_scale.y = scale;
 
 			float x = static_cast<float>(cellIdx % 10);
 			x *= 72.f;
@@ -50,7 +50,7 @@ void TestMoveSnakeHeadSystem::Execute()
 			y -= 360.f;
 			y *= -1;
 			y -= 36.f;
-			transform.m_position = { x, y };
+			transform.m_position = { x, y, 0.f };
 
 			cellIdx = ++cellIdx % 100; //-V567
 		}

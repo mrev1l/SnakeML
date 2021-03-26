@@ -17,9 +17,9 @@ void InitializeCameraSystem::Execute()
 	CameraComponent& camera = *(CameraComponent*)it->At(0);
 
 	camera.m_entityId = 1;
-	camera.m_eyePosition =	{ 0.f, 0.f, -10.f, 1.f };
-	camera.m_focusPoint =	{ 0.f, 0.f, 0.f, 1.f };
-	camera.m_upDirection =	{ 0.f, 1.f, 0.f, 0.f };
+	camera.m_eyePosition =	{ 0.f, 0.f, -10.f };
+	camera.m_focusPoint =	{ 0.f, 0.f, 0.f };
+	camera.m_upDirection =	{ 0.f, 1.f, 0.f };
 
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::CameraComponent, it);
 }

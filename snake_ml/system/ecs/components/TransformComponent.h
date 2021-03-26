@@ -15,9 +15,9 @@ public:
 	virtual ~TransformComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::TransformComponent; }
 
-	types::vec4<float> m_position;
-	types::vec4<float> m_rotation;
-	types::vec4<float> m_scale;
+	math::vector m_position;
+	math::vector m_rotation;
+	math::vector m_scale;
 };
 REGISTER_TYPE(TransformComponent);
 

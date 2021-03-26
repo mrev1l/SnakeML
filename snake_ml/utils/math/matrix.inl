@@ -276,3 +276,20 @@ inline snakeml::math::matrix OrthographicMatrixLH(float viewWidth, float viewHei
 
 	return result;
 }
+
+inline snakeml::math::matrix LookAtMatrixLH(snakeml::math::vector eyePos, snakeml::math::vector lookAt, snakeml::math::vector up)
+{
+	snakeml::math::vector zaxis = (lookAt - eyePos).getNormalized(); // The "forward" vector.	
+	snakeml::math::vector xaxis = up.cross(zaxis).getNormalized();  // The "right" vector.
+	snakeml::math::vector yaxis = zaxis.cross(xaxis).getNormalized(); // The "up" vector.
+
+	snakeml::math::matrix orientation(
+		xaxis.x, yaxis.x, zaxis.x, 0.0f,
+		xaxis.y, yaxis.y, zaxis.y, 0.0f,
+		xaxis.z, yaxis.z, zaxis.z, 0.0f,
+		0.0f,	 0.0f,	  0.0f,	   1.0f);
+
+	snakeml::math::matrix translation = snakeml::math::TranslationMatrix(-eyePos);
+
+	return translation * orientation;
+}

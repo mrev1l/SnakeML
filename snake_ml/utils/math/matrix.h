@@ -60,6 +60,8 @@ inline matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float near
 
 inline matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ);
 
+inline matrix LookAtMatrixLH(vector eyePos, vector lookAt, vector up);
+
 #include "matrix.inl"
 
 }

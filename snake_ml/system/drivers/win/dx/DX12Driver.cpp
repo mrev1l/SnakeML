@@ -284,7 +284,7 @@ void DX12Driver::InitializeRenderTarget()
 	);
 }
 
-void DX12Driver::GetMatrices(DirectX::XMMATRIX& outProjection, DirectX::XMMATRIX& outOrthogonal)
+void DX12Driver::GetMatrices(math::matrix& outProjection, math::matrix& outOrthogonal) const
 {
 	outProjection = m_projectionMatrix;
 	outOrthogonal = m_orthogonalMatrix;
@@ -306,10 +306,10 @@ void DX12Driver::InitializeRenderTarget_AttachTexture(DXGI_FORMAT format, const 
 
 void DX12Driver::InitializeMatrices()
 {
-	m_orthogonalMatrix = DirectX::XMMatrixOrthographicLH(m_clientWidth, m_clientHeight, 0.1f, 100.f);
+	m_orthogonalMatrix = math::OrthographicMatrixLH(m_clientWidth, m_clientHeight, 0.1f, 100.f);
 
 	float aspectRatio = static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight);
-	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
+	m_projectionMatrix = math::PerspectiveMatrixLH(DirectX::XMConvertToRadians(m_foV), aspectRatio, 0.1f, 100.0f);
 }
 
 }
