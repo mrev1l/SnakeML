@@ -43,12 +43,14 @@ public:
 
 private:
 	void copy(const matrix& _m);
+
+	static constexpr size_t k_rowLength = 4u;
 };
 
-inline matrix ScaleMatrix(vector scale);
+inline matrix ScaleMatrix(const vector& scale);
 inline matrix ScaleMatrix(float x, float y, float z);
 
-inline matrix TranslationMatrix(vector translation);
+inline matrix TranslationMatrix(const vector& translation);
 inline matrix TranslationMatrix(float x, float y, float z);
 
 inline matrix RotationYawMatrix(float yawRad);
@@ -60,7 +62,7 @@ inline matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float near
 
 inline matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ);
 
-inline matrix LookAtMatrixLH(vector eyePos, vector lookAt, vector up);
+inline matrix LookAtMatrixLH(const vector& eyePos, const vector& lookAt, const vector& up);
 
 #include "matrix.inl"
 

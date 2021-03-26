@@ -38,7 +38,8 @@ namespace snakeml
 namespace math
 {
 
-constexpr float default_epsilon = 1e-4f;
+constexpr float k_default_epsilon = 1e-4f;
+constexpr float k_precise_epsilon = 1e-9f;
 
 /***************************************************************************
 	* These functions were taken from the MiniEngine.
@@ -62,6 +63,11 @@ template <typename T>
 inline T DivideByMultiple(T value, size_t alignment)
 {
 	return (T)((value + alignment - 1) / alignment);
+}
+
+inline bool IsNearlyZero(float val)
+{
+	return abs(val - 0.f) < k_precise_epsilon;
 }
 
 }
