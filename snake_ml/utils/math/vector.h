@@ -23,7 +23,7 @@ public:
 	
 	vector operator-(const vector& a) const;
 	void operator-=(const vector& a);
-	vector operator-();
+	vector operator-() const;
 
 	vector operator*(float scalar) const;
 	void operator*=(float scalar);

@@ -46,16 +46,16 @@ inline snakeml::math::matrix snakeml::math::matrix::inverse() const
 	auto& aug = augmented.m;
 	auto& inv = inverse.m;
 
-	for (size_t i = 0u; i < 4u; ++i)
+	for (size_t i = 0u; i < k_rowLength; ++i)
 	{
-		ASSERT(aug[i][i] != 0.f, "Cannot inverse matrix");
+		ASSERT(!math::IsNearlyZero(aug[i][i]), "Cannot inverse matrix");
 
-		for (size_t j = 0u; j < 4u; ++j)
+		for (size_t j = 0u; j < k_rowLength; ++j)
 		{
 			if (i != j)
 			{
 				float ratio = aug[j][i] / aug[i][i];
-				for (size_t k = 0u; k < 4u; ++k)
+				for (size_t k = 0u; k < k_rowLength; ++k)
 				{
 					aug[j][k] = aug[j][k] - ratio * aug[i][k];
 					inv[j][k] = inv[j][k] - ratio * inv[i][k];
@@ -64,9 +64,9 @@ inline snakeml::math::matrix snakeml::math::matrix::inverse() const
 		}
 	}
 
-	for (size_t i = 0u; i < 4u; ++i)
+	for (size_t i = 0u; i < k_rowLength; ++i)
 	{
-		for (size_t j = 0u; j < 4u; ++j)
+		for (size_t j = 0u; j < k_rowLength; ++j)
 		{
 			inv[i][j] /= aug[i][i];
 		}
@@ -134,8 +134,9 @@ inline snakeml::math::matrix snakeml::math::matrix::operator*(const matrix& _m) 
 	matrix res;
 	for (size_t i = 0u; i < 16u; ++i)
 	{
-		res.m[i / 4u][i % 4u] = m[i / 4u][0] * _m.m[0][i % 4u] + m[i / 4u][1] * _m.m[1][i % 4u] +
-			m[i / 4u][2] * _m.m[2][i % 4u] + m[i / 4u][3] * _m.m[3][i % 4u];
+		res.m[i / k_rowLength][i % k_rowLength] = 
+			m[i / k_rowLength][0] * _m.m[0][i % k_rowLength] + m[i / k_rowLength][1] * _m.m[1][i % k_rowLength] +
+			m[i / k_rowLength][2] * _m.m[2][i % k_rowLength] + m[i / k_rowLength][3] * _m.m[3][i % k_rowLength];
 	}
 	return res;
 }
@@ -152,17 +153,17 @@ inline snakeml::math::matrix snakeml::math::matrix::operator/(float scalar) cons
 
 inline void snakeml::math::matrix::copy(const matrix& _m)
 {
-	for (size_t i = 0 ; i < 4; ++i)
+	for (size_t i = 0 ; i < k_rowLength; ++i)
 	{
 		const float* sourceBegin = &_m.m[i][0];
-		const float* sourceEnd = &_m.m[i][0] + 4;
+		const float* sourceEnd = &_m.m[i][0] + k_rowLength;
 		float* destEnd = &m[i][0];
 
 		std::copy(sourceBegin, sourceEnd, destEnd);
 	}
 }
 
-inline snakeml::math::matrix ScaleMatrix(snakeml::math::vector scale)
+inline snakeml::math::matrix ScaleMatrix(const snakeml::math::vector& scale)
 {
 	snakeml::math::matrix scaleMatrix;
 	scaleMatrix.m[0][0] = scale.x;
@@ -174,10 +175,10 @@ inline snakeml::math::matrix ScaleMatrix(snakeml::math::vector scale)
 inline snakeml::math::matrix ScaleMatrix(float x, float y, float z)
 {
 	snakeml::math::vector scale(x, y, z);
-	return ScaleMatrix(scale);
+	return snakeml::math::ScaleMatrix(scale);
 }
 
-inline snakeml::math::matrix TranslationMatrix(snakeml::math::vector translation)
+inline snakeml::math::matrix TranslationMatrix(const snakeml::math::vector& translation)
 {
 	snakeml::math::matrix scaleMatrix;
 	scaleMatrix.m[3][0] = translation.x;
@@ -189,7 +190,7 @@ inline snakeml::math::matrix TranslationMatrix(snakeml::math::vector translation
 inline snakeml::math::matrix TranslationMatrix(float x, float y, float z)
 {
 	snakeml::math::vector translation(x, y, z);
-	return TranslationMatrix(translation);
+	return snakeml::math::TranslationMatrix(translation);
 }
 
 inline snakeml::math::matrix RotationYawMatrix(float yawRad)
@@ -277,11 +278,11 @@ inline snakeml::math::matrix OrthographicMatrixLH(float viewWidth, float viewHei
 	return result;
 }
 
-inline snakeml::math::matrix LookAtMatrixLH(snakeml::math::vector eyePos, snakeml::math::vector lookAt, snakeml::math::vector up)
+inline snakeml::math::matrix LookAtMatrixLH(const snakeml::math::vector& eyePos, const snakeml::math::vector& lookAt, const snakeml::math::vector& up)
 {
-	snakeml::math::vector zaxis = (lookAt - eyePos).getNormalized(); // The "forward" vector.	
-	snakeml::math::vector xaxis = up.cross(zaxis).getNormalized();  // The "right" vector.
-	snakeml::math::vector yaxis = zaxis.cross(xaxis).getNormalized(); // The "up" vector.
+	snakeml::math::vector zaxis = (lookAt - eyePos).getNormalized();	// The "forward" vector.
+	snakeml::math::vector xaxis = up.cross(zaxis).getNormalized();		// The "right" vector.
+	snakeml::math::vector yaxis = zaxis.cross(xaxis).getNormalized();	// The "up" vector.
 
 	snakeml::math::matrix orientation(
 		xaxis.x, yaxis.x, zaxis.x, 0.0f,
