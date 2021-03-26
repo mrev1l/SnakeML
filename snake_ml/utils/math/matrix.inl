@@ -247,3 +247,32 @@ inline snakeml::math::matrix RotationMatrix(float yawRad, float pitchRad, float 
 {
 	return (RotationRollMatrix(rollRad) * RotationPitchMatrix(pitchRad)) * RotationYawMatrix(yawRad);
 }
+
+inline snakeml::math::matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float nearZ, float farZ)
+{
+	float sinFov = sinf(0.5f * fovAngleY);
+	float cosFov = cosf(0.5f * fovAngleY);
+
+	float height = cosFov / sinFov;
+	float width = height / aspectRatio;
+	float fRange = farZ / (farZ - nearZ);
+
+	return snakeml::math::matrix(
+		width,	0.f,	0.f,				0.f,
+		0.f,	height,	0.f,				0.f,
+		0.f,	0.f,	fRange,				1.f,
+		0.f,	0.f,	-fRange * nearZ,	0.f);
+}
+
+inline snakeml::math::matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ)
+{
+	float fRange = 1.0f / (farZ - nearZ);
+
+	snakeml::math::matrix result;
+	result.m[0][0] = 2.f / viewWidth;
+	result.m[1][1] = 2.f / viewHeight;
+	result.m[2][2] = fRange;
+	result.m[3][2] = -fRange * nearZ;
+
+	return result;
+}

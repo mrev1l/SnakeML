@@ -56,6 +56,10 @@ inline matrix RotationPitchMatrix(float pitchRad);
 inline matrix RotationRollMatrix(float rollRad);
 inline matrix RotationMatrix(float yawRad, float pitchRad, float rollRad);
 
+inline matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float nearZ, float farZ);
+
+inline matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ);
+
 #include "matrix.inl"
 
 }
