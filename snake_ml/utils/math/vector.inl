@@ -55,7 +55,7 @@ inline void snakeml::math::vector::operator-=(const snakeml::math::vector& a)
 	x -= a.x; y -= a.y; z -= a.z;
 }
 
-inline snakeml::math::vector snakeml::math::vector::operator-()
+inline snakeml::math::vector snakeml::math::vector::operator-() const
 {
 	return vector {-x, -y, -z};
 }

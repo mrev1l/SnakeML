@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "utils/snake_math.h"
 #include "utils/types/arithmetic.h"
 #include "utils/math/math_utils.h"
 
@@ -20,6 +19,7 @@
 	#define ASSERT(Condition, Message) if(!(Condition)) { _wassert(_CRT_WIDE(#Message), _CRT_WIDE(__FILE__), __LINE__); }
 #endif
 
+#include "utils/snake_math.h"
 #include "utils/math/vector.h"
 #include "utils/math/matrix.h"
 
