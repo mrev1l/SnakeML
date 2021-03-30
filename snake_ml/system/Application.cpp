@@ -14,7 +14,7 @@
 #include "ecs/systems/InitializeEntitiesSystem.h"
 #include "ecs/systems/InitializeTransformComponentsSystem.h"
 #include "ecs/systems/LoadMaterialsSystem.h"
-#include "ecs/systems/WIP_System.h"
+#include "ecs/systems/RotateCubeSystem.h"
 #include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/TestMoveSnakeHeadSystem.h"
 
@@ -53,7 +53,6 @@ void Application::Initialize()
 
 	new ECSManager();
 
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<WIP_System>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LoadMaterialsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());

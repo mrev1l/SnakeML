@@ -13,11 +13,6 @@ inline float snakeml::math::vector::length() const
 	return sqrtf(x * x + y * y + z * z);
 }
 
-inline float snakeml::math::vector::lengthSq() const
-{
-	return (x * x + y * y + z * z);
-}
-
 inline snakeml::math::vector snakeml::math::vector::getNormalized() const
 {
 	const float len = length();
