@@ -13,6 +13,7 @@ public:
 	~vector() = default;
 
 	float length() const;
+	float lengthSq() const;
 	vector getNormalized() const;
 	void normalize();
 	vector cross(const vector& a) const;
