@@ -24,7 +24,7 @@ public:
 	void ExecuteSystem(const std::unique_ptr<ISystem>& system);
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 
-	void Update();
+	void Update(double deltaTime);
 
 private:
 	ComponentsPool m_components;

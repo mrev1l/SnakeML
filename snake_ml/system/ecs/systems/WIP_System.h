@@ -9,10 +9,10 @@ namespace snakeml
 namespace system
 {
 
-class RotateCubeSystem : public ISystem
+class WIP_System : public ISystem
 {
 public:
-	void Execute() override;
+	void Update(double deltaTime) override;
 };
 
 }

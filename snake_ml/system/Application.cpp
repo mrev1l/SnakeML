@@ -14,9 +14,10 @@
 #include "ecs/systems/InitializeEntitiesSystem.h"
 #include "ecs/systems/InitializeTransformComponentsSystem.h"
 #include "ecs/systems/LoadMaterialsSystem.h"
-#include "ecs/systems/RotateCubeSystem.h"
+#include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/TestMoveSnakeHeadSystem.h"
+#include "ecs/systems/WIP_System.h"
 
 #include "input/InputManager.h"
 
@@ -55,11 +56,14 @@ void Application::Initialize()
 
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LoadMaterialsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeEntitiesSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
 
-	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<TestMoveSnakeHeadSystem>());
+	// TODO cleanup
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<WIP_System>());
+	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
+	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<TestMoveSnakeHeadSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
 
@@ -102,7 +106,7 @@ void Application::Update(double dt)
 		elapsedSeconds = 0.0;
 	}
 
-	ECSManager::GetInstance()->Update();
+	ECSManager::GetInstance()->Update(dt);
 	Render();
 }
 

@@ -11,7 +11,7 @@ namespace snakeml
 namespace system
 {
 
-void Render2DSystem::Execute()
+void Render2DSystem::Update(double deltaTime)
 {
 	IRenderDriver* renderDriver = IRenderDriver::GetInstance();
 	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();

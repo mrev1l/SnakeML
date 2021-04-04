@@ -12,8 +12,9 @@ namespace system
 class ISystem
 {
 public:
-	virtual ~ISystem() = default;
-	virtual void Execute() = 0; // private + friend class?
+	virtual ~ISystem() = 0 {};
+	virtual void Execute() {} // TODO: private + friend class?
+	virtual void Update(double deltaTime) {} // TODO: private + friend class?
 };
 
 }

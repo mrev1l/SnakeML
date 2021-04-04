@@ -14,6 +14,7 @@ enum class ComponentType : uint32_t
 	DX12RenderComponent,
 	TransformComponent,
 	CameraComponent,
+	PhysicsComponent,
 	Size
 };
 

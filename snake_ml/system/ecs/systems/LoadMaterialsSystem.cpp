@@ -6,6 +6,8 @@
 #include "system/drivers/win/os/helpers/win_utils.h"
 
 #include "system/ecs/ECSManager.h"
+#include "system/ecs/components/PhysicsComponent.h"
+#include "system/ecs/components/TransformComponent.h"
 
 namespace snakeml
 {
@@ -14,25 +16,46 @@ namespace system
 
 void LoadMaterialsSystem::Execute()
 {
-	constexpr uint32_t materialsNum = 1u;
-	constexpr const char* jsonName = "data\\assets\\levels\\test\\2dmaterialcomponentjson.txt";
-
+	// NEW TODO
+	constexpr const char* jsonName = "data\\assets\\levels\\level_0\\level_0.txt";
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
 	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
+	/*bool isParsed = !jsonDocument.ParseInsitu(const_cast<char*>(jsonString.c_str())).HasParseError();
+	auto error = jsonDocument.GetParseError();*/
 	ParseJsonString(jsonString.c_str(), jsonDocument);
 
-	MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsNum);
-	MaterialComponent& material = *(MaterialComponent*)it->At(0);
+	/*bool hasMaterials = jsonDocument.HasMember("material_components");
+	hasMaterials &= jsonDocument["material_components"].IsArray();*/
+	ParseMaterials(jsonDocument);
+	ParseTransforms(jsonDocument);
+	ParsePhysicsComponents(jsonDocument);
 
-	ParseEntityId(jsonDocument, material.m_entityId);
-	ParseVerticesArray(jsonDocument, material.m_vertices, material.m_inputLayoutEntries);
-	ParseVSName(jsonDocument, material.m_vs);
-	ParsePSName(jsonDocument, material.m_ps);
-	ParseTexturePath(jsonDocument, material.m_texturePath);
+	int stop = 34;
+	return;
+	// OLD
+	{
+		constexpr uint32_t materialsNum = 1u;
+		constexpr const char* jsonName = "data\\assets\\levels\\test\\2dmaterialcomponentjson.txt";
 
-	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
+		rapidjson::Document jsonDocument;
+		std::string jsonString;
+		WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
+
+		ParseJsonString(jsonString.c_str(), jsonDocument);
+
+		MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsNum);
+		MaterialComponent& material = *(MaterialComponent*)it->At(0);
+
+		ParseComponent_EntityId(jsonDocument, material.m_entityId);
+		ParseMaterialComponent_VerticesArray(jsonDocument, material.m_vertices, material.m_inputLayoutEntries);
+		ParseMaterialComponent_VSPath(jsonDocument, material.m_vs);
+		ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
+		ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
+
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
+	}
 }
 
 void LoadMaterialsSystem::ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson)
@@ -42,13 +65,37 @@ void LoadMaterialsSystem::ParseJsonString(const char* jsonBuffer, rapidjson::Doc
 	ASSERT(outJson.IsObject(), "Invalid JSON");
 }
 
-void LoadMaterialsSystem::ParseEntityId(const rapidjson::Document& json, uint32_t& outId)
+void LoadMaterialsSystem::ParseComponent_EntityId(const rapidjson::Value& json, uint32_t& outId)
 {
 	ASSERT(json.HasMember("entityId") && json["entityId"].IsUint(), "Invalid entityId json");
 	outId = json["entityId"].GetUint();
 }
 
-void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
+void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
+{
+	const bool hasMaterials = json.HasMember("material_components") && json["material_components"].IsArray();
+	if (hasMaterials)
+	{
+		const rapidjson::GenericArray<true, rapidjson::Value>& materialsArray = json["material_components"].GetArray();
+		const size_t materialsCount = materialsArray.Size();
+		MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsCount);
+		for (size_t i = 0u; i < materialsCount; ++i)
+		{
+			MaterialComponent& material = *(MaterialComponent*)it->At(i);
+			const rapidjson::Value& materialJson = *(materialsArray.Begin() + i);
+
+			ParseComponent_EntityId(materialJson, material.m_entityId);
+			ParseMaterialComponent_VerticesArray(materialJson, material.m_vertices, material.m_inputLayoutEntries);
+			ParseMaterialComponent_VSPath(materialJson, material.m_vs);
+			ParseMaterialComponent_PSPath(materialJson, material.m_ps);
+			ParseMaterialComponent_TexturePath(materialJson, material.m_texturePath);
+		}
+
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
+	}
+}
+
+void LoadMaterialsSystem::ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
 	std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries)
 {
 	ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
@@ -75,6 +122,120 @@ void LoadMaterialsSystem::ParseVerticesArray(const rapidjson::Document& json, st
 	inputLayoutEntries.push_back(MaterialComponent::InputLayoutEntries::UV);
 }
 
+void LoadMaterialsSystem::ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName)
+{
+	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
+
+	std::string vs = json["vs"].GetString();
+	WinUtils::StringToWstring(vs.c_str(), outVSName);
+}
+
+void LoadMaterialsSystem::ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName)
+{
+	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
+
+	std::string ps = json["ps"].GetString();
+	WinUtils::StringToWstring(ps.c_str(), outPSName);
+}
+
+void LoadMaterialsSystem::ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath)
+{
+	const bool hasTexturePath = json.HasMember("texture");
+	const bool isString = json["texture"].IsString();
+	if (hasTexturePath && isString)
+	{
+		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
+	}
+}
+
+void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
+{
+	const bool hasTransforms = json.HasMember("transform_components") && json["transform_components"].IsArray();
+	if (hasTransforms)
+	{
+		const rapidjson::GenericArray<true, rapidjson::Value>& transformsArray = json["transform_components"].GetArray();
+		const size_t transformsCount = transformsArray.Size();
+		TransformComponentIterator* it = (TransformComponentIterator*)IComponent::CreateIterator(ComponentType::TransformComponent, transformsCount);
+		for (size_t i = 0u; i < transformsCount; ++i)
+		{
+			TransformComponent& transform = *(TransformComponent*)it->At(i);
+			const rapidjson::Value& transformJson = *(transformsArray.Begin() + i);
+
+			ParseComponent_EntityId(transformJson, transform.m_entityId);
+			ParseTransformComponent_Position(transformJson, transform.m_position);
+			ParseTransformComponent_Rotation(transformJson, transform.m_rotation);
+			ParseTransformComponent_Scale(transformJson, transform.m_scale);
+		}
+
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::TransformComponent, it);
+	}
+}
+
+void LoadMaterialsSystem::ParseTransformComponent_Position(const rapidjson::Value& json, math::vector& _outPosition)
+{
+	ASSERT(json.HasMember("position") && json["position"].IsArray() && json["position"].Size() == 3u, "Invalid position json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& positionJson = json["position"].GetArray();
+
+	_outPosition = { positionJson[0].GetFloat(), positionJson[1].GetFloat(), positionJson[2].GetFloat() };
+}
+
+void LoadMaterialsSystem::ParseTransformComponent_Rotation(const rapidjson::Value& json, math::vector& _outRotation)
+{
+	ASSERT(json.HasMember("rotation") && json["rotation"].IsArray() && json["rotation"].Size() == 3u, "Invalid rotation json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& rotationJson = json["rotation"].GetArray();
+
+	_outRotation = { rotationJson[0].GetFloat(), rotationJson[1].GetFloat(), rotationJson[2].GetFloat() };
+}
+
+void LoadMaterialsSystem::ParseTransformComponent_Scale(const rapidjson::Value& json, math::vector& _outScale)
+{
+	ASSERT(json.HasMember("scale") && json["scale"].IsArray() && json["scale"].Size() == 3u, "Invalid scale json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& scaleJson = json["scale"].GetArray();
+
+	_outScale = { scaleJson[0].GetFloat(), scaleJson[1].GetFloat(), scaleJson[2].GetFloat() };
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json)
+{
+	const bool hasPhysicsComponents = json.HasMember("physics_components") && json["physics_components"].IsArray();
+	if (hasPhysicsComponents)
+	{
+		const rapidjson::GenericArray<true, rapidjson::Value>& physicsComponentsArray = json["physics_components"].GetArray();
+		const size_t physicsComponentsCount = physicsComponentsArray.Size();
+		PhysicsComponentIterator* it = (PhysicsComponentIterator*)IComponent::CreateIterator(ComponentType::PhysicsComponent, physicsComponentsCount);
+		for (size_t i = 0u; i < physicsComponentsCount; ++i)
+		{
+			PhysicsComponent& physicsComponent = *(PhysicsComponent*)it->At(i);
+			const rapidjson::Value& physicsComponentJson = *(physicsComponentsArray.Begin() + i);
+
+			ParseComponent_EntityId(physicsComponentJson, physicsComponent.m_entityId);
+			ParsePhysicsComponents_ShapeDimensions(physicsComponentJson, physicsComponent.m_shape.m_dimensions);
+			ParsePhysicsComponents_ShapeMass(physicsComponentJson, physicsComponent.m_shape.m_mass);
+		}
+
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::PhysicsComponent, it);
+	}
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, math::vector& _outShapeDimensions)
+{
+	ASSERT(json.HasMember("shape_dimensions") && json["shape_dimensions"].IsArray() && json["shape_dimensions"].Size() == 3u, "Invalid shape dimension json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& shapeDimensionsJson = json["shape_dimensions"].GetArray();
+
+	_outShapeDimensions = { shapeDimensionsJson[0].GetFloat(), shapeDimensionsJson[1].GetFloat(), shapeDimensionsJson[2].GetFloat() };
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass)
+{
+	ASSERT(json.HasMember("shape_mass") && json["shape_mass"].IsFloat(), "Invalid shape mass json");
+
+	_outMass = json["shape_mass"].GetFloat();;
+}
+
 void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray)
 {
 	ASSERT(json.HasMember("indices") && json["indices"].IsArray(), "Invalid indices json");
@@ -86,32 +247,6 @@ void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std
 	for (uint16_t& index : indicesArray)
 	{
 		index = (indicesIt++)->GetInt();
-	}
-}
-
-void LoadMaterialsSystem::ParseVSName(const rapidjson::Document& json, std::wstring& outVSName)
-{
-	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
-
-	std::string vs = json["vs"].GetString();
-	WinUtils::StringToWstring(vs.c_str(), outVSName);
-}
-
-void LoadMaterialsSystem::ParsePSName(const rapidjson::Document& json, std::wstring& outPSName)
-{
-	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
-
-	std::string ps = json["ps"].GetString();
-	WinUtils::StringToWstring(ps.c_str(), outPSName);
-}
-
-void LoadMaterialsSystem::ParseTexturePath(const rapidjson::Document& json, std::wstring& outTexturePath)
-{
-	const bool hasTexturePath = json.HasMember("texture");
-	const bool isString = json["texture"].IsString();
-	if (hasTexturePath && isString)
-	{
-		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
 	}
 }
 

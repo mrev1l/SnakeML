@@ -75,7 +75,7 @@ inline snakeml::math::vector snakeml::math::vector::operator/(float scalar) cons
 	return vector {x / scalar, y / scalar, z / scalar};
 }
 
-inline void snakeml::math::vector::operator/(float scalar)
+inline void snakeml::math::vector::operator/=(float scalar)
 {
 	x /= scalar; y /= scalar; z /= scalar;
 }

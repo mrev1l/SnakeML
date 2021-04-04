@@ -19,13 +19,32 @@ public:
 
 private:
 	static void ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson);
-	static void ParseEntityId(const rapidjson::Document& json, uint32_t& outId);
-	static void ParseVerticesArray(const rapidjson::Document& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
+	
+	static void ParseComponent_EntityId(const rapidjson::Value& json, uint32_t& outId);
+
+	// ******* Parsing Material components *******
+	static void ParseMaterials(const rapidjson::Document& json);
+	static void ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
 		std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
+	static void ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName);
+	static void ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName);
+	static void ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath);
+	// *******  *******  *******  *******  *******
+
+	// ******* Parsing Transform components *******
+	static void ParseTransforms(const rapidjson::Document& json);
+	static void ParseTransformComponent_Position(const rapidjson::Value& json, math::vector& _outPosition);
+	static void ParseTransformComponent_Rotation(const rapidjson::Value& json, math::vector& _outRotation);
+	static void ParseTransformComponent_Scale(const rapidjson::Value& json, math::vector& _outScale);
+	// *******  *******  *******  *******  ********
+
+	// ******* Parsing Physics components *******
+	static void ParsePhysicsComponents(const rapidjson::Document& json);
+	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, math::vector& _outShapeDimensions);
+	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
+	// *******  *******  *******  *******  ******
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
-	static void ParseVSName(const rapidjson::Document& json, std::wstring& outVSName);
-	static void ParsePSName(const rapidjson::Document& json, std::wstring& outPSName);
-	static void ParseTexturePath(const rapidjson::Document& json, std::wstring& outTexturePath);
+
 };
 
 }

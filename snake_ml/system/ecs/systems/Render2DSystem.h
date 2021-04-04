@@ -12,7 +12,7 @@ namespace system
 class Render2DSystem : public ISystem
 {
 public:
-	void Execute() override;
+	void Update(double deltaTime) override;
 };
 
 }

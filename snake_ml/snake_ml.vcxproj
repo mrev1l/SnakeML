@@ -233,6 +233,7 @@
     <ClCompile Include="system\drivers\OSDriver.cpp" />
     <ClCompile Include="system\drivers\RenderDriver.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.cpp" />
+    <ClCompile Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource\DX12Buffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandList.cpp" />
     <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandQueue.cpp" />
@@ -265,10 +266,11 @@
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\LoadMaterialsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\WIP_System.cpp" />
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
@@ -285,6 +287,7 @@
     <ClInclude Include="system\drivers\OSDriver.h" />
     <ClInclude Include="system\drivers\RenderDriver.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.h" />
+    <ClInclude Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\dx\resource\DX12Buffer.h" />
     <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandList.h" />
     <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandQueue.h" />
@@ -314,6 +317,7 @@
     <ClInclude Include="system\ecs\ComponentsPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
+    <ClInclude Include="system\ecs\components\PhysicsComponent.h" />
     <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h" />
     <ClInclude Include="system\ecs\components\TransformComponent.h" />
     <ClInclude Include="system\ecs\ECSManager.h" />
@@ -323,10 +327,11 @@
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h" />
+    <ClInclude Include="system\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\LoadMaterialsSystem.h" />
     <ClInclude Include="system\ecs\systems\Render2DSystem.h" />
-    <ClInclude Include="system\ecs\systems\RotateCubeSystem.h" />
+    <ClInclude Include="system\ecs\systems\WIP_System.h" />
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />

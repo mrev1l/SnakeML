@@ -18,11 +18,11 @@ void ECSManager::ScheduleSystem(std::unique_ptr<ISystem>&& system)
 	m_systems.emplace_back(std::move(system));
 }
 
-void ECSManager::Update()
+void ECSManager::Update(double deltaTime)
 {
 	for (const std::unique_ptr<ISystem>& system : m_systems)
 	{
-		system->Execute();
+		system->Update(deltaTime);
 	}
 }
 

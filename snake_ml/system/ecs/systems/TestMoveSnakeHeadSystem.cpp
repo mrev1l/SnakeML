@@ -14,7 +14,7 @@ namespace snakeml
 namespace system
 {
 
-void TestMoveSnakeHeadSystem::Execute()
+void TestMoveSnakeHeadSystem::Update(double deltaTime)
 {
 	const uint32_t entityIdToUpdate = 0;
 	constexpr float scale = 0.1f;
@@ -26,9 +26,9 @@ void TestMoveSnakeHeadSystem::Execute()
 	static auto t0 = clock.now();
 
 	auto t1 = clock.now(); //-V656
-	auto deltaTime = t1 - t0;
+	auto dt = t1 - t0;
 	t0 = t1;
-	elapsedSeconds += deltaTime.count() * 1e-9;
+	elapsedSeconds += dt.count() * 1e-9;
 	if (elapsedSeconds > 0.1)
 	{
 		elapsedSeconds = 0.f;

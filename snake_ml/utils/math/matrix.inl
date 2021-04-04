@@ -129,6 +129,15 @@ inline snakeml::math::matrix snakeml::math::matrix::operator*(float scalar) cons
 		m[3][0] * scalar, m[3][1] * scalar, m[3][2] * scalar, m[3][3] * scalar);
 }
 
+inline snakeml::math::vector snakeml::math::matrix::operator*(snakeml::math::vector a) const
+{
+	return vector(
+		m[0][0] * a.x + m[0][1] * a.y + m[0][2] * a.z,
+		m[1][0] * a.x + m[1][1] * a.y + m[1][2] * a.z,
+		m[2][0] * a.x + m[2][1] * a.y + m[2][2] * a.z
+	);
+}
+
 inline snakeml::math::matrix snakeml::math::matrix::operator*(const matrix& _m) const
 {
 	matrix res;
