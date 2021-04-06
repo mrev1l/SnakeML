@@ -15,7 +15,7 @@ namespace system
 void PhysicsSystem::Update(double deltaTime)
 {
 	PhysicsComponentIterator* physicsComponents =  (PhysicsComponentIterator*)ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::PhysicsComponent);
-	for (size_t i = 0u; i < physicsComponents->Num(); ++i)
+	for (size_t i = 0u; i < physicsComponents->Size(); ++i)
 	{
 		PhysicsComponent& body = *((PhysicsComponent*)physicsComponents->At(i));
 		UpdateAABB(body);

@@ -51,20 +51,26 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	const math::matrix modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
-	const math::matrix mvpMatrix = modelMatrix * cameraMatrix * orthogonal;
+	if (renderableComponent.m_pipelineState)
+	{
+		const math::matrix mvpMatrix = modelMatrix * cameraMatrix * orthogonal;
 
-	outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture, mvpMatrix));
-	outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_vertexBuffer));
+		outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture, mvpMatrix));
+		outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_vertexBuffer));
+	}
 
-	AABB aabb = physicsComponent.m_aabb;
-	float width = abs(aabb.max.x - aabb.min.x);
-	float height = abs(aabb.max.y - aabb.min.y);
-	const math::matrix debugScaleMatrix = math::ScaleMatrix(width, height, 1.f);
-	const math::matrix debugModelMatrix = debugScaleMatrix * translationMatrix;
-	const math::matrix debugMvpMatrix = debugModelMatrix * cameraMatrix * orthogonal;
+	if (renderableComponent.m_debugPipelineState)
+	{
+		AABB aabb = physicsComponent.m_aabb;
+		float width = abs(aabb.max.x - aabb.min.x);
+		float height = abs(aabb.max.y - aabb.min.y);
+		const math::matrix debugScaleMatrix = math::ScaleMatrix(width, height, 1.f);
+		const math::matrix debugModelMatrix = debugScaleMatrix * translationMatrix;
+		const math::matrix debugMvpMatrix = debugModelMatrix * cameraMatrix * orthogonal;
 
-	outRenderCommands.push_back(std::make_unique<SetupAABBPixelShaderCommand>(renderableComponent.m_debugPipelineState, renderableComponent.m_debugRootSignature, debugMvpMatrix));
-	outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_debugVertexBuffer));
+		outRenderCommands.push_back(std::make_unique<SetupAABBPixelShaderCommand>(renderableComponent.m_debugPipelineState, renderableComponent.m_debugRootSignature, debugMvpMatrix));
+		outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_debugVertexBuffer));
+	}
 }
 
 }

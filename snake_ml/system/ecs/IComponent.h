@@ -67,7 +67,7 @@ public:
 	IComponent* At(size_t idx) { return GetElement(idx); }
 
 	IComponent* GetData() { return m_data; }
-	size_t Num() { return m_count; }
+	size_t Size() { return m_count; }
 
 protected:
 	virtual IComponent* GetElement(size_t idx) = 0;

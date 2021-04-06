@@ -38,7 +38,7 @@ void InitializeRenderComponentsSystem::Execute()
 	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
 	MaterialComponent* materials = (MaterialComponent*)materialComponents->GetData();
 
-	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Num());
+	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Size());
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
 	DX12RenderComponent* renderComponents = (DX12RenderComponent*)renderComponentsIt->GetData();
 
@@ -47,18 +47,18 @@ void InitializeRenderComponentsSystem::Execute()
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	for (size_t i = 0; i < materialComponents->Num(); ++i)
+	for (size_t i = 0; i < materialComponents->Size(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponents[i];
 		const MaterialComponent& materialComponent = materials[i];
 
 		InitRenderComponent(commandList, materialComponent, renderComponent);
+	}
 
-		if (commandQueue)
-		{
-			auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-			commandQueue->WaitForFenceValue(fenceValue);
-		}
+	if (commandQueue)
+	{
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		commandQueue->WaitForFenceValue(fenceValue);
 	}
 }
 
@@ -74,7 +74,12 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	InitRenderComponent_LoadShaders(materialComponent.m_vs.data(), materialComponent.m_ps.data(), s_debugVSPath, s_debugPSPath,
 		vertexShaderBlob, pixelShaderBlob, debugVertexShaderBlob, debugPixelShaderBlob);
 
-	InitRenderComponent_InitializeRootSignatures(_outRenderComponent.m_rootSignature, _outRenderComponent.m_debugRootSignature);
+	std::vector<RootParameters> rootParamsIds, debugRootParamsIds = {RootParameters::MatricesCB};
+	if (vertexShaderBlob.Get() && pixelShaderBlob.Get())
+	{
+		rootParamsIds = { RootParameters::MatricesCB, RootParameters::Textures };
+	}
+	InitRenderComponent_InitializeRootSignatures(rootParamsIds, debugRootParamsIds, _outRenderComponent.m_rootSignature, _outRenderComponent.m_debugRootSignature);
 
 	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout, inputLayoutDebug;
 	InitRenderComponent_GenerateInputLayouts(materialComponent.m_inputLayoutEntries, s_debugInputLayoutEntries, inputLayout, inputLayoutDebug);
@@ -94,7 +99,10 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::wstring texturePath, DX12Texture& _outTexture)
 {
-	commandList->LoadTextureFromFile(_outTexture, texturePath);
+	if (!texturePath.empty())
+	{
+		commandList->LoadTextureFromFile(_outTexture, texturePath);
+	}
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadBuffers(
@@ -104,37 +112,65 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadBuffers(
 	DX12VertexBuffer& _outGeometryVB, 
 	DX12VertexBuffer& _outDebugGeometryVB)
 {
-	commandList->CopyVertexBuffer(_outGeometryVB, geometryVertices);
-	commandList->CopyVertexBuffer(_outDebugGeometryVB, debugGeometryVertices);
+	if (!geometryVertices.empty())
+	{
+		commandList->CopyVertexBuffer(_outGeometryVB, geometryVertices);
+	}
+
+	if (!debugGeometryVertices.empty())
+	{
+		commandList->CopyVertexBuffer(_outDebugGeometryVB, debugGeometryVertices);
+	}
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadShaders(
-	const wchar_t* vsPath, 
-	const wchar_t* psPath, 
-	const wchar_t* debugVsPath, 
-	const wchar_t* debugPsPath, 
+	const std::wstring& vsPath,
+	const std::wstring& psPath,
+	const std::wstring& debugVsPath,
+	const std::wstring& debugPsPath,
 	Microsoft::WRL::ComPtr<ID3DBlob>& _outVsBlob, 
 	Microsoft::WRL::ComPtr<ID3DBlob>& _outPsBlob, 
 	Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugVsBlob, 
 	Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugPsBlob)
 {
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(vsPath, &_outVsBlob));
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(psPath, &_outPsBlob));
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(debugVsPath, &_outDebugVsBlob));
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(debugPsPath, &_outDebugPsBlob));
+	if(!vsPath.empty())
+	{
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(vsPath.c_str(), &_outVsBlob));
+	}
+	
+	if (!psPath.empty())
+	{
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(psPath.c_str(), &_outPsBlob));
+	}
+
+	if (!debugVsPath.empty())
+	{
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(debugVsPath.c_str(), &_outDebugVsBlob));
+	}
+
+	if (!debugPsPath.empty())
+	{
+		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(debugPsPath.c_str(), &_outDebugPsBlob));
+	}
 }
 
-void InitializeRenderComponentsSystem::InitRenderComponent_InitializeRootSignatures(DX12RootSignature& _outRootSignature, DX12RootSignature& _outDebugRootSignature)
+void InitializeRenderComponentsSystem::InitRenderComponent_InitializeRootSignatures(
+	const std::vector<RootParameters>& rootParamsIds,
+	const std::vector<RootParameters>& debugRootParamsIds,
+	DX12RootSignature& _outRootSignature, 
+	DX12RootSignature& _outDebugRootSignature)
 {
+	if(!rootParamsIds.empty())
 	{
 		const CD3DX12_DESCRIPTOR_RANGE1 descriptorRage(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-		std::vector<CD3DX12_ROOT_PARAMETER1> rootParameters = CreateRootParameters_Main(&descriptorRage);
+		std::vector<CD3DX12_ROOT_PARAMETER1> rootParameters = CreateRootParameters(rootParamsIds, &descriptorRage);// CreateRootParameters_Main(&descriptorRage);
 		CD3DX12_STATIC_SAMPLER_DESC linearRepeatSampler(0, D3D12_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR);
 		CreateRootSignature(rootParameters, 1u, &linearRepeatSampler, _outRootSignature);
 	}
 
+	if (!debugRootParamsIds.empty())
 	{
-		std::vector<CD3DX12_ROOT_PARAMETER1> rootParametersDebug = CreateRootParameters_Debug();
+		std::vector<CD3DX12_ROOT_PARAMETER1> rootParametersDebug = CreateRootParameters(debugRootParamsIds, nullptr);//CreateRootParameters_Debug();
 		CreateRootSignature(rootParametersDebug, 0, nullptr, _outDebugRootSignature);
 	}
 }
@@ -145,8 +181,15 @@ void InitializeRenderComponentsSystem::InitRenderComponent_GenerateInputLayouts(
 	std::vector<D3D12_INPUT_ELEMENT_DESC>& _outInputLayout,
 	std::vector<D3D12_INPUT_ELEMENT_DESC>& _outDebugInputLayout)
 {
-	GenerateInputLayout(inputLayoutEntries, _outInputLayout);
-	GenerateInputLayout(debugInputLayoutEntries, _outDebugInputLayout);
+	if (!inputLayoutEntries.empty())
+	{
+		GenerateInputLayout(inputLayoutEntries, _outInputLayout);
+	}
+
+	if (!debugInputLayoutEntries.empty())
+	{
+		GenerateInputLayout(debugInputLayoutEntries, _outDebugInputLayout);
+	}
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent_InitializePSOs(
@@ -161,23 +204,29 @@ void InitializeRenderComponentsSystem::InitRenderComponent_InitializePSOs(
 	Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outPipelineState,
 	Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outDebugPipelineState)
 {
-	CreatePipelineState(
-		rootSignature,
-		inputLayout,
-		vsBlob,
-		psBlob,
-		CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT),
-		_outPipelineState);
+	if (rootSignature.Get())
+	{
+		CreatePipelineState(
+			rootSignature,
+			inputLayout,
+			vsBlob,
+			psBlob,
+			CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT),
+			_outPipelineState);
+	}
 
-	CD3DX12_RASTERIZER_DESC rasterizerDescDebug(D3D12_DEFAULT);
-	rasterizerDescDebug.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	CreatePipelineState(
-		debugRootSignature,
-		debugInputLayout,
-		debugVsBlob,
-		debugPsBlob,
-		rasterizerDescDebug,
-		_outDebugPipelineState);
+	if (debugRootSignature.Get())
+	{
+		CD3DX12_RASTERIZER_DESC rasterizerDescDebug(D3D12_DEFAULT);
+		rasterizerDescDebug.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		CreatePipelineState(
+			debugRootSignature,
+			debugInputLayout,
+			debugVsBlob,
+			debugPsBlob,
+			rasterizerDescDebug,
+			_outDebugPipelineState);
+	}
 }
 
 void InitializeRenderComponentsSystem::CreateRootSignature(
@@ -301,6 +350,38 @@ void InitializeRenderComponentsSystem::GenerateInputLayout(const std::vector<Mat
 			0
 		};
 	}
+}
+
+std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRootParameters(const std::vector<RootParameters>& rootParamsIds, const D3D12_DESCRIPTOR_RANGE1* descriptorRange)
+{
+	std::vector<CD3DX12_ROOT_PARAMETER1> rootParameters(rootParamsIds.size());
+	for (size_t i = 0u; i < rootParameters.size(); ++i)
+	{
+		switch (rootParamsIds[i])
+		{
+		case snakeml::system::win::MatricesCB:
+		{
+			rootParameters[i].InitAsConstants(
+				GetRootParameterNumValues(RootParameters::MatricesCB),
+				0,
+				0,
+				GetRootParameterShaderVisibility(RootParameters::MatricesCB));
+		}
+		break;
+		case snakeml::system::win::Textures:
+		{
+			rootParameters[i].InitAsDescriptorTable(
+				GetRootParameterNumValues(RootParameters::Textures),
+				descriptorRange,
+				GetRootParameterShaderVisibility(RootParameters::Textures));
+		}
+		break;
+		default:
+			ASSERT(false, "Missed enum entry");
+			break;
+		}
+	}
+	return rootParameters;
 }
 
 std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRootParameters_Main(const D3D12_DESCRIPTOR_RANGE1* descriptorRange)

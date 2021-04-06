@@ -17,54 +17,6 @@ namespace system
 
 void WIP_System::Update(double deltaTime)
 {
-	// Linear movement integration
-	
-	//const math::vector force = { 1.f, -1.f, 0.f };
-	//math::vector accDelta = (force / snakeHead.m_shape.m_mass) * deltaTime;
-	//snakeHead.m_acceleration += accDelta;
-	//snakeHead.m_velocity += snakeHead.m_acceleration * deltaTime;
-	//snakeHead.m_position += snakeHead.m_velocity * deltaTime;
-
-	//// Angular movement integration
-	//const math::vector torque = math::vector::forward * 1000.f;
-	//snakeHead.m_angularAcceleration += (torque / snakeHead.m_shape.m_momentOfInertia) * deltaTime;
-	//snakeHead.m_angularVelocity += snakeHead.m_angularAcceleration * deltaTime;
-	//snakeHead.m_rotation += snakeHead.m_angularVelocity * deltaTime;
-
-	//// Test overlaps
-	//PhysicsComponent* bodys[] = { &snakeHead, &leftWorldBoundary, &topWorldBoundary, &rightWorldBoundary, &bottomWorldBoundary };
-
-	//for (size_t i = 0u; i < 5u; ++i)
-	//{
-	//	for (size_t j = 0u; j < 5u; ++j)
-	//	{
-	//		if (i == j)
-	//		{
-	//			continue;
-	//		}
-
-	//		const AABB a = GetAABB(*bodys[i]);
-	//		const AABB b = GetAABB(*bodys[j]);
-
-	//		float d1x = b.min.x - a.max.x;
-	//		float d1y = b.min.y - a.max.y;
-	//		float d2x = a.min.x - b.max.x;
-	//		float d2y = a.min.y - b.max.y;
-
-	//		if (d1x >= 0.f || d1y >= 0.f)
-	//		{
-	//			continue;
-	//		}
-
-	//		if (d2x >= 0.f || d2y >= 0.f)
-	//		{
-	//			continue;
-	//		}
-
-	//		int stop = 34;
-	//	}
-	//}
-
 	static bool s_update = true;
 
 	const uint32_t entityIdToUpdate = 0;
@@ -102,22 +54,23 @@ void WIP_System::Update(double deltaTime)
 
 	PhysicsComponentIterator* bodys = (PhysicsComponentIterator*)ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::PhysicsComponent);
 	// Update AABBs
-	for (size_t i = 0u; i < bodys->Num(); ++i)
+	for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
 		PhysicsComponent& body = *(PhysicsComponent*)bodys->At(i);
 
 		std::array<math::vector, 4> boundingBox =
 		{
-			math::vector{body.m_position.x - body.m_shape.m_dimensions.x / 2.f, body.m_position.y - body.m_shape.m_dimensions.y / 2.f, 0.f},
-			math::vector{body.m_position.x - body.m_shape.m_dimensions.x / 2.f, body.m_position.y + body.m_shape.m_dimensions.y / 2.f, 0.f},
-			math::vector{body.m_position.x + body.m_shape.m_dimensions.x / 2.f, body.m_position.y - body.m_shape.m_dimensions.y / 2.f, 0.f},
-			math::vector{body.m_position.x + body.m_shape.m_dimensions.x / 2.f, body.m_position.y + body.m_shape.m_dimensions.y / 2.f, 0.f}
+			math::vector{/*body.m_position.x*/ - body.m_shape.m_dimensions.x / 2.f, /*body.m_position.y*/ - body.m_shape.m_dimensions.y / 2.f, 0.f},
+			math::vector{/*body.m_position.x*/ - body.m_shape.m_dimensions.x / 2.f, /*body.m_position.y*/ + body.m_shape.m_dimensions.y / 2.f, 0.f},
+			math::vector{/*body.m_position.x*/ + body.m_shape.m_dimensions.x / 2.f, /*body.m_position.y*/ - body.m_shape.m_dimensions.y / 2.f, 0.f},
+			math::vector{/*body.m_position.x*/ + body.m_shape.m_dimensions.x / 2.f, /*body.m_position.y*/ + body.m_shape.m_dimensions.y / 2.f, 0.f}
 		};
 
 		const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(body.m_rotation.y), math::ConvertToRadians(body.m_rotation.x), math::ConvertToRadians(body.m_rotation.z));
 		const math::matrix translationMatrix = math::TranslationMatrix(body.m_position.x, body.m_position.y, body.m_position.z);
 
 		const math::matrix transformMatrix = rotationMatrix * translationMatrix;
+		
 		for (auto& vertex : boundingBox)
 		{
 			vertex = transformMatrix * vertex;
@@ -134,9 +87,9 @@ void WIP_System::Update(double deltaTime)
 	}
 
 	// Test overlaps
-	for (size_t i = 0u; i < bodys->Num(); ++i)
+	for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
-		for (size_t j = 0u; j < bodys->Num(); ++j)
+		for (size_t j = 0u; j < bodys->Size(); ++j)
 		{
 			if (i == j)
 			{

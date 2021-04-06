@@ -98,7 +98,11 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 void LoadMaterialsSystem::ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
 	std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries)
 {
-	ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
+	//ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
+	if (!(json.HasMember("vertices") && json["vertices"].IsArray()))
+	{
+		return;
+	}
 
 	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
 	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
@@ -124,7 +128,11 @@ void LoadMaterialsSystem::ParseMaterialComponent_VerticesArray(const rapidjson::
 
 void LoadMaterialsSystem::ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName)
 {
-	ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
+	//ASSERT(json.HasMember("vs") && json["vs"].IsString(), "Invalid vs json");
+	if (!(json.HasMember("vs") && json["vs"].IsString()))
+	{
+		return;
+	}
 
 	std::string vs = json["vs"].GetString();
 	WinUtils::StringToWstring(vs.c_str(), outVSName);
@@ -132,7 +140,11 @@ void LoadMaterialsSystem::ParseMaterialComponent_VSPath(const rapidjson::Value& 
 
 void LoadMaterialsSystem::ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName)
 {
-	ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
+	//ASSERT(json.HasMember("ps") && json["ps"].IsString(), "Invalid ps json");
+	if (!(json.HasMember("ps") && json["ps"].IsString()))
+	{
+		return;
+	}
 
 	std::string ps = json["ps"].GetString();
 	WinUtils::StringToWstring(ps.c_str(), outPSName);
@@ -141,7 +153,7 @@ void LoadMaterialsSystem::ParseMaterialComponent_PSPath(const rapidjson::Value& 
 void LoadMaterialsSystem::ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath)
 {
 	const bool hasTexturePath = json.HasMember("texture");
-	const bool isString = json["texture"].IsString();
+	const bool isString = hasTexturePath ? json["texture"].IsString() : false;
 	if (hasTexturePath && isString)
 	{
 		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);

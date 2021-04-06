@@ -21,7 +21,7 @@ void InitializeEntitiesSystem::Execute()
 		++i)
 	{
 		Iterator* it = componentsPool.GetComponents(static_cast<ComponentType>(i));
-		for (size_t componentIdx = 0; componentIdx < it->Num(); ++componentIdx)
+		for (size_t componentIdx = 0; componentIdx < it->Size(); ++componentIdx)
 		{
 			IComponent* component = it->At(componentIdx);
 

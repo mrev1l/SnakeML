@@ -21,6 +21,7 @@ class DX12RenderComponent;
 class DX12Texture;
 class DX12VertexBuffer;
 
+// TODO REVIEW OPTIONAL CREATION
 class InitializeRenderComponentsSystem : public ISystem
 {
 public:
@@ -36,15 +37,17 @@ private:
 		DX12VertexBuffer& _outGeometryVB,
 		DX12VertexBuffer& _outDebugGeometryVB);
 	static void InitRenderComponent_LoadShaders(
-		const wchar_t* vsPath,
-		const wchar_t* psPath,
-		const wchar_t* debugVsPath,
-		const wchar_t* debugPsPath,
+		const std::wstring& vsPath,
+		const std::wstring& psPath,
+		const std::wstring& debugVsPath,
+		const std::wstring& debugPsPath,
 		Microsoft::WRL::ComPtr<ID3DBlob>& _outVsBlob,
 		Microsoft::WRL::ComPtr<ID3DBlob>& _outPsBlob,
 		Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugVsBlob,
 		Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugPsBlob);
 	static void InitRenderComponent_InitializeRootSignatures(
+		const std::vector<RootParameters>& rootParamsIds,
+		const std::vector<RootParameters>& debugRootParamsIds,
 		DX12RootSignature& _outRootSignature,
 		DX12RootSignature& _outDebugRootSignature);
 	static void InitRenderComponent_GenerateInputLayouts(
@@ -81,6 +84,7 @@ private:
 	static DX12Utils::DX12ShaderSemanticName GetShaderSemanticName(MaterialComponent::InputLayoutEntries layoutEntry);
 	static void GenerateInputLayout(const std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries, std::vector<D3D12_INPUT_ELEMENT_DESC>& outInputLayout);
 	
+	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters(const std::vector<RootParameters>& rootParamsIds, const D3D12_DESCRIPTOR_RANGE1* descriptorRange);
 	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters_Main(const D3D12_DESCRIPTOR_RANGE1* descriptorRange);
 	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters_Debug();
 	static UINT GetRootParameterNumValues(RootParameters paramType);
