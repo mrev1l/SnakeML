@@ -9,11 +9,61 @@
 #include "system/ecs/Entity.h"
 
 #include <chrono>
+#include <iterator>
 
 namespace snakeml
 {
 namespace system
 {
+
+template<typename T>
+class QuadTree
+{
+public:
+	struct Rectangle
+	{
+		math::vector origin;
+		math::vector halfDimensions;
+
+		bool Contains(math::vector point) const;
+		bool Intersects(Rectangle other) const;
+	};
+
+	struct Point
+	{
+		math::vector position;
+		const T& userData;
+	};
+
+	QuadTree(Rectangle boundary);
+	~QuadTree() = default;
+	
+	bool AddPoint(const Point& point);
+	void GetPoints(Rectangle boundary, std::back_insert_iterator<std::vector<Point>> resIt) const;
+
+private:
+	enum
+	{
+		NorthWest = 0,
+		NorthEast,
+		SouthWest,
+		SouthEast
+	};
+
+	QuadTree(const QuadTree& other) = delete;
+	QuadTree(QuadTree&& other) = delete;
+	QuadTree& operator=(const QuadTree& other) = delete;
+	QuadTree& operator=(QuadTree&& other) = delete;
+
+	void SubDivide();
+
+	Rectangle									m_boundary;
+	std::vector<Point>							m_points;
+	std::array<std::unique_ptr<QuadTree>, 4u>	m_subTrees;
+	bool										m_isSubDivided = false;
+
+	static constexpr size_t s_capacity = 4;
+};
 
 void WIP_System::Update(double deltaTime)
 {
@@ -86,8 +136,57 @@ void WIP_System::Update(double deltaTime)
 		}
 	}
 
+	// Populate QuadTree
+	QuadTree<AABB> qt(QuadTree<AABB>::Rectangle{ {0.f, 0.f, 0.f}, {370.f, 370.f, 0.f} });
+	for (size_t i = 0u; i < bodys->Size(); ++i)
+	{
+		const PhysicsComponent& body = *((PhysicsComponent*)bodys->At(i));
+
+		qt.AddPoint(QuadTree<AABB>::Point{body.m_position, body.m_aabb});
+	}
+
 	// Test overlaps
 	for (size_t i = 0u; i < bodys->Size(); ++i)
+	{
+		const PhysicsComponent& body = *((PhysicsComponent*)bodys->At(i));
+		
+		QuadTree<AABB>::Rectangle boundary = { body.m_position, { 720.f, 105.f, 0.f } };
+		std::vector<QuadTree<AABB>::Point> points;
+
+		qt.GetPoints(boundary, std::back_inserter(points));
+
+		for (auto point : points)
+		{
+			if (
+				point.userData.min.x == body.m_aabb.min.x &&
+				point.userData.min.y == body.m_aabb.min.y &&
+				point.userData.max.x == body.m_aabb.max.x &&
+				point.userData.max.y == body.m_aabb.max.y)
+			{
+				return;
+			}
+			const AABB& a = body.m_aabb;
+			const AABB& b = point.userData;
+
+			float d1x = b.min.x - a.max.x;
+			float d1y = b.min.y - a.max.y;
+			float d2x = a.min.x - b.max.x;
+			float d2y = a.min.y - b.max.y;
+
+			if (d1x >= 0.f || d1y >= 0.f)
+			{
+				continue;
+			}
+
+			if (d2x >= 0.f || d2y >= 0.f)
+			{
+				continue;
+			}
+
+			s_update = false;
+		}
+	}
+	/*for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
 		for (size_t j = 0u; j < bodys->Size(); ++j)
 		{
@@ -119,9 +218,123 @@ void WIP_System::Update(double deltaTime)
 
 			s_update = false;
 		}
-	}
+	}*/
 
 	int stop = 45;
+}
+
+template<typename T>
+QuadTree<T>::QuadTree(Rectangle boundary)
+	: m_boundary(boundary)
+{
+	m_points.reserve(s_capacity);
+}
+
+template<typename T>
+bool QuadTree<T>::AddPoint(const Point& point)
+{
+	if (!m_boundary.Contains(point.position))
+	{
+		return false;
+	}
+
+	if (m_points.size() < s_capacity)
+	{
+		m_points.emplace_back(point);
+	}
+	else
+	{
+		if (!m_isSubDivided)
+		{
+			SubDivide();
+		}
+
+		bool wasAdded = m_subTrees[NorthWest]->AddPoint(point);
+		wasAdded |= m_subTrees[NorthEast]->AddPoint(point);
+		wasAdded |= m_subTrees[SouthWest]->AddPoint(point);
+		wasAdded |= m_subTrees[SouthEast]->AddPoint(point);
+
+		ASSERT(wasAdded, "QuadTree node accepted the point that was not inserted.");
+	}
+
+	return true;
+}
+
+template<typename T>
+void QuadTree<T>::GetPoints(QuadTree<T>::Rectangle boundary, std::back_insert_iterator<std::vector<Point>> resIt) const
+{
+	if (!m_boundary.Intersects(boundary))
+	{
+		return;
+	}
+
+	for (auto point : m_points)
+	{
+		if (boundary.Contains(point.position))
+		{
+			resIt = point;
+		}
+	}
+
+	if (m_isSubDivided)
+	{
+		m_subTrees[NorthWest]->GetPoints(boundary, resIt);
+		m_subTrees[NorthEast]->GetPoints(boundary, resIt);
+		m_subTrees[SouthWest]->GetPoints(boundary, resIt);
+		m_subTrees[SouthEast]->GetPoints(boundary, resIt);
+	}
+}
+
+template<typename T>
+void QuadTree<T>::SubDivide()
+{
+	ASSERT(!m_isSubDivided, "Trying to re-subdivide the QuadTree.");
+
+	math::vector northwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2, m_boundary.origin.y + m_boundary.halfDimensions.y / 2, 0.f };
+	math::vector northeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2, m_boundary.origin.y + m_boundary.halfDimensions.y / 2, 0.f };
+	math::vector southwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2, m_boundary.origin.y - m_boundary.halfDimensions.y / 2, 0.f };
+	math::vector southeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2, m_boundary.origin.y - m_boundary.halfDimensions.y / 2, 0.f };
+
+	Rectangle northwest{ northwestOrigin, m_boundary.halfDimensions / 2};
+	Rectangle northeast{ northeastOrigin, m_boundary.halfDimensions / 2};
+	Rectangle southwest{ southwestOrigin, m_boundary.halfDimensions / 2};
+	Rectangle southeast{ southeastOrigin, m_boundary.halfDimensions / 2};
+
+	m_subTrees =
+	{
+		std::make_unique<QuadTree>(northwest),
+		std::make_unique<QuadTree>(northeast),
+		std::make_unique<QuadTree>(southwest),
+		std::make_unique<QuadTree>(southeast)
+	};
+
+	m_isSubDivided = true;
+}
+
+template<typename T>
+bool QuadTree<T>::Rectangle::Contains(math::vector point) const
+{
+	return
+		point.x >= origin.x - halfDimensions.x &&
+		point.x <= origin.x + halfDimensions.x &&
+		point.y >= origin.y - halfDimensions.y &&
+		point.y <= origin.y + halfDimensions.y;
+}
+
+template<typename T>
+bool QuadTree<T>::Rectangle::Intersects(Rectangle other) const
+{
+	float d1x = origin.x - halfDimensions.x - other.origin.x + other.halfDimensions.x;
+	float d1y = origin.y - halfDimensions.y - other.origin.y + other.halfDimensions.y;
+	float d2x = other.origin.x - other.halfDimensions.x - origin.x + halfDimensions.x;
+	float d2y = other.origin.y - other.halfDimensions.y - origin.y + halfDimensions.y;
+
+	bool test = !((d1x >= 0.f) && (d1y >= 0.f) && (d2x >= 0.f) && (d2y >= 0.f));
+	if (test)
+	{
+		int stop = 345;
+	}
+	return !((d1x >= 0.f) && (d1y >= 0.f) && (d2x >= 0.f) && (d2y >= 0.f));
 }
 
 }
