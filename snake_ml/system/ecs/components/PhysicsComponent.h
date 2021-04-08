@@ -33,6 +33,7 @@ public:
 	math::vector m_angularVelocity;
 	math::vector m_acceleration;
 	math::vector m_angularAcceleration;
+	bool m_isDynamic = false;
 };
 REGISTER_TYPE(PhysicsComponent);
 

@@ -42,6 +42,7 @@ private:
 	static void ParsePhysicsComponents(const rapidjson::Document& json);
 	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, math::vector& _outShapeDimensions);
 	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
+	static void ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic);
 	// *******  *******  *******  *******  ******
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 

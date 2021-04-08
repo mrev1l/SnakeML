@@ -16,6 +16,16 @@ namespace snakeml
 namespace system
 {
 
+bool TestIntersection_AABB_AABB(const AABB& a, const AABB& b)
+{
+	const bool isABehindB = a.min.x >= b.max.x;
+	const bool isABeforeB = a.max.x <= b.min.x;
+	const bool isAAboveA = a.min.y >= b.max.y;
+	const bool isABelowB = a.max.y <= b.min.y;
+
+	return !(isABehindB || isABeforeB || isAAboveA || isABelowB);
+}
+
 template<typename T>
 class QuadTree
 {
@@ -25,21 +35,20 @@ public:
 		math::vector origin;
 		math::vector halfDimensions;
 
-		bool Contains(math::vector point) const;
 		bool Intersects(Rectangle other) const;
 	};
 
-	struct Point
+	struct Object
 	{
-		math::vector position;
+		Rectangle shape;
 		const T& userData;
 	};
 
 	QuadTree(Rectangle boundary);
 	~QuadTree() = default;
 	
-	bool AddPoint(const Point& point);
-	void GetPoints(Rectangle boundary, std::back_insert_iterator<std::vector<Point>> resIt) const;
+	bool AddObject(const Object& object);
+	void GetObjects(Rectangle boundary, std::vector<const Object const *>& _outResult) const;
 
 private:
 	enum
@@ -57,8 +66,10 @@ private:
 
 	void SubDivide();
 
+	static void TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult);
+
 	Rectangle									m_boundary;
-	std::vector<Point>							m_points;
+	std::vector<Object>							m_objects;
 	std::array<std::unique_ptr<QuadTree>, 4u>	m_subTrees;
 	bool										m_isSubDivided = false;
 
@@ -137,88 +148,44 @@ void WIP_System::Update(double deltaTime)
 	}
 
 	// Populate QuadTree
-	QuadTree<AABB> qt(QuadTree<AABB>::Rectangle{ {0.f, 0.f, 0.f}, {370.f, 370.f, 0.f} });
+	QuadTree<PhysicsComponent> qt(QuadTree<PhysicsComponent>::Rectangle{ {0.f, 0.f, 0.f}, {370.f, 370.f, 0.f} });
 	for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
 		const PhysicsComponent& body = *((PhysicsComponent*)bodys->At(i));
 
-		qt.AddPoint(QuadTree<AABB>::Point{body.m_position, body.m_aabb});
+		qt.AddObject(QuadTree<PhysicsComponent>::Object{ {body.m_position, {(body.m_aabb.max - body.m_aabb.min) / 2.f}}, body });
 	}
 
-	// Test overlaps
+	// Broad Phase
 	for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
 		const PhysicsComponent& body = *((PhysicsComponent*)bodys->At(i));
-		
-		QuadTree<AABB>::Rectangle boundary = { body.m_position, { 720.f, 105.f, 0.f } };
-		std::vector<QuadTree<AABB>::Point> points;
-
-		qt.GetPoints(boundary, std::back_inserter(points));
-
-		for (auto point : points)
+		if (!body.m_isDynamic)
 		{
-			if (
-				point.userData.min.x == body.m_aabb.min.x &&
-				point.userData.min.y == body.m_aabb.min.y &&
-				point.userData.max.x == body.m_aabb.max.x &&
-				point.userData.max.y == body.m_aabb.max.y)
+			continue;
+		}
+		
+		QuadTree<PhysicsComponent>::Rectangle boundary = { body.m_position, body.m_aabb.max - body.m_aabb.min };
+		std::vector<const QuadTree<PhysicsComponent>::Object const*> objects;
+
+		qt.GetObjects(boundary, objects);
+
+		for (auto object : objects)
+		{
+			if (&object->userData == &body)
 			{
-				return;
+				continue;
 			}
 			const AABB& a = body.m_aabb;
-			const AABB& b = point.userData;
+			const AABB& b = object->userData.m_aabb;
 
-			float d1x = b.min.x - a.max.x;
-			float d1y = b.min.y - a.max.y;
-			float d2x = a.min.x - b.max.x;
-			float d2y = a.min.y - b.max.y;
-
-			if (d1x >= 0.f || d1y >= 0.f)
-			{
-				continue;
-			}
-
-			if (d2x >= 0.f || d2y >= 0.f)
-			{
-				continue;
-			}
-
-			s_update = false;
+			const bool isIntersecting = TestIntersection_AABB_AABB(a, b);
+			
+			s_update = !isIntersecting;
 		}
 	}
-	/*for (size_t i = 0u; i < bodys->Size(); ++i)
-	{
-		for (size_t j = 0u; j < bodys->Size(); ++j)
-		{
-			if (i == j)
-			{
-				continue;
-			}
-
-			const PhysicsComponent& bodyA = *((PhysicsComponent*)bodys->At(i));
-			const PhysicsComponent& bodyB = *((PhysicsComponent*)bodys->At(j));
-
-			const AABB& a = bodyA.m_aabb;
-			const AABB& b = bodyB.m_aabb;
-
-			float d1x = b.min.x - a.max.x;
-			float d1y = b.min.y - a.max.y;
-			float d2x = a.min.x - b.max.x;
-			float d2y = a.min.y - b.max.y;
-
-			if (d1x >= 0.f || d1y >= 0.f)
-			{
-				continue;
-			}
-
-			if (d2x >= 0.f || d2y >= 0.f)
-			{
-				continue;
-			}
-
-			s_update = false;
-		}
-	}*/
+	
+	// Narrow Phase
 
 	int stop = 45;
 }
@@ -227,20 +194,20 @@ template<typename T>
 QuadTree<T>::QuadTree(Rectangle boundary)
 	: m_boundary(boundary)
 {
-	m_points.reserve(s_capacity);
+	m_objects.reserve(s_capacity);
 }
 
 template<typename T>
-bool QuadTree<T>::AddPoint(const Point& point)
+bool QuadTree<T>::AddObject(const Object& point)
 {
-	if (!m_boundary.Contains(point.position))
+	if (!m_boundary.Intersects(point.shape))
 	{
 		return false;
 	}
 
-	if (m_points.size() < s_capacity)
+	if (m_objects.size() < s_capacity)
 	{
-		m_points.emplace_back(point);
+		m_objects.emplace_back(point);
 	}
 	else
 	{
@@ -249,10 +216,10 @@ bool QuadTree<T>::AddPoint(const Point& point)
 			SubDivide();
 		}
 
-		bool wasAdded = m_subTrees[NorthWest]->AddPoint(point);
-		wasAdded |= m_subTrees[NorthEast]->AddPoint(point);
-		wasAdded |= m_subTrees[SouthWest]->AddPoint(point);
-		wasAdded |= m_subTrees[SouthEast]->AddPoint(point);
+		bool wasAdded = m_subTrees[NorthWest]->AddObject(point);
+		wasAdded |= m_subTrees[NorthEast]->AddObject(point);
+		wasAdded |= m_subTrees[SouthWest]->AddObject(point);
+		wasAdded |= m_subTrees[SouthEast]->AddObject(point);
 
 		ASSERT(wasAdded, "QuadTree node accepted the point that was not inserted.");
 	}
@@ -261,27 +228,27 @@ bool QuadTree<T>::AddPoint(const Point& point)
 }
 
 template<typename T>
-void QuadTree<T>::GetPoints(QuadTree<T>::Rectangle boundary, std::back_insert_iterator<std::vector<Point>> resIt) const
+void QuadTree<T>::GetObjects(QuadTree<T>::Rectangle boundary, std::vector<const Object const*>& _outResult) const
 {
 	if (!m_boundary.Intersects(boundary))
 	{
 		return;
 	}
 
-	for (auto point : m_points)
+	for (const auto& object : m_objects)
 	{
-		if (boundary.Contains(point.position))
+		if (boundary.Intersects(object.shape))
 		{
-			resIt = point;
+			TryPushObject(object, _outResult);
 		}
 	}
 
 	if (m_isSubDivided)
 	{
-		m_subTrees[NorthWest]->GetPoints(boundary, resIt);
-		m_subTrees[NorthEast]->GetPoints(boundary, resIt);
-		m_subTrees[SouthWest]->GetPoints(boundary, resIt);
-		m_subTrees[SouthEast]->GetPoints(boundary, resIt);
+		m_subTrees[NorthWest]->GetObjects(boundary, _outResult);
+		m_subTrees[NorthEast]->GetObjects(boundary, _outResult);
+		m_subTrees[SouthWest]->GetObjects(boundary, _outResult);
+		m_subTrees[SouthEast]->GetObjects(boundary, _outResult);
 	}
 }
 
@@ -290,15 +257,15 @@ void QuadTree<T>::SubDivide()
 {
 	ASSERT(!m_isSubDivided, "Trying to re-subdivide the QuadTree.");
 
-	math::vector northwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2, m_boundary.origin.y + m_boundary.halfDimensions.y / 2, 0.f };
-	math::vector northeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2, m_boundary.origin.y + m_boundary.halfDimensions.y / 2, 0.f };
-	math::vector southwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2, m_boundary.origin.y - m_boundary.halfDimensions.y / 2, 0.f };
-	math::vector southeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2, m_boundary.origin.y - m_boundary.halfDimensions.y / 2, 0.f };
+	math::vector northwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
+	math::vector northeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
+	math::vector southwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
+	math::vector southeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
 
-	Rectangle northwest{ northwestOrigin, m_boundary.halfDimensions / 2};
-	Rectangle northeast{ northeastOrigin, m_boundary.halfDimensions / 2};
-	Rectangle southwest{ southwestOrigin, m_boundary.halfDimensions / 2};
-	Rectangle southeast{ southeastOrigin, m_boundary.halfDimensions / 2};
+	Rectangle northwest{ northwestOrigin, m_boundary.halfDimensions / 2.f };
+	Rectangle northeast{ northeastOrigin, m_boundary.halfDimensions / 2.f };
+	Rectangle southwest{ southwestOrigin, m_boundary.halfDimensions / 2.f };
+	Rectangle southeast{ southeastOrigin, m_boundary.halfDimensions / 2.f };
 
 	m_subTrees =
 	{
@@ -312,29 +279,27 @@ void QuadTree<T>::SubDivide()
 }
 
 template<typename T>
-bool QuadTree<T>::Rectangle::Contains(math::vector point) const
+void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult)
 {
-	return
-		point.x >= origin.x - halfDimensions.x &&
-		point.x <= origin.x + halfDimensions.x &&
-		point.y >= origin.y - halfDimensions.y &&
-		point.y <= origin.y + halfDimensions.y;
+	if (std::find_if(_outResult.begin(), _outResult.end(), 
+		[obj](const Object* a)
+		{
+			return a == &obj;
+		}) != _outResult.end())
+	{
+		return;
+	}
+	_outResult.push_back(&obj);
 }
 
 template<typename T>
 bool QuadTree<T>::Rectangle::Intersects(Rectangle other) const
 {
-	float d1x = origin.x - halfDimensions.x - other.origin.x + other.halfDimensions.x;
-	float d1y = origin.y - halfDimensions.y - other.origin.y + other.halfDimensions.y;
-	float d2x = other.origin.x - other.halfDimensions.x - origin.x + halfDimensions.x;
-	float d2y = other.origin.y - other.halfDimensions.y - origin.y + halfDimensions.y;
+	bool result = TestIntersection_AABB_AABB(
+		{ origin - halfDimensions, origin + halfDimensions },
+		{ other.origin - other.halfDimensions, other.origin + other.halfDimensions });
 
-	bool test = !((d1x >= 0.f) && (d1y >= 0.f) && (d2x >= 0.f) && (d2y >= 0.f));
-	if (test)
-	{
-		int stop = 345;
-	}
-	return !((d1x >= 0.f) && (d1y >= 0.f) && (d2x >= 0.f) && (d2y >= 0.f));
+	return result;
 }
 
 }

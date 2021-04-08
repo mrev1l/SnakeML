@@ -63,27 +63,32 @@
 	{
 		"entityId" : 0,
 		"shape_dimensions" : [ 72.0, 72.0, 0.0 ],
-		"shape_mass" : 1.0
+		"shape_mass" : 1.0,
+		"is_dynamic" : true
 	},
 	{
 		"entityId" : 2,
 		"shape_dimensions" : [ 2.0, 720.0, 0.0 ],
-		"shape_mass" : 1.0
+		"shape_mass" : 1.0,
+		"is_dynamic" : false
 	},
 	{
 		"entityId" : 3,
 		"shape_dimensions" : [ 2.0, 720.0, 0.0 ],
-		"shape_mass" : 1.0
+		"shape_mass" : 1.0,
+		"is_dynamic" : false
 	},
 	{
 		"entityId" : 4,
 		"shape_dimensions" : [ 720.0, 2.0, 0.0 ],
-		"shape_mass" : 1.0
+		"shape_mass" : 1.0,
+		"is_dynamic" : false
 	},
 	{
 		"entityId" : 5,
 		"shape_dimensions" : [ 720.0, 2.0, 0.0 ],
-		"shape_mass" : 1.0
+		"shape_mass" : 1.0,
+		"is_dynamic" : false
 	}
 ]
 }

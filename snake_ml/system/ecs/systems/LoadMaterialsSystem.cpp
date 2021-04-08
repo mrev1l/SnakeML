@@ -226,6 +226,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 			ParseComponent_EntityId(physicsComponentJson, physicsComponent.m_entityId);
 			ParsePhysicsComponents_ShapeDimensions(physicsComponentJson, physicsComponent.m_shape.m_dimensions);
 			ParsePhysicsComponents_ShapeMass(physicsComponentJson, physicsComponent.m_shape.m_mass);
+			ParsePhysicsComponents_IsDynamic(physicsComponentJson, physicsComponent.m_isDynamic);
 		}
 
 		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::PhysicsComponent, it);
@@ -245,7 +246,14 @@ void LoadMaterialsSystem::ParsePhysicsComponents_ShapeMass(const rapidjson::Valu
 {
 	ASSERT(json.HasMember("shape_mass") && json["shape_mass"].IsFloat(), "Invalid shape mass json");
 
-	_outMass = json["shape_mass"].GetFloat();;
+	_outMass = json["shape_mass"].GetFloat();
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic)
+{
+	ASSERT(json.HasMember("is_dynamic") && json["is_dynamic"].IsBool(), "Invalid is dynamic json");
+
+	_outIsDynamic = json["is_dynamic"].GetBool();
 }
 
 void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray)
