@@ -16,6 +16,86 @@ namespace snakeml
 namespace system
 {
 
+bool TestIntersection_SAT(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices)
+{
+	std::vector<math::vector> axises;
+	
+	// TODO : remove code duplication
+
+	// building axises off the first polygon edges
+	for (size_t i = 0u; i < aVertices.size(); ++i)
+	{
+		const size_t j = (i + 1) % aVertices.size();
+		math::vector edge = aVertices[j] - aVertices[i];
+		// calculate perpendicular vector in 2D
+		edge = { -edge.y, edge.x, 0.f };
+		const math::vector axisCandidate = edge.getNormalized();
+
+		// don't allow the same axis to occur multiple times
+		if (std::find_if(axises.begin(), axises.end(), [axisCandidate](const math::vector& a)
+			{
+				float dot = axisCandidate.dot(a);
+				return math::IsNearlyEqual(dot, 1.f, cosf(math::ConvertToRadians(1.f))) ||
+					math::IsNearlyEqual(dot, -1.f, cosf(math::ConvertToRadians(1.f)));
+			}) == axises.end())
+		{
+			axises.push_back(axisCandidate);
+		}
+	}
+
+	// building axises off the second polygon edges
+	for (size_t i = 0u; i < bVertices.size(); ++i)
+	{
+		const size_t j = (i + 1) % aVertices.size();
+		math::vector edge = bVertices[j] - bVertices[i];
+		// calculate perpendicular vector in 2D
+		edge = { -edge.y, edge.x, 0.f };
+		
+		const math::vector axisCandidate = edge.getNormalized();
+
+		// don't allow the same axis to occur multiple times
+		if (std::find_if(axises.begin(), axises.end(), [axisCandidate](const math::vector& a)
+			{
+				float dot = axisCandidate.dot(a);
+				return math::IsNearlyEqual(dot, 1.f, cosf(math::ConvertToRadians(1.f))) ||
+					math::IsNearlyEqual(dot, -1.f, cosf(math::ConvertToRadians(1.f)));
+			}) == axises.end())
+		{
+			axises.push_back(axisCandidate);
+		}
+	}
+
+	// TODO : remove code duplication
+
+	for (const math::vector& axis : axises)
+	{
+		float aProjectionMin = FLT_MAX, aProjectionMax = -FLT_MAX, bProjectionMin = FLT_MAX, bProjectionMax = -FLT_MAX;
+
+		for (const math::vector& aVertex : aVertices)
+		{
+			float projection = aVertex.dot(axis);
+			aProjectionMin = std::min(aProjectionMin, projection);
+			aProjectionMax = std::max(aProjectionMax, projection);
+		}
+
+		for (const math::vector& bVertex : bVertices)
+		{
+			float projection = bVertex.dot(axis);
+			bProjectionMin = std::min(bProjectionMin, projection);
+			bProjectionMax = std::max(bProjectionMax, projection);
+		}
+
+		if (
+			aProjectionMax <= bProjectionMin || // a is before b
+			aProjectionMin >= bProjectionMax)	// a is after b
+		{
+			return false;
+		}
+	}
+
+	return true; // no separating axis found
+}
+
 bool TestIntersection_AABB_AABB(const AABB& a, const AABB& b)
 {
 	const bool isABehindB = a.min.x >= b.max.x;
@@ -78,6 +158,23 @@ private:
 
 void WIP_System::Update(double deltaTime)
 {
+	{
+		// sat test
+		std::vector<math::vector> polygonA = {
+			{ 1.f, 1.f, 0.f },
+			{ 1.f, 3.f, 0.f },
+			{ 3.f, 1.f, 0.f }
+		};
+
+		std::vector<math::vector> polygonB = {
+			{ 1.f, 1.f, 0.f },
+			{ 3.f, 1.f, 0.f },
+			{ 3.f, 3.f, 0.f }
+		};
+
+		bool result = TestIntersection_SAT(polygonA, polygonB);
+	}
+
 	static bool s_update = true;
 
 	const uint32_t entityIdToUpdate = 0;
@@ -157,6 +254,7 @@ void WIP_System::Update(double deltaTime)
 	}
 
 	// Broad Phase
+	std::vector<std::pair<const PhysicsComponent&, const PhysicsComponent&>> narrowPhasePairs;
 	for (size_t i = 0u; i < bodys->Size(); ++i)
 	{
 		const PhysicsComponent& body = *((PhysicsComponent*)bodys->At(i));
@@ -182,11 +280,15 @@ void WIP_System::Update(double deltaTime)
 			const bool isIntersecting = TestIntersection_AABB_AABB(a, b);
 			
 			s_update = !isIntersecting;
+			narrowPhasePairs.push_back({ body, object->userData });
 		}
 	}
 	
 	// Narrow Phase
-
+	for (const std::pair<const PhysicsComponent&, const PhysicsComponent&>& pair : narrowPhasePairs)
+	{
+		//pair.first.
+	}
 	int stop = 45;
 }
 
@@ -281,6 +383,7 @@ void QuadTree<T>::SubDivide()
 template<typename T>
 void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult)
 {
+	// TODO : indenting
 	if (std::find_if(_outResult.begin(), _outResult.end(), 
 		[obj](const Object* a)
 		{
