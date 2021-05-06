@@ -35,8 +35,39 @@ std::vector<MaterialComponent::InputLayoutEntries> InitializeRenderComponentsSys
 
 void InitializeRenderComponentsSystem::Execute()
 {
+	// NEW
+	/*const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
+	
+	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
+	auto device = dx12Driver->GetD3D12Device();
+	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
+	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
+
+	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
+	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Size());
+	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
+	DX12RenderComponent* renderComponents = (DX12RenderComponent*)renderComponentsIt->GetData();
+
+	for (size_t i = 0u; i < entities.size(); ++i)
+	{
+		DX12RenderComponent& renderComponent = renderComponents[i];
+		const MaterialComponent& materialComponent = *((MaterialComponent*)entities[i].m_components.at(ComponentType::MaterialComponent));
+		const MeshComponent& mesh = *((MeshComponent*)entities[i].m_components.at(ComponentType::MeshComponent));
+
+		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
+	}
+
+	if (commandQueue)
+	{
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		commandQueue->WaitForFenceValue(fenceValue);
+	}*/
+
+	// OLD
 	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
 	MaterialComponent* materials = (MaterialComponent*)materialComponents->GetData();
+	Iterator* meshComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MeshComponent);
+	MeshComponent* meshes = (MeshComponent*)meshComponents->GetData();
 
 	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Size());
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
@@ -47,12 +78,14 @@ void InitializeRenderComponentsSystem::Execute()
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
+	ASSERT(meshComponents->Size() >= materialComponents->Size(), "Renderables initialization is going to fail");
 	for (size_t i = 0; i < materialComponents->Size(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponents[i];
 		const MaterialComponent& materialComponent = materials[i];
+		const MeshComponent& mesh = meshes[i];
 
-		InitRenderComponent(commandList, materialComponent, renderComponent);
+		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
 	}
 
 	if (commandQueue)
@@ -62,13 +95,15 @@ void InitializeRenderComponentsSystem::Execute()
 	}
 }
 
-void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12CommandList> commandList, const MaterialComponent& materialComponent, DX12RenderComponent& _outRenderComponent)
+void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12CommandList> commandList, const MaterialComponent& materialComponent, const MeshComponent& meshComponent, DX12RenderComponent& _outRenderComponent)
 {
 	_outRenderComponent.m_entityId = materialComponent.m_entityId;
 
 	InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePath, _outRenderComponent.m_texture);
 
-	InitRenderComponent_LoadBuffers(commandList, materialComponent.m_vertices, s_debugAABBVertices, _outRenderComponent.m_vertexBuffer, _outRenderComponent.m_debugVertexBuffer);
+	// TODO FIX by separating main and debug rendering data
+	const std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<types::vec3<float>, types::vec2<float>>>() : meshComponent.m_vertices;
+	InitRenderComponent_LoadBuffers(commandList, vertices, s_debugAABBVertices, _outRenderComponent.m_vertexBuffer, _outRenderComponent.m_debugVertexBuffer);
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob, debugVertexShaderBlob, debugPixelShaderBlob;
 	InitRenderComponent_LoadShaders(materialComponent.m_vs.data(), materialComponent.m_ps.data(), s_debugVSPath, s_debugPSPath,

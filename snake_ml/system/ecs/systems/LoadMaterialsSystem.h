@@ -24,8 +24,7 @@ private:
 
 	// ******* Parsing Material components *******
 	static void ParseMaterials(const rapidjson::Document& json);
-	static void ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
-		std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
+	static void ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
 	static void ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName);
 	static void ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName);
 	static void ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath);
@@ -44,6 +43,12 @@ private:
 	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
 	static void ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic);
 	// *******  *******  *******  *******  ******
+
+	// ******* Parsing Mesh components *******
+	static void ParseMeshes(const rapidjson::Document& json);
+	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices);
+	// ******* ******* ******* ******* *******
+	
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 
 };

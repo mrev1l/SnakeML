@@ -317,6 +317,7 @@
     <ClInclude Include="system\ecs\ComponentsPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
+    <ClInclude Include="system\ecs\components\MeshComponent.h" />
     <ClInclude Include="system\ecs\components\PhysicsComponent.h" />
     <ClInclude Include="system\ecs\components\platform_specific\win\DX12RenderComponent.h" />
     <ClInclude Include="system\ecs\components\TransformComponent.h" />

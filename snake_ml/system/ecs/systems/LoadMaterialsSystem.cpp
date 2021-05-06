@@ -6,6 +6,7 @@
 #include "system/drivers/win/os/helpers/win_utils.h"
 
 #include "system/ecs/ECSManager.h"
+#include "system/ecs/components/MeshComponent.h"
 #include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/components/TransformComponent.h"
 
@@ -29,6 +30,7 @@ void LoadMaterialsSystem::Execute()
 	/*bool hasMaterials = jsonDocument.HasMember("material_components");
 	hasMaterials &= jsonDocument["material_components"].IsArray();*/
 	ParseMaterials(jsonDocument);
+	ParseMeshes(jsonDocument);
 	ParseTransforms(jsonDocument);
 	ParsePhysicsComponents(jsonDocument);
 
@@ -49,7 +51,7 @@ void LoadMaterialsSystem::Execute()
 		MaterialComponent& material = *(MaterialComponent*)it->At(0);
 
 		ParseComponent_EntityId(jsonDocument, material.m_entityId);
-		ParseMaterialComponent_VerticesArray(jsonDocument, material.m_vertices, material.m_inputLayoutEntries);
+		ParseMaterialComponent_VerticesArray(jsonDocument, material.m_inputLayoutEntries);
 		ParseMaterialComponent_VSPath(jsonDocument, material.m_vs);
 		ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
 		ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
@@ -85,7 +87,7 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 			const rapidjson::Value& materialJson = *(materialsArray.Begin() + i);
 
 			ParseComponent_EntityId(materialJson, material.m_entityId);
-			ParseMaterialComponent_VerticesArray(materialJson, material.m_vertices, material.m_inputLayoutEntries);
+			ParseMaterialComponent_VerticesArray(materialJson, material.m_inputLayoutEntries);
 			ParseMaterialComponent_VSPath(materialJson, material.m_vs);
 			ParseMaterialComponent_PSPath(materialJson, material.m_ps);
 			ParseMaterialComponent_TexturePath(materialJson, material.m_texturePath);
@@ -95,32 +97,9 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 	}
 }
 
-void LoadMaterialsSystem::ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices,
-	std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries)
+void LoadMaterialsSystem::ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries)
 {
-	//ASSERT(json.HasMember("vertices") && json["vertices"].IsArray(), "Invalid vertices json");
-	if (!(json.HasMember("vertices") && json["vertices"].IsArray()))
-	{
-		return;
-	}
-
-	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
-	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
-
-	outVertices.resize(static_cast<std::vector<std::pair<types::vec3<float>, types::vec3<float>>>::size_type>(verticesArray.Size()));
-	for (auto& vertex : outVertices)
-	{
-		ASSERT(vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u, "Invalid vertices json");
-		ASSERT(vertexIt->HasMember("uv") && (*vertexIt)["uv"].IsArray() && (*vertexIt)["uv"].Size() == 2u, "Invalid vertices json");
-
-		const rapidjson::GenericArray<true, rapidjson::Value>& pos = (*vertexIt)["pos"].GetArray();
-		const rapidjson::GenericArray<true, rapidjson::Value>& uv = (*vertexIt)["uv"].GetArray();
-
-		vertex.first = { pos[0].GetFloat(), pos[1].GetFloat(), pos[2].GetFloat() };
-		vertex.second = { uv[0].GetFloat(), uv[1].GetFloat()};
-
-		++vertexIt;
-	}
+	// TODO: read from json ? shader reflection ?
 
 	inputLayoutEntries.push_back(MaterialComponent::InputLayoutEntries::Position);
 	inputLayoutEntries.push_back(MaterialComponent::InputLayoutEntries::UV);
@@ -254,6 +233,56 @@ void LoadMaterialsSystem::ParsePhysicsComponents_IsDynamic(const rapidjson::Valu
 	ASSERT(json.HasMember("is_dynamic") && json["is_dynamic"].IsBool(), "Invalid is dynamic json");
 
 	_outIsDynamic = json["is_dynamic"].GetBool();
+}
+
+void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
+{
+	const bool hasMeshes = json.HasMember("mesh_components") && json["mesh_components"].IsArray();
+	if (hasMeshes)
+	{
+		const rapidjson::GenericArray<true, rapidjson::Value>& meshComponentsArray = json["mesh_components"].GetArray();
+		const size_t meshComponentsCount = meshComponentsArray.Size();
+		MeshComponentIterator* it = (MeshComponentIterator*)IComponent::CreateIterator(ComponentType::MeshComponent, meshComponentsCount);
+		for (size_t i = 0u; i < meshComponentsCount; ++i)
+		{
+			MeshComponent& meshComponent = *(MeshComponent*)it->At(i);
+			const rapidjson::Value& meshComponentJson = *(meshComponentsArray.Begin() + i);
+
+			ParseComponent_EntityId(meshComponentJson, meshComponent.m_entityId);
+			ParseMeshes_VerticesArray(meshComponentJson, meshComponent.m_vertices);
+		}
+
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MeshComponent, it);
+	}
+}
+
+void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices)
+{
+	if (!(json.HasMember("vertices") && json["vertices"].IsArray()))
+	{
+		return;
+	}
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
+	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
+
+	outVertices.resize(static_cast<std::vector<std::pair<types::vec3<float>, types::vec3<float>>>::size_type>(verticesArray.Size()));
+	for (auto& vertex : outVertices)
+	{
+		if (vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u)
+		{
+			const rapidjson::GenericArray<true, rapidjson::Value>& pos = (*vertexIt)["pos"].GetArray();
+			vertex.first = { pos[0].GetFloat(), pos[1].GetFloat(), pos[2].GetFloat() };
+		}
+
+		if (vertexIt->HasMember("uv") && (*vertexIt)["uv"].IsArray() && (*vertexIt)["uv"].Size() == 2u)
+		{
+			const rapidjson::GenericArray<true, rapidjson::Value>& uv = (*vertexIt)["uv"].GetArray();
+			vertex.second = { uv[0].GetFloat(), uv[1].GetFloat() };
+		}
+
+		++vertexIt;
+	}
 }
 
 void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray)

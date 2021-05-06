@@ -15,6 +15,7 @@ enum class ComponentType : uint32_t
 	TransformComponent,
 	CameraComponent,
 	PhysicsComponent,
+	MeshComponent,
 	Size
 };
 
