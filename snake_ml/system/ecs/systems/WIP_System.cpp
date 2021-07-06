@@ -357,6 +357,9 @@ private:
 
 void WIP_System::Update(double deltaTime)
 {
+	// if debug
+	deltaTime = 1.f / 144.f;
+
 	// TESTING GJK
 	{
 		std::vector<math::vector> polygonA = { {0.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {2.f, 0.f, 0.f} };
@@ -374,7 +377,7 @@ void WIP_System::Update(double deltaTime)
 	timer2 += deltaTime;
 
 	float timeToSimulate = deltaTime;
-	static math::vector force = math::vector{ 1.f, 1.f, 0.f };
+	static math::vector force = math::vector{ 1.0f, 0.5f, 0.f };
 	do
 	{
 		const float dt = timeToSimulate > k_physicsTimeStep ? k_physicsTimeStep : timeToSimulate;
@@ -394,13 +397,13 @@ void WIP_System::Update(double deltaTime)
 			if (s_update)
 			{
 				//const math::vector force = math::vector{ 1.f, 1.f, 0.f };// *1000000.f;
-				math::vector accDelta = (force / body.m_shape.m_mass) * dt;
+				math::vector accDelta = (force * 10.f / body.m_shape.m_mass) * dt;
 				body.m_acceleration += accDelta;
 				body.m_velocity += body.m_acceleration * dt;
 				body.m_position += body.m_velocity * dt;
 
 				// Angular movement integration
-				const math::vector torque = math::vector::zero;//math::vector::forward * 1000.f;
+				const math::vector torque = math::vector::forward * 1000.f;
 				body.m_angularAcceleration += (torque / body.m_shape.m_momentOfInertia) * dt;
 				body.m_angularVelocity += body.m_angularAcceleration * dt;
 				body.m_rotation += body.m_angularVelocity * dt;
@@ -541,6 +544,12 @@ void WIP_System::Update(double deltaTime)
 		}
 
 		static bool adjusted = false;
+		static std::vector<
+			std::pair<
+			Intersection,
+			const PhysicsComponent
+			>> s_intersections;
+		static std::vector<math::vector> s_pos;
 
 		// Narrow Phase
 		for (const auto& pair : narrowPhasePairs)
@@ -566,26 +575,44 @@ void WIP_System::Update(double deltaTime)
 				}
 				*/
 
-				if (adjusted)
-				{
-					int stop = 34;
-				}
-
 				const Intersection intersection = TestIntersection_GJK(pair.first.second, pair.second.second, pair.first.first.m_position, pair.second.first.m_position);
 				if (intersection.areIntersecting)
 				{
+					if (adjusted)
+					{
+						int stop = 34;
+					}
+
 					int stop = 34;
 
-					force = -intersection.penetrationVector;// *pair.first.first.m_acceleration.length();// *intersection.penetrationDepth;
-					if (pair.first.first.m_acceleration.length() > 0.f) // hack, should use something like IsDynamic intstead
+					force = math::vector::zero;//-intersection.penetrationVector;// *pair.first.first.m_acceleration.length();// *intersection.penetrationDepth;
+					if (pair.first.first.m_velocity.length() > 0.f) // hack, should use something like IsDynamic intstead
 					{
 						PhysicsComponent& aBody = const_cast<PhysicsComponent&>(pair.first.first);
-						aBody.m_acceleration = -intersection.penetrationVector * aBody.m_acceleration.length();
-						aBody.m_velocity = math::vector::zero;
+						/*aBody.m_acceleration = -intersection.penetrationVector * aBody.m_acceleration.length();
+						aBody.m_velocity = math::vector::zero;*/
 						aBody.m_position -= intersection.penetrationVector * intersection.penetrationDepth;
+
+						s_pos.push_back(aBody.m_position);
+
+						math::vector reflectedVelocity = aBody.m_velocity - (-intersection.penetrationVector * 2.f * aBody.m_velocity.dot(-intersection.penetrationVector));
+						aBody.m_velocity = reflectedVelocity;
+						aBody.m_acceleration = math::vector::zero;
+
 						adjusted = true;
+						s_intersections.push_back({ intersection, aBody });
 					}
 				}
+				else
+				{
+					adjusted = false;
+					//s_intersections.clear();
+				}
+			}
+			else
+			{
+				adjusted = false;
+				//s_intersections.clear();
 			}
 			//s_update = !isIntersecting;
 		}
@@ -692,7 +719,7 @@ void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object cons
 	if (std::find_if(_outResult.begin(), _outResult.end(), 
 		[obj](const Object* a)
 		{
-			return a == &obj;
+			return &(a->userData) == &(obj.userData);
 		}) != _outResult.end())
 	{
 		return;
