@@ -26,8 +26,6 @@ public:
 	virtual ~MaterialComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::MaterialComponent; }
 
-	std::vector<std::pair<types::vec3<float>, types::vec2<float>>> m_vertices;
-	std::vector<uint16_t> m_indices;
 	std::wstring m_vs;
 	std::wstring m_ps;
 	std::vector<InputLayoutEntries> m_inputLayoutEntries;

@@ -60,9 +60,6 @@
     <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\RotateCubeSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -162,6 +159,18 @@
     <ClCompile Include="utils\math\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\ecs\systems\WIP_System.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\types\QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -225,9 +234,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\RotateCubeSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h">
@@ -353,6 +359,24 @@
     <ClInclude Include="utils\math\math_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\ecs\systems\WIP_System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\PhysicsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\PhysicsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\MeshComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\types\QuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -367,6 +391,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="utils\math\matrix.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="utils\types\QuadTree.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

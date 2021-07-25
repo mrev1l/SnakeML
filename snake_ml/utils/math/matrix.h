@@ -32,6 +32,7 @@ public:
 	matrix operator-() const;
 
 	matrix operator*(float scalar) const;
+	vector operator*(vector a) const;
 	matrix operator*(const matrix& _m) const;
 	void operator*=(const matrix& _m);
 

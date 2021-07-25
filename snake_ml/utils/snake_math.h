@@ -65,9 +65,14 @@ inline T DivideByMultiple(T value, size_t alignment)
 	return (T)((value + alignment - 1) / alignment);
 }
 
-inline bool IsNearlyZero(float val)
+inline bool IsNearlyZero(float val, float epsilon = k_precise_epsilon)
 {
-	return abs(val - 0.f) < k_precise_epsilon;
+	return abs(val - 0.f) < epsilon;
+}
+
+inline bool IsNearlyEqual(float a, float b, float epsilon = k_default_epsilon)
+{
+	return std::abs(a - b) < k_default_epsilon;
 }
 
 }

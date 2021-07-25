@@ -2,10 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "utils/types/arithmetic.h"
-#include "utils/math/math_utils.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <stdint.h>
 #include <map>
@@ -22,5 +21,8 @@
 #include "utils/snake_math.h"
 #include "utils/math/vector.h"
 #include "utils/math/matrix.h"
+#include "utils/math/math_utils.h"
+
+#include "utils/types/arithmetic.h"
 
 #pragma warning(disable : 4834)
