@@ -168,6 +168,9 @@
     <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\types\QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -371,6 +374,9 @@
     <ClInclude Include="system\ecs\components\MeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\types\QuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -385,6 +391,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="utils\math\matrix.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="utils\types\QuadTree.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

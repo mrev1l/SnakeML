@@ -61,8 +61,8 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
 
 	// TODO cleanup
-	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<WIP_System>());
-	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
 	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<TestMoveSnakeHeadSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }

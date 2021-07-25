@@ -16,6 +16,8 @@ namespace snakeml
 {
 namespace system
 {
+namespace wip
+{
 
 math::vector GJK_SupportFunction(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices, const math::vector& direction)
 {
@@ -358,7 +360,7 @@ private:
 void WIP_System::Update(double deltaTime)
 {
 	// if debug
-	deltaTime = 1.f / 144.f;
+	//deltaTime = 1.f / 144.f;
 
 	// TESTING GJK
 	{
@@ -397,13 +399,15 @@ void WIP_System::Update(double deltaTime)
 			if (s_update)
 			{
 				//const math::vector force = math::vector{ 1.f, 1.f, 0.f };// *1000000.f;
-				math::vector accDelta = (force * 10.f / body.m_shape.m_mass) * dt;
-				body.m_acceleration += accDelta;
+				math::vector accDelta = (force * -1.f * 10000.f / body.m_shape.m_mass) * dt;
+				body.m_acceleration = accDelta;
+				s_update = false;
+				return; // test!!!!!!!!!!!!!!!!!!!!!!!
 				body.m_velocity += body.m_acceleration * dt;
 				body.m_position += body.m_velocity * dt;
 
 				// Angular movement integration
-				const math::vector torque = math::vector::forward * 1000.f;
+				const math::vector torque = math::vector::zero;// math::vector::forward * 1000.f;
 				body.m_angularAcceleration += (torque / body.m_shape.m_momentOfInertia) * dt;
 				body.m_angularVelocity += body.m_angularAcceleration * dt;
 				body.m_rotation += body.m_angularVelocity * dt;
@@ -422,6 +426,8 @@ void WIP_System::Update(double deltaTime)
 				transform.m_rotation = body.m_rotation;
 			}
 		}
+
+		return;
 
 		PhysicsComponentIterator* bodys = (PhysicsComponentIterator*)ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::PhysicsComponent);
 		// Update AABBs
@@ -490,10 +496,10 @@ void WIP_System::Update(double deltaTime)
 				{
 					continue;
 				}
-				const AABB& a = body.m_aabb;
-				const AABB& b = object->userData.m_aabb;
+				const types::AABB& a = body.m_aabb;
+				const types::AABB& b = object->userData.m_aabb;
 
-				const bool isIntersecting = TestIntersection_AABB_AABB(a, b);
+				const bool isIntersecting = types::TestIntersection_AABB_AABB(a, b);
 
 				//s_update = !isIntersecting;
 				if (isIntersecting)
@@ -737,5 +743,6 @@ bool QuadTree<T>::Rectangle::Intersects(Rectangle other) const
 	return result;
 }
 
+}
 }
 }

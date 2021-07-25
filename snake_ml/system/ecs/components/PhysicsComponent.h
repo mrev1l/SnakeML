@@ -26,7 +26,7 @@ public:
 	ComponentType GetComponentType() const override { return ComponentType::PhysicsComponent; }
 
 	BoxShape m_shape;
-	AABB m_aabb;
+	types::AABB m_aabb;
 	math::vector m_position;
 	math::vector m_rotation;
 	math::vector m_velocity;

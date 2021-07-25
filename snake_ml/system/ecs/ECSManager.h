@@ -20,6 +20,14 @@ public:
 
 	inline ComponentsPool& GetComponentsPool() { return m_components; }
 	inline std::vector<Entity>& GetEntities() { return m_entities; }
+	inline Entity* GetEntity(uint32_t id) {
+		auto entityIt = std::find_if(m_entities.begin(), m_entities.end(), [id](const Entity& entity) { return entity.m_entityId == id; });
+		if (entityIt != m_entities.end())
+		{
+			return entityIt._Ptr;
+		}
+		return nullptr;
+	}
 
 	void ExecuteSystem(const std::unique_ptr<ISystem>& system);
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);

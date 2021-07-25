@@ -8,6 +8,8 @@ namespace snakeml
 {
 namespace system
 {
+namespace wip
+{
 
 class WIP_System : public ISystem
 {
@@ -15,5 +17,6 @@ public:
 	void Update(double deltaTime) override;
 };
 
+}
 }
 }

@@ -278,6 +278,7 @@
     <ClCompile Include="utils\math\vector.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp" />
+    <ClCompile Include="utils\types\QuadTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h" />
@@ -345,6 +346,7 @@
     <ClInclude Include="utils\snake_math.h" />
     <ClInclude Include="utils\types\arithmetic.h" />
     <ClInclude Include="utils\types\HighResolutionClock.h" />
+    <ClInclude Include="utils\types\QuadTree.h" />
     <ClInclude Include="utils\types\ThreadSafeQueue.h" />
     <ClInclude Include="system\drivers\win\os\helpers\win_utils.h" />
   </ItemGroup>
@@ -454,6 +456,7 @@
   <ItemGroup>
     <None Include="utils\math\matrix.inl" />
     <None Include="utils\math\vector.inl" />
+    <None Include="utils\types\QuadTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

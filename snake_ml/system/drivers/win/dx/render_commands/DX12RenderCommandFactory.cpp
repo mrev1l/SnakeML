@@ -61,7 +61,7 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	if (renderableComponent.m_debugPipelineState)
 	{
-		AABB aabb = physicsComponent.m_aabb;
+		types::AABB aabb = physicsComponent.m_aabb;
 		float width = abs(aabb.max.x - aabb.min.x);
 		float height = abs(aabb.max.y - aabb.min.y);
 		const math::matrix debugScaleMatrix = math::ScaleMatrix(width, height, 1.f);
