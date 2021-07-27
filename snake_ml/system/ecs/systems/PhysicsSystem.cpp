@@ -301,7 +301,10 @@ void PhysicsSystem::UpdateAABBs(PhysicsComponent* physicsBodies, size_t bodiesCo
 	for (size_t i = 0u; i < bodiesCount; ++i)
 	{
 		PhysicsComponent& body = physicsBodies[i];
-		UpdateAABB(body);
+		if (body.m_isDynamic)
+		{
+			UpdateAABB(body);
+		}
 	}
 }
 
