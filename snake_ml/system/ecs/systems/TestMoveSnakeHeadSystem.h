@@ -8,11 +8,11 @@ namespace snakeml
 {
 namespace system
 {
-
+// TODO Remove?
 class TestMoveSnakeHeadSystem : public ISystem
 {
 public:
-	void Execute() override;
+	void Update(double deltaTime) override;
 };
 
 }

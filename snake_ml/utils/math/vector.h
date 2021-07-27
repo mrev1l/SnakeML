@@ -29,7 +29,7 @@ public:
 	void operator*=(float scalar);
 
 	vector operator/(float scalar) const;
-	void operator/(float scalar);
+	void operator/=(float scalar);
 
 	float x = 0.f;
 	float y = 0.f;
