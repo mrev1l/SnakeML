@@ -1,7 +1,9 @@
 #pragma once
 
-#include "system/ecs/ISystem.h"
 #include "system/ecs/Entity.h"
+#include "system/ecs/ISystem.h"
+
+#include "utils/math/algorithms/CollisionDetectionGJK.h"
 #include "utils/types/QuadTree.h"
 
 namespace snakeml
@@ -11,13 +13,6 @@ namespace system
 
 class PhysicsComponent;
 class TransformComponent;
-
-struct Intersection
-{
-	bool areIntersecting = false;
-	float penetrationDepth = 0.f;
-	math::vector penetrationVector = math::vector::zero;
-};
 
 class PhysicsSystem : public ISystem
 {
@@ -52,8 +47,8 @@ private:
 	void CalculateBroadphaseForBody(const types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase);
 
 	void NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase);
-	void ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, Intersection& foundIntersection);
-	void ResolveIntersection(const NarrowPhasePair& narrowPhase, const Intersection& intersection);
+	void ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, math::GJK::Intersection& foundIntersection);
+	void ResolveIntersection(const NarrowPhasePair& narrowPhase, const math::GJK::Intersection& intersection);
 
 	static void GeneratePolygon(const PhysicsComponent& body, Polygon& _outPolygon);
 };

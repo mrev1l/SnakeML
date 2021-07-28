@@ -171,6 +171,12 @@
     <ClCompile Include="utils\types\QuadTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\math\algorithms\CollisionDetectionGJK.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\math\algorithms\CollisionDetectionSAT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -375,6 +381,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\types\QuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\math\algorithms\CollisionDetectionGJK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\math\algorithms\CollisionDetectionSAT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

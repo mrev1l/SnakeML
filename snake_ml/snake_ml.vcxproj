@@ -274,6 +274,8 @@
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
+    <ClCompile Include="utils\math\algorithms\CollisionDetectionGJK.cpp" />
+    <ClCompile Include="utils\math\algorithms\CollisionDetectionSAT.cpp" />
     <ClCompile Include="utils\math\matrix.cpp" />
     <ClCompile Include="utils\math\vector.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
@@ -337,6 +339,8 @@
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="utils\math\algorithms\CollisionDetectionGJK.h" />
+    <ClInclude Include="utils\math\algorithms\CollisionDetectionSAT.h" />
     <ClInclude Include="utils\math\math_utils.h" />
     <ClInclude Include="utils\math\matrix.h" />
     <ClInclude Include="utils\math\vector.h" />

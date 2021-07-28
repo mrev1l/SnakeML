@@ -9,6 +9,8 @@
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
+#include "utils/math/algorithms/CollisionDetectionSAT.h"
+
 #include <utility>
 
 // TODO : REPLACE WITH LOGGING
@@ -17,226 +19,6 @@ namespace snakeml
 {
 namespace system
 {
-
-void GJK_FindSupportPoint(const math::vector& supportDirection, const std::vector<math::vector>& vertices, std::pair<math::vector, float>& _outSupportPoint)
-{
-	for (const math::vector& v : vertices)
-	{
-		const float dot = supportDirection.dot(v);
-		if (dot > _outSupportPoint.second)
-		{
-			_outSupportPoint = { v, dot };
-		}
-	}
-}
-
-math::vector GJK_SupportFunction(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices, const math::vector& direction)
-{
-	std::pair<math::vector, float> furthestPointA = { math::vector::zero, -FLT_MAX }, furthestPointB = { math::vector::zero, -FLT_MAX };
-
-	GJK_FindSupportPoint( direction, aVertices, furthestPointA);
-	GJK_FindSupportPoint(-direction, bVertices, furthestPointB);
-
-	return furthestPointA.first - furthestPointB.first;
-}
-
-math::vector triple_product(const math::vector& a, const math::vector& b, const math::vector& c)
-{
-	// https://en.wikipedia.org/wiki/Triple_product#Vector_triple_product
-	//return b * a.dot(c) - c * (a.dot(b));
-	return a.cross(b).cross(c);
-}
-
-math::vector perpendicular2d(const math::vector& a)
-{
-	return { -a.y, a.x, 0.f };
-}
-
-bool ShareAxis(const math::vector& a, const math::vector& b)
-{
-	const float dot = a.getNormalized().dot(b.getNormalized());
-	return math::IsNearlyEqual(std::abs(dot), 1.f);
-}
-
-bool GJK_HandleSimplex_LineCase(const std::vector<math::vector>& simplex, math::vector& direction)
-{
-	const math::vector& a = simplex[1];
-	const math::vector& b = simplex[0];
-	const math::vector ab = b - a;
-	const math::vector ao = math::vector::zero - a;
-
-	const bool doShareAxis = ShareAxis(ab, ao);
-	const math::vector triProduct = triple_product(ab, ao, ab);
-	
-	math::vector abPerp = math::IsNearlyZero(triProduct.length()) ? perpendicular2d(ab) : triProduct;
-
-	direction = abPerp.getNormalized();
-	return false;
-}
-
-bool GJK_HandleSimplex_TriangleCase(std::vector<math::vector>& simplex, math::vector& direction)
-{
-	const math::vector& a = simplex[2];
-	const math::vector& b = simplex[1];
-	const math::vector& c = simplex[0];
-	const math::vector ab = b - a;
-	const math::vector ac = c - a;
-	const math::vector ao = math::vector::zero - a;
-	const bool doShareAxis = ShareAxis(ab, ac);
-	const math::vector abTriProduct = triple_product(ac, ab, ab);
-	const math::vector acTriProduct = triple_product(ab, ac, ac);
-	const math::vector abPerp = math::IsNearlyZero(abTriProduct.length()) ? perpendicular2d(ab) : abTriProduct;
-	const math::vector acPerp = math::IsNearlyZero(acTriProduct.length()) ? perpendicular2d(ac) : acTriProduct;
-	if (abPerp.dot(ao) > 0.f)
-	{
-		simplex.erase(simplex.begin());
-		direction = abPerp.getNormalized();
-		return false;
-	}
-	else if (acPerp.dot(ao) > 0.f)
-	{
-		simplex.erase(simplex.begin() + 1);
-		direction = acPerp.getNormalized();
-		return false;
-	}
-	return true;
-}
-
-bool GJK_HandleSimplex(std::vector<math::vector>& simplex, math::vector& direction)
-{
-	if (simplex.size() == 2)
-	{
-		return GJK_HandleSimplex_LineCase(simplex, direction);
-	}
-	ASSERT(simplex.size() == 3, "Error in GJK");
-	return GJK_HandleSimplex_TriangleCase(simplex, direction);
-}
-
-
-Intersection TestIntersection_GJK(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices, const math::vector& aCenter, const math::vector& bCenter)
-{
-	// https://www.youtube.com/watch?v=ajv46BSqcK4
-	math::vector direction = (bCenter - aCenter).getNormalized();
-	std::vector<math::vector> simplex = { GJK_SupportFunction(aVertices, bVertices, direction) };
-	direction = (math::vector::zero - simplex[0]).getNormalized();
-	while (true)
-	{
-		math::vector supportPoint = GJK_SupportFunction(aVertices, bVertices, direction);
-		if (supportPoint.dot(direction) < 0.f)
-		{
-			return Intersection{};
-		}
-		simplex.push_back(supportPoint);
-		if (GJK_HandleSimplex(simplex, direction))
-		{
-			break;
-		}
-	}
-
-	// EPA
-	float minDistance = FLT_MAX;
-	size_t minIdx = 0u;
-	math::vector minNormal = math::vector::zero;
-
-	while (math::IsNearlyEqual(minDistance, FLT_MAX))
-	{
-		for (size_t i = 0u; i < simplex.size(); ++i)
-		{
-			size_t j = (i + 1) % simplex.size();
-
-			const math::vector edge = simplex[j] - simplex[i];
-			math::vector edgeNormal = math::vector(edge.y, -edge.x, 0.f).getNormalized();
-			float distance = edgeNormal.dot(simplex[i]);
-			
-			if (distance < 0)
-			{
-				edgeNormal *= -1.f;
-				distance *= -1.f;
-			}
-
-			if (distance < minDistance)
-			{
-				minDistance = distance;
-				minNormal = edgeNormal;
-				minIdx = j;
-			}
-		}
-
-		const math::vector supportPoint = GJK_SupportFunction(aVertices, bVertices, minNormal);
-		const float supportDistance = minNormal.dot(supportPoint);
-
-		if (std::abs(minDistance - supportDistance) > math::k_default_epsilon)
-		{
-			minDistance = FLT_MAX;
-			simplex.insert(simplex.begin() + minIdx, supportPoint);
-		}
-	}
-
-	return Intersection{ true, minDistance, minNormal };
-}
-
-bool SAT_IsAxisPresent(const math::vector& axisCandidate, std::vector<math::vector>& axises)
-{
-	return std::find_if(axises.begin(), axises.end(), [axisCandidate](const math::vector& a)
-		{
-			float dot = axisCandidate.dot(a);
-			return math::IsNearlyEqual(dot, 1.f, cosf(math::ConvertToRadians(1.f))) ||
-				math::IsNearlyEqual(dot, -1.f, cosf(math::ConvertToRadians(1.f)));
-		}) != axises.end();
-}
-
-void SAT_BuildAxises(const std::vector<math::vector>& vertices, std::vector<math::vector>& _outAxises)
-{
-	for (size_t i = 0u; i < vertices.size(); ++i)
-	{
-		const size_t j = (i + 1) % vertices.size();
-		math::vector edge = vertices[j] - vertices[i];
-		// calculate perpendicular vector in 2D
-		edge = { -edge.y, edge.x, 0.f };
-		const math::vector axisCandidate = edge.getNormalized();
-
-		// don't allow the same axis to occur multiple times
-		if (!SAT_IsAxisPresent(axisCandidate, _outAxises))
-		{
-			_outAxises.push_back(axisCandidate);
-		}
-	}
-}
-
-void SAT_ProjectPolygon(const math::vector& axis, const std::vector<math::vector>& vertices, float& _outProjectionMin, float& _outProjectionMax)
-{
-	for (const math::vector& vertex : vertices)
-	{
-		float projection = vertex.dot(axis);
-		_outProjectionMin = std::min(_outProjectionMin, projection);
-		_outProjectionMax = std::max(_outProjectionMax, projection);
-	}
-}
-
-bool TestIntersection_SAT(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices)
-{
-	std::vector<math::vector> axises;
-
-	SAT_BuildAxises(aVertices, axises);
-	SAT_BuildAxises(bVertices, axises);
-
-	for (const math::vector& axis : axises)
-	{
-		float aProjectionMin = FLT_MAX, aProjectionMax = -FLT_MAX, bProjectionMin = FLT_MAX, bProjectionMax = -FLT_MAX;
-
-		SAT_ProjectPolygon(axis, aVertices, aProjectionMin, aProjectionMax);
-		SAT_ProjectPolygon(axis, bVertices, bProjectionMin, bProjectionMax);
-
-		if (
-			aProjectionMax <= bProjectionMin || // a is before b
-			aProjectionMin >= bProjectionMax)	// a is after b
-		{
-			return false;
-		}
-	}
-
-	return true; // no separating axis found
-}
 
 void PhysicsSystem::Update(double deltaTime)
 {
@@ -405,7 +187,7 @@ void PhysicsSystem::CalculateBroadphaseForBody(const types::QuadTree<PhysicsComp
 
 void PhysicsSystem::NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase)
 {
-	Intersection foundIntersection;
+	math::GJK::Intersection foundIntersection;
 	for (const auto& pair : narrowPhase)
 	{
 		ResolveNarrowPhase(pair, foundIntersection);
@@ -417,16 +199,16 @@ void PhysicsSystem::NarrowPhaseIntersectionSolutionStep(const std::vector<Narrow
 	}
 }
 
-void PhysicsSystem::ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, Intersection& _outFoundGJK_Intersection)
+void PhysicsSystem::ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, math::GJK::Intersection& _outFoundGJK_Intersection)
 {
-	const bool isSAT_IntersectionFound = TestIntersection_SAT(narrowPhase.a.polygon, narrowPhase.b.polygon);
+	const bool isSAT_IntersectionFound = math::SAT::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon);
 	if (isSAT_IntersectionFound)
 	{
-		_outFoundGJK_Intersection = TestIntersection_GJK(narrowPhase.a.polygon, narrowPhase.b.polygon, narrowPhase.a.physicsObject.m_position, narrowPhase.b.physicsObject.m_position);
+		_outFoundGJK_Intersection = math::GJK::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon, narrowPhase.a.physicsObject.m_position, narrowPhase.b.physicsObject.m_position);
 	}
 }
 
-void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, const Intersection& intersection)
+void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, const math::GJK::Intersection& intersection)
 {
 	if (narrowPhase.a.physicsObject.m_isDynamic)
 	{
