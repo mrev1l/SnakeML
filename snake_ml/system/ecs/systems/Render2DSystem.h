@@ -12,6 +12,8 @@ namespace system
 class Render2DSystem : public ISystem
 {
 public:
+	Render2DSystem() : ISystem() {}
+
 	void Update(double deltaTime) override;
 };
 

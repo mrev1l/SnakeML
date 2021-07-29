@@ -29,8 +29,9 @@ public:
 		return nullptr;
 	}
 
-	void ExecuteSystem(const std::unique_ptr<ISystem>& system);
+	void ExecuteSystem(const std::unique_ptr<ISystem>& system) const;
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
+	void UnscheduleSystem(const ISystem* system);
 
 	void Update(double deltaTime);
 
@@ -38,6 +39,9 @@ private:
 	ComponentsPool m_components;
 	std::vector<Entity> m_entities;
 	std::vector<std::unique_ptr<ISystem>> m_systems;
+
+	std::unordered_set<uint32_t> m_systemsToUnschedule;
+
 };
 
 }

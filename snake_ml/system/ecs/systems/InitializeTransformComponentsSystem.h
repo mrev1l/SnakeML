@@ -15,6 +15,8 @@ class PhysicsComponent;
 class InitializeTransformComponentsSystem : public ISystem
 {
 public:
+	InitializeTransformComponentsSystem() : ISystem() {}
+
 	void Execute() override;
 
 	static void InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody);

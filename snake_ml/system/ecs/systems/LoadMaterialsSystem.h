@@ -15,6 +15,8 @@ namespace system
 class LoadMaterialsSystem : public ISystem
 {
 public:
+	LoadMaterialsSystem() : ISystem() {}
+
 	void Execute() override;
 
 private:

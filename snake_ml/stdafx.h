@@ -11,6 +11,7 @@
 #include <math.h>
 #include <memory>
 #include <vector>
+#include <unordered_set>
 
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);

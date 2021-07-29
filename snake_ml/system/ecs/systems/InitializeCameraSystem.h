@@ -10,6 +10,8 @@ namespace system
 class InitializeCameraSystem : public ISystem
 {
 public:
+	InitializeCameraSystem() : ISystem() {}
+
 	void Execute() override;
 };
 

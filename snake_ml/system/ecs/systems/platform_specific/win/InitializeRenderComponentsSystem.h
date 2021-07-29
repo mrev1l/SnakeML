@@ -26,6 +26,8 @@ class DX12VertexBuffer;
 class InitializeRenderComponentsSystem : public ISystem
 {
 public:
+	InitializeRenderComponentsSystem() : ISystem() {}
+
 	void Execute() override;
 
 private:

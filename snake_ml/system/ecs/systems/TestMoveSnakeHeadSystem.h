@@ -12,6 +12,8 @@ namespace system
 class TestMoveSnakeHeadSystem : public ISystem
 {
 public:
+	TestMoveSnakeHeadSystem() : ISystem() {}
+
 	void Update(double deltaTime) override;
 };
 

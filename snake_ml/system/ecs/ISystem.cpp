@@ -2,3 +2,13 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "ISystem.h"
+
+namespace snakeml
+{
+namespace system
+{
+
+uint32_t ISystem::s_globalSystemIdCounter = 0;
+
+}
+}

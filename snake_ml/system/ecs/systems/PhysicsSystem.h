@@ -17,6 +17,8 @@ class TransformComponent;
 class PhysicsSystem : public ISystem
 {
 public:
+	PhysicsSystem() : ISystem() {}
+
 	void Update(double deltaTime) override;
 
 private:

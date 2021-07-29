@@ -12,6 +12,7 @@ namespace system
 class InitializeEntitiesSystem : public ISystem
 {
 public:
+	InitializeEntitiesSystem() : ISystem() {}
 	void Execute() override;
 };
 
