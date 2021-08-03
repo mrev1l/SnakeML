@@ -34,23 +34,22 @@ void PhysicsSystem::Update(double deltaTime)
 		types::QuadTree<PhysicsComponent> qt(types::QuadTree<PhysicsComponent>::Rectangle{ {0.f, 0.f, 0.f}, {370.f, 370.f, 0.f} });
 		std::vector<NarrowPhasePair> narrowPhase;
 
-		PhysicsComponentIterator* bodies = (PhysicsComponentIterator*)ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::PhysicsComponent);
-		PhysicsComponent* bodiesArr = (PhysicsComponent*)bodies->GetData();
+		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<PhysicsComponentIterator>();
 
-		SimulatePhysics(bodiesArr, bodies->Size(), dt);
-		UpdateAABBs(bodiesArr, bodies->Size());
-		PopulateQuadTree(qt, bodiesArr, bodies->Size());
-		BroadPhaseStep(qt, bodiesArr, bodies->Size(), narrowPhase);
+		SimulatePhysics(bodiesIt, dt);
+		UpdateAABBs(bodiesIt);
+		PopulateQuadTree(qt, bodiesIt);
+		BroadPhaseStep(qt, bodiesIt, narrowPhase);
 		NarrowPhaseIntersectionSolutionStep(narrowPhase);
 	}
 	while (!math::IsNearlyZero(timeToSimulate, math::k_default_epsilon));
 }
 
-void PhysicsSystem::SimulatePhysics(PhysicsComponent* physicsBodies, size_t bodiesCount, double dt)
+void PhysicsSystem::SimulatePhysics(PhysicsComponentIterator* bodiesIt, double dt)
 {
-	for (size_t idx = 0; idx < bodiesCount; ++idx)
+	for (size_t idx = 0; idx < bodiesIt->Size(); ++idx)
 	{
-		PhysicsComponent& body = physicsBodies[idx];
+		PhysicsComponent& body = bodiesIt->At(idx);
 		Entity* entityPtr = ECSManager::GetInstance()->GetEntity(body.m_entityId);
 		ASSERT(entityPtr, "(PhysicsSystem::Update) : Invalid entity ptr.");
 
@@ -78,11 +77,11 @@ void PhysicsSystem::SimulatePhysicsStep(PhysicsComponent& body, TransformCompone
 	transform.m_rotation = body.m_rotation;
 }
 
-void PhysicsSystem::UpdateAABBs(PhysicsComponent* physicsBodies, size_t bodiesCount)
+void PhysicsSystem::UpdateAABBs(PhysicsComponentIterator* bodiesIt)
 {
-	for (size_t i = 0u; i < bodiesCount; ++i)
+	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
 	{
-		PhysicsComponent& body = physicsBodies[i];
+		PhysicsComponent& body = bodiesIt->At(i);
 		if (body.m_isDynamic)
 		{
 			UpdateAABB(body);
@@ -123,11 +122,11 @@ void PhysicsSystem::UpdateAABB(PhysicsComponent& body)
 	}
 }
 
-void PhysicsSystem::PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent* physicsBodies, size_t bodiesCount)
+void PhysicsSystem::PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponentIterator* bodiesIt)
 {
-	for (size_t i = 0u; i < bodiesCount; ++i)
+	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
 	{
-		PhysicsComponent& body = physicsBodies[i];
+		PhysicsComponent& body = bodiesIt->At(i);
 		AddPhysicsBodyToQuadTree(quadTree, body);
 	}
 }
@@ -137,11 +136,11 @@ void PhysicsSystem::AddPhysicsBodyToQuadTree(types::QuadTree<PhysicsComponent>& 
 	quadTree.AddObject(types::QuadTree<PhysicsComponent>::Object{ {body.m_position, {(body.m_aabb.max - body.m_aabb.min) / 2.f}}, body });
 }
 
-void PhysicsSystem::BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent* physicsBodies, size_t bodiesCount, std::vector<NarrowPhasePair>& _outNarrowPhase)
+void PhysicsSystem::BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase)
 {
-	for (size_t i = 0u; i < bodiesCount; ++i)
+	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
 	{
-		PhysicsComponent& body = physicsBodies[i];
+		PhysicsComponent& body = bodiesIt->At(i);
 		if (!body.m_isDynamic)
 		{
 			continue;
@@ -228,8 +227,13 @@ void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outP
 	ASSERT(entityPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
 	const Entity& entity = *entityPtr;
 
-	const MeshComponent& mesh = *(MeshComponent*)entity.m_components.at(ComponentType::MeshComponent);
-	const TransformComponent& transform = *(TransformComponent*)entity.m_components.at(ComponentType::TransformComponent);
+	const MeshComponent* meshPtr = entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
+	ASSERT(meshPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
+	const MeshComponent& mesh = *meshPtr;
+
+	const TransformComponent* transformPtr = entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+	ASSERT(transformPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
+	const TransformComponent& transform = *transformPtr;
 
 	const math::matrix scaleMatrix = math::ScaleMatrix(transform.m_scale.x, transform.m_scale.y, transform.m_scale.z);
 	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(transform.m_rotation.y), math::ConvertToRadians(transform.m_rotation.x), math::ConvertToRadians(transform.m_rotation.z));

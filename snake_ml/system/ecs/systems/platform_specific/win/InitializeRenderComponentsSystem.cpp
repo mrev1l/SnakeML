@@ -35,7 +35,7 @@ std::vector<MaterialComponent::InputLayoutEntries> InitializeRenderComponentsSys
 
 void InitializeRenderComponentsSystem::Execute()
 {
-	// NEW
+	// TODO NEW 
 	/*const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
 	
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
@@ -64,26 +64,23 @@ void InitializeRenderComponentsSystem::Execute()
 	}*/
 
 	// OLD
-	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
-	MaterialComponent* materials = (MaterialComponent*)materialComponents->GetData();
-	Iterator* meshComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MeshComponent);
-	MeshComponent* meshes = (MeshComponent*)meshComponents->GetData();
+	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<MaterialComponentIterator>();
+	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<MeshComponentIterator>();
 
-	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Size());
-	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
-	DX12RenderComponent* renderComponents = (DX12RenderComponent*)renderComponentsIt->GetData();
+	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialsIt->Size());
+	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
 
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	ASSERT(meshComponents->Size() >= materialComponents->Size(), "Renderables initialization is going to fail");
-	for (size_t i = 0; i < materialComponents->Size(); ++i)
+	ASSERT(meshesIt->Size() >= materialsIt->Size(), "Renderables initialization is going to fail");
+	for (size_t i = 0; i < materialsIt->Size(); ++i)
 	{
-		DX12RenderComponent& renderComponent = renderComponents[i];
-		const MaterialComponent& materialComponent = materials[i];
-		const MeshComponent& mesh = meshes[i];
+		DX12RenderComponent& renderComponent = renderComponentsIt->At(i);
+		const MaterialComponent& materialComponent = materialsIt->At(i);
+		const MeshComponent& mesh = meshesIt->At(i);
 
 		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
 	}

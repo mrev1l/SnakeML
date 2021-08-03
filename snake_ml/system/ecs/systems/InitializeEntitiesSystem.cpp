@@ -23,7 +23,7 @@ void InitializeEntitiesSystem::Execute()
 		Iterator* it = componentsPool.GetComponents(static_cast<ComponentType>(i));
 		for (size_t componentIdx = 0; componentIdx < it->Size(); ++componentIdx)
 		{
-			IComponent* component = it->At(componentIdx);
+			IComponent* component = it->GetInterfacePtr(componentIdx);
 
 			std::vector<Entity>::iterator entityWithThisId = std::find_if(entities.begin(), entities.end(),
 				[component](const Entity& a) { return a.m_entityId == component->m_entityId; });

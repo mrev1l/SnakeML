@@ -26,7 +26,7 @@ void WIP_System::Update(double deltaTime)
 	Entity* entityPtr = ECSManager::GetInstance()->GetEntity(entityIdToUpdate);
 	if (entityPtr)
 	{
-		PhysicsComponent& body = *(PhysicsComponent*)entityPtr->m_components.at(ComponentType::PhysicsComponent);
+		PhysicsComponent& body = *entityPtr->m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
 		const math::vector force = math::vector{ 1.0f, 0.5f, 0.f };
 		const math::vector accDelta = (force * -1.f * 1000.f / body.m_shape.m_mass) * deltaTime;

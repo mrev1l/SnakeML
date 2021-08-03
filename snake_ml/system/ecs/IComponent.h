@@ -22,12 +22,18 @@ enum class ComponentType : uint32_t
 #define REGISTER_TYPE(ObjectType) \
 	class ObjectType##Iterator : public Iterator { \
 	public: \
-		ObjectType##Iterator(IComponent* data, size_t num) : Iterator(data, num) {} \
+		ObjectType##Iterator(IComponent* data, size_t num) : Iterator(data, num) { \
+			Iterator::RegisterCastTableEntry(ComponentType::##ObjectType, typeid(ObjectType##Iterator)); \
+		} \
 		virtual ~ObjectType##Iterator() { \
 			ObjectType* concreteArray = (ObjectType*)m_data; \
 			delete[] concreteArray; \
 		} \
 		\
+		ObjectType& At(size_t idx) { \
+			ObjectType* concreteArray = (ObjectType*)m_data; \
+			return concreteArray[idx]; \
+		} \
 	protected: \
 		IComponent* GetElement(size_t idx) override { \
 			ObjectType* concreteArray = (ObjectType*)m_data; \
@@ -40,6 +46,7 @@ enum class ComponentType : uint32_t
 		ObjectType##Factory() \
 		{ \
 			IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
+			IComponent::RegisterCastTableEntry(ComponentType::##ObjectType, typeid(ObjectType)); \
 		} \
 		virtual IComponent* Create() override { \
 			return new ObjectType(); \
@@ -62,19 +69,24 @@ class IComponent;
 class Iterator
 {
 public:
-	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) {};
+	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) { };
 	virtual ~Iterator() = default;
 
-	IComponent* At(size_t idx) { return GetElement(idx); }
-
-	IComponent* GetData() { return m_data; }
+	IComponent* GetInterfacePtr(size_t idx) { return GetElement(idx); }
 	size_t Size() { return m_count; }
+
+	template<class T>
+	T* As();
 
 protected:
 	virtual IComponent* GetElement(size_t idx) = 0;
+	static void RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo);
 
 	IComponent* m_data;
 	size_t m_count;
+
+private:
+	inline static std::unordered_map<ComponentType, const std::type_info&> s_castTable;
 };
 
 class Factory
@@ -94,19 +106,47 @@ public:
 	virtual ~IComponent() = default;
 	virtual ComponentType GetComponentType() const = 0;
 
+	template<class T>
+	T* As();
+
 	static void RegisterFactory(ComponentType objType, Factory* objFactory);
-
-	static IComponent* Create(ComponentType objType);
-	static IComponent* Create(ComponentType objType, size_t num);
-
 	static Iterator* CreateIterator(ComponentType objType, size_t num);
 	static void DeleteIterator(ComponentType objType, Iterator* it);
+	static void RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo);
 
-	uint32_t m_entityId;
+	uint32_t m_entityId = -1;
 
 private:
 	inline static std::unordered_map<ComponentType, Factory*> factories;
+	inline static std::unordered_map<ComponentType, const std::type_info&> s_castTable;
 };
+
+template<class T>
+inline T* Iterator::As()
+{
+	ASSERT(m_count, "[IComponent] : Missconfigured component.")
+	ASSERT(s_castTable.contains(m_data->GetComponentType()), "[IComponent] : Missconfigured component.")
+	const std::type_info& tInfo = typeid(T);
+	const std::type_info& thisTypeInfo = s_castTable.at(m_data->GetComponentType());
+	if (thisTypeInfo.hash_code() == tInfo.hash_code())
+	{
+		return (T*)this;
+	}
+	return nullptr;
+}
+
+template<class T>
+inline T* IComponent::As()
+{
+	ASSERT(s_castTable.contains(GetComponentType()), "[IComponent] : Missconfigured component.");
+	const std::type_info& tInfo = typeid(T);
+	const std::type_info& thisTypeInfo = s_castTable.at(GetComponentType());
+	if (thisTypeInfo.hash_code() == tInfo.hash_code())
+	{
+		return (T*)this;
+	}
+	return nullptr;
+}
 
 }
 }

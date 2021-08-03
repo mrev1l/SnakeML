@@ -37,27 +37,28 @@ void LoadMaterialsSystem::Execute()
 	int stop = 34;
 	return;
 	// OLD
-	{
-		constexpr uint32_t materialsNum = 1u;
-		constexpr const char* jsonName = "data\\assets\\levels\\test\\2dmaterialcomponentjson.txt";
+	//{
+	//	constexpr uint32_t materialsNum = 1u;
+	//	constexpr const char* jsonName = "data\\assets\\levels\\test\\2dmaterialcomponentjson.txt";
 
-		rapidjson::Document jsonDocument;
-		std::string jsonString;
-		WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
+	//	rapidjson::Document jsonDocument;
+	//	std::string jsonString;
+	//	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
-		ParseJsonString(jsonString.c_str(), jsonDocument);
+	//	ParseJsonString(jsonString.c_str(), jsonDocument);
 
-		MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsNum);
-		MaterialComponent& material = *(MaterialComponent*)it->At(0);
+	//	MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsNum);
+	//	MaterialComponent& material = *(MaterialComponent*)it->At(0);
 
-		ParseComponent_EntityId(jsonDocument, material.m_entityId);
-		ParseMaterialComponent_VerticesArray(jsonDocument, material.m_inputLayoutEntries);
-		ParseMaterialComponent_VSPath(jsonDocument, material.m_vs);
-		ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
-		ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
+	//	ParseComponent_EntityId(jsonDocument, material.m_entityId);
+	//	ParseMaterialComponent_VerticesArray(jsonDocument, material.m_inputLayoutEntries);
+	//	ParseMaterialComponent_VSPath(jsonDocument, material.m_vs);
+	//	ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
+	//	ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
-	}
+	//	//ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
+	//	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MaterialComponentIterator>(it);
+	//}
 }
 
 void LoadMaterialsSystem::ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson)
@@ -83,7 +84,7 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 		MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsCount);
 		for (size_t i = 0u; i < materialsCount; ++i)
 		{
-			MaterialComponent& material = *(MaterialComponent*)it->At(i);
+			MaterialComponent& material = it->At(i);
 			const rapidjson::Value& materialJson = *(materialsArray.Begin() + i);
 
 			ParseComponent_EntityId(materialJson, material.m_entityId);
@@ -93,7 +94,7 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 			ParseMaterialComponent_TexturePath(materialJson, material.m_texturePath);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MaterialComponentIterator>(it);
 	}
 }
 
@@ -149,7 +150,7 @@ void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
 		TransformComponentIterator* it = (TransformComponentIterator*)IComponent::CreateIterator(ComponentType::TransformComponent, transformsCount);
 		for (size_t i = 0u; i < transformsCount; ++i)
 		{
-			TransformComponent& transform = *(TransformComponent*)it->At(i);
+			TransformComponent& transform = it->At(i);
 			const rapidjson::Value& transformJson = *(transformsArray.Begin() + i);
 
 			ParseComponent_EntityId(transformJson, transform.m_entityId);
@@ -158,7 +159,7 @@ void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
 			ParseTransformComponent_Scale(transformJson, transform.m_scale);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::TransformComponent, it);
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<TransformComponentIterator>(it);
 	}
 }
 
@@ -199,7 +200,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 		PhysicsComponentIterator* it = (PhysicsComponentIterator*)IComponent::CreateIterator(ComponentType::PhysicsComponent, physicsComponentsCount);
 		for (size_t i = 0u; i < physicsComponentsCount; ++i)
 		{
-			PhysicsComponent& physicsComponent = *(PhysicsComponent*)it->At(i);
+			PhysicsComponent& physicsComponent = it->At(i);
 			const rapidjson::Value& physicsComponentJson = *(physicsComponentsArray.Begin() + i);
 
 			ParseComponent_EntityId(physicsComponentJson, physicsComponent.m_entityId);
@@ -208,7 +209,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 			ParsePhysicsComponents_IsDynamic(physicsComponentJson, physicsComponent.m_isDynamic);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::PhysicsComponent, it);
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<PhysicsComponentIterator>(it);
 	}
 }
 
@@ -245,14 +246,14 @@ void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
 		MeshComponentIterator* it = (MeshComponentIterator*)IComponent::CreateIterator(ComponentType::MeshComponent, meshComponentsCount);
 		for (size_t i = 0u; i < meshComponentsCount; ++i)
 		{
-			MeshComponent& meshComponent = *(MeshComponent*)it->At(i);
+			MeshComponent& meshComponent = it->At(i);
 			const rapidjson::Value& meshComponentJson = *(meshComponentsArray.Begin() + i);
 
 			ParseComponent_EntityId(meshComponentJson, meshComponent.m_entityId);
 			ParseMeshes_VerticesArray(meshComponentJson, meshComponent.m_vertices);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MeshComponent, it);
+		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MeshComponentIterator>(it);
 	}
 }
 

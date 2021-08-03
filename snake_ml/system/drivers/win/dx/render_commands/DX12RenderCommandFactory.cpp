@@ -28,12 +28,12 @@ namespace win
 
 void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
-	CameraComponent& camera = *(CameraComponent*)ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::CameraComponent)->At(0);
+	CameraComponent& camera = ECSManager::GetInstance()->GetComponentsPool().GetComponents<CameraComponentIterator>()->At(0);
 	math::matrix cameraMatrix = math::LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
 
-	const DX12RenderComponent& renderableComponent = *(DX12RenderComponent*)entity.m_components.at(ComponentType::DX12RenderComponent);
-	/*const*/ TransformComponent& transformComponent = *(TransformComponent*)entity.m_components.at(ComponentType::TransformComponent);
-	/*const*/ PhysicsComponent& physicsComponent = *(PhysicsComponent*)entity.m_components.at(ComponentType::PhysicsComponent);
+	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();
+	/*const*/ TransformComponent& transformComponent = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+	/*const*/ PhysicsComponent& physicsComponent = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
 	//test TODO
 	{

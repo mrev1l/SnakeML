@@ -13,16 +13,6 @@ void IComponent::RegisterFactory(ComponentType objType, Factory* objFactory)
 	factories.insert({ objType, objFactory });
 }
 
-IComponent* IComponent::Create(ComponentType objType)
-{
-	return factories.at(objType)->Create();
-}
-
-IComponent* IComponent::Create(ComponentType objType, size_t num)
-{
-	return factories.at(objType)->Create(num);
-}
-
 Iterator* IComponent::CreateIterator(ComponentType objType, size_t num)
 {
 	return factories.at(objType)->CreateIterator(num);
@@ -31,6 +21,16 @@ Iterator* IComponent::CreateIterator(ComponentType objType, size_t num)
 void IComponent::DeleteIterator(ComponentType objType, Iterator* it)
 {
 	factories.at(objType)->DeleteIterator(it);
+}
+
+void IComponent::RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo)
+{
+	s_castTable.insert({ type, typeInfo });
+}
+
+void Iterator::RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo)
+{
+	s_castTable.insert({ type, typeInfo });
 }
 
 }

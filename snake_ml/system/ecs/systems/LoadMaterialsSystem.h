@@ -50,9 +50,8 @@ private:
 	static void ParseMeshes(const rapidjson::Document& json);
 	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices);
 	// ******* ******* ******* ******* *******
-	
-	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 
+	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 };
 
 }

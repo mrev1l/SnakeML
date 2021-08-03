@@ -12,6 +12,7 @@ namespace system
 {
 
 class PhysicsComponent;
+class PhysicsComponentIterator;
 class TransformComponent;
 
 class PhysicsSystem : public ISystem
@@ -36,16 +37,16 @@ private:
 		NarrowPhaseBody b;
 	};
 
-	void SimulatePhysics(PhysicsComponent* physicsBodies, size_t bodiesCount, double dt);
+	void SimulatePhysics(PhysicsComponentIterator* bodiesIt, double dt);
 	void SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, double dt);
 
-	void UpdateAABBs(PhysicsComponent* physicsBodies, size_t bodiesCount);
+	void UpdateAABBs(PhysicsComponentIterator* bodiesIt);
 	void UpdateAABB(PhysicsComponent& body);
 
-	void PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent* physicsBodies, size_t bodiesCount);
+	void PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponentIterator* bodiesIt);
 	void AddPhysicsBodyToQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body);
 
-	void BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent* physicsBodies, size_t bodiesCount, std::vector<NarrowPhasePair>& _outNarrowPhase);
+	void BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase);
 	void CalculateBroadphaseForBody(const types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase);
 
 	void NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase);
