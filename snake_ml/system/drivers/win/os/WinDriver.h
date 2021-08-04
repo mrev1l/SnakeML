@@ -23,6 +23,8 @@ public:
 	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::vec2<uint32_t> windowSz);
 	~WinDriver();
 
+	void GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) override;
+
 private:
 	static HINSTANCE GetHInstance();
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

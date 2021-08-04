@@ -23,6 +23,11 @@ namespace system
 void PhysicsSystem::Update(double deltaTime)
 {
 	static constexpr float k_physicsTimeStep = 1.f / 144.f; // 1 simulation step per frame per 144 fps
+	
+	uint32_t levelWidth = -1, levelHeight = -1, margin = 10;
+	IOSDriver::GetInstance()->GetAppDimensions(levelWidth, levelHeight);
+	const float quadTreeHalfWidth = static_cast<float>(levelWidth / 2 + margin), quadTreeHalfHeight = static_cast<float>(levelHeight / 2 + margin);
+
 	//deltaTime = k_physicsTimeStep; // debug
 	float timeToSimulate = deltaTime;
 
@@ -31,7 +36,7 @@ void PhysicsSystem::Update(double deltaTime)
 		const float dt = timeToSimulate > k_physicsTimeStep ? k_physicsTimeStep : timeToSimulate;
 		timeToSimulate -= dt;
 
-		types::QuadTree<PhysicsComponent> qt(types::QuadTree<PhysicsComponent>::Rectangle{ {0.f, 0.f, 0.f}, {370.f, 370.f, 0.f} });
+		types::QuadTree<PhysicsComponent> qt(types::QuadTree<PhysicsComponent>::Rectangle{ math::vector::zero, {quadTreeHalfWidth, quadTreeHalfHeight, 0.f} });
 		std::vector<NarrowPhasePair> narrowPhase;
 
 		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<PhysicsComponentIterator>();

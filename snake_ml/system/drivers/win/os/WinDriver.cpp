@@ -33,6 +33,12 @@ WinDriver::~WinDriver()
 	CoUninitialize();
 }
 
+void WinDriver::GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight)
+{
+	_outWidth = m_windowSz.m_x;
+	_outHeight = m_windowSz.m_y;
+}
+
 void WinDriver::OnInitialize()
 {
 	// Set the working directory to the path of the executable.

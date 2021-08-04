@@ -25,6 +25,8 @@ public:
 
 	void Update()			{ OnUpdate(); }
 
+	virtual void GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) = 0;
+
 	patterns::Event<OSImplementation, uint64_t>	m_onInputEvent;
 	patterns::Event<OSImplementation, double>	m_onUpdateEvent;
 
