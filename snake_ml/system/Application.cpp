@@ -100,7 +100,7 @@ void Application::Update(double dt)
 		wchar_t buffer[500];
 		auto fps = frameCounter / elapsedSeconds;
 		swprintf_s(buffer, 500, L"FPS: %f\n", fps);
-		OutputDebugString(buffer);
+		IOSDriver::GetInstance()->LogMessage(buffer);
 
 		frameCounter = 0;
 		elapsedSeconds = 0.0;
@@ -117,6 +117,7 @@ void Application::Render()
 
 void Application::Resize(uint32_t width, uint32_t height)
 {
+	// TODO
 	//system::IRenderDriver::GetInstance()->Resize(width, height);
 }
 

@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "PhysicsSystem.h"
 
+#include "system/drivers/OSDriver.h"
+
 #include "system/ecs/components/MeshComponent.h"
 #include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/components/TransformComponent.h"
@@ -13,8 +15,6 @@
 
 #include <utility>
 
-// TODO : REPLACE WITH LOGGING
-#include "system/drivers/win/os/WinDriver.h"
 namespace snakeml
 {
 namespace system
@@ -222,7 +222,7 @@ void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, cons
 		narrowPhase.a.physicsObject.m_velocity = reflectedVelocity;
 		narrowPhase.a.physicsObject.m_acceleration = math::vector::zero;
 
-		OutputDebugString(L"INTERSECTION\n");
+		IOSDriver::GetInstance()->LogMessage(L"INTERSECTION\n");
 	}
 }
 

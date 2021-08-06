@@ -33,10 +33,15 @@ WinDriver::~WinDriver()
 	CoUninitialize();
 }
 
-void WinDriver::GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight)
+void WinDriver::GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) const
 {
 	_outWidth = m_windowSz.m_x;
 	_outHeight = m_windowSz.m_y;
+}
+
+void WinDriver::LogMessage(std::wstring message) const
+{
+	OutputDebugString(message.c_str());
 }
 
 void WinDriver::OnInitialize()

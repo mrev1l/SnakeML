@@ -23,7 +23,9 @@ public:
 	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::vec2<uint32_t> windowSz);
 	~WinDriver();
 
-	void GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) override;
+	void GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) const override;
+
+	void LogMessage(std::wstring message) const override;
 
 private:
 	static HINSTANCE GetHInstance();
