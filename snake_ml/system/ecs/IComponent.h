@@ -30,7 +30,7 @@ enum class ComponentType : uint32_t
 			delete[] concreteArray; \
 		} \
 		\
-		ObjectType& At(size_t idx) { \
+		ObjectType& At(size_t idx) const { \
 			ObjectType* concreteArray = (ObjectType*)m_data; \
 			return concreteArray[idx]; \
 		} \
@@ -73,7 +73,7 @@ public:
 	virtual ~Iterator() = default;
 
 	IComponent* GetInterfacePtr(size_t idx) { return GetElement(idx); }
-	size_t Size() { return m_count; }
+	size_t Size() const { return m_count; }
 
 	template<class T>
 	T* As();

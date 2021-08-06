@@ -20,6 +20,7 @@ public:
 
 	inline ComponentsPool& GetComponentsPool() { return m_components; }
 	inline std::vector<Entity>& GetEntities() { return m_entities; }
+	// TODO
 	inline Entity* GetEntity(uint32_t id) {
 		auto entityIt = std::find_if(m_entities.begin(), m_entities.end(), [id](const Entity& entity) { return entity.m_entityId == id; });
 		if (entityIt != m_entities.end())
@@ -37,7 +38,7 @@ public:
 
 private:
 	ComponentsPool m_components;
-	std::vector<Entity> m_entities;
+	std::vector<Entity> m_entities; // TODO : rework into unordered_map
 	std::vector<std::unique_ptr<ISystem>> m_systems;
 
 	std::unordered_set<uint32_t> m_systemsToUnschedule;
