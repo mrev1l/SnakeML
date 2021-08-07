@@ -92,36 +92,8 @@ void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator* bodiesIt)
 		PhysicsComponent& body = bodiesIt->At(i);
 		if (body.m_isDynamic)
 		{
-			UpdateAABB(body);
+			body.m_aabb = types::AABB::GenerateAABB(body.m_shape.m_dimensions, body.m_position, body.m_rotation);
 		}
-	}
-}
-
-void PhysicsSystem::UpdateAABB(PhysicsComponent& body)
-{
-	// Generate Bounding Box
-	BoundingBox boundingBox;
-	GenerateBoundingBox(body.m_shape.m_dimensions, boundingBox);
-
-	// Calc transform matrix for Bounding Box vertices
-	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(body.m_rotation.y), math::ConvertToRadians(body.m_rotation.x), math::ConvertToRadians(body.m_rotation.z));
-	const math::matrix translationMatrix = math::TranslationMatrix(body.m_position.x, body.m_position.y, body.m_position.z);
-	const math::matrix transformMatrix = rotationMatrix * translationMatrix;
-
-	// Transform Bounding Box vertices
-	for (auto& vertex : boundingBox)
-	{
-		vertex = transformMatrix * vertex;
-	}
-
-	// Construct AABB
-	body.m_aabb = { {FLT_MAX, FLT_MAX, 0.f}, {-FLT_MAX, -FLT_MAX, 0.f} };
-	for (auto vertex : boundingBox)
-	{
-		body.m_aabb.min.x = std::min(body.m_aabb.min.x, vertex.x);
-		body.m_aabb.min.y = std::min(body.m_aabb.min.y, vertex.y);
-		body.m_aabb.max.x = std::max(body.m_aabb.max.x, vertex.x);
-		body.m_aabb.max.y = std::max(body.m_aabb.max.y, vertex.y);
 	}
 }
 
@@ -169,7 +141,7 @@ void PhysicsSystem::CalculateBroadphaseForBody(const types::QuadTree<PhysicsComp
 		const types::AABB& a = body.m_aabb;
 		const types::AABB& b = object->userData.m_aabb;
 
-		const bool areIntersecting = types::TestIntersection_AABB_AABB(a, b);
+		const bool areIntersecting = types::AABB::TestIntersection_AABB_AABB(a, b);
 
 		if (areIntersecting)
 		{
@@ -221,17 +193,6 @@ void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, cons
 
 		IOSDriver::GetInstance()->LogMessage(L"INTERSECTION\n");
 	}
-}
-
-void PhysicsSystem::GenerateBoundingBox(const math::vector& shapeDimensions, BoundingBox& _outBBox)
-{
-	_outBBox = 
-	{
-		math::vector{-shapeDimensions.x / 2.f, -shapeDimensions.y / 2.f, 0.f},
-		math::vector{-shapeDimensions.x / 2.f, +shapeDimensions.y / 2.f, 0.f},
-		math::vector{+shapeDimensions.x / 2.f, -shapeDimensions.y / 2.f, 0.f},
-		math::vector{+shapeDimensions.x / 2.f, +shapeDimensions.y / 2.f, 0.f}
-	};
 }
 
 void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outPolygon)

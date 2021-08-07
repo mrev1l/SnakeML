@@ -36,17 +36,10 @@ public:
 struct AABB
 {
 	math::vector min, max;
+
+	static bool TestIntersection_AABB_AABB(const AABB& a, const AABB& b);
+	static AABB GenerateAABB(const math::vector& dimensions, const math::vector& position, const math::vector& rotation);
 };
-
-inline bool TestIntersection_AABB_AABB(const AABB& a, const AABB& b)
-{
-	const bool isABehindB = a.min.x >= b.max.x;
-	const bool isABeforeB = a.max.x <= b.min.x;
-	const bool isAAboveA = a.min.y >= b.max.y;
-	const bool isABelowB = a.max.y <= b.min.y;
-
-	return !(isABehindB || isABeforeB || isAAboveA || isABelowB);
-}
 
 }
 }

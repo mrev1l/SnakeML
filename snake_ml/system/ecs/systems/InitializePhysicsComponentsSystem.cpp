@@ -39,40 +39,7 @@ void InitializePhysicsComponentsSystem::InitPhysicsBody(const TransformComponent
 	_outBody.m_rotation = transform.m_rotation;
 	_outBody.m_velocity = math::vector::zero;
 
-	InitAABB(_outBody);
-}
-
-void InitializePhysicsComponentsSystem::InitAABB(PhysicsComponent& _outBody)
-{
-	// Create Bounding Box
-	std::array<math::vector, 4> boundingBox =
-	{
-		math::vector{-_outBody.m_shape.m_dimensions.x / 2.f, -_outBody.m_shape.m_dimensions.y / 2.f, 0.f},
-		math::vector{-_outBody.m_shape.m_dimensions.x / 2.f, +_outBody.m_shape.m_dimensions.y / 2.f, 0.f},
-		math::vector{+_outBody.m_shape.m_dimensions.x / 2.f, -_outBody.m_shape.m_dimensions.y / 2.f, 0.f},
-		math::vector{+_outBody.m_shape.m_dimensions.x / 2.f, +_outBody.m_shape.m_dimensions.y / 2.f, 0.f}
-	};
-
-	// Calc transform matrix for Bounding Box vertices
-	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(_outBody.m_rotation.y), math::ConvertToRadians(_outBody.m_rotation.x), math::ConvertToRadians(_outBody.m_rotation.z));
-	const math::matrix translationMatrix = math::TranslationMatrix(_outBody.m_position.x, _outBody.m_position.y, _outBody.m_position.z);
-	const math::matrix transformMatrix = rotationMatrix * translationMatrix;
-
-	// Transform Bounding Box vertices
-	for (auto& vertex : boundingBox)
-	{
-		vertex = transformMatrix * vertex;
-	}
-
-	// Construct AABB
-	_outBody.m_aabb = { {FLT_MAX, FLT_MAX, 0.f}, {-FLT_MAX, -FLT_MAX, 0.f} };
-	for (auto vertex : boundingBox)
-	{
-		_outBody.m_aabb.min.x = std::min(_outBody.m_aabb.min.x, vertex.x);
-		_outBody.m_aabb.min.y = std::min(_outBody.m_aabb.min.y, vertex.y);
-		_outBody.m_aabb.max.x = std::max(_outBody.m_aabb.max.x, vertex.x);
-		_outBody.m_aabb.max.y = std::max(_outBody.m_aabb.max.y, vertex.y);
-	}
+	_outBody.m_aabb = types::AABB::GenerateAABB(_outBody.m_shape.m_dimensions, _outBody.m_position, _outBody.m_rotation);
 }
 
 }

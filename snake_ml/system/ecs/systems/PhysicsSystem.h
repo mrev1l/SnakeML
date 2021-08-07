@@ -43,7 +43,6 @@ private:
 	void SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, double dt);
 
 	void UpdateAABBs(const PhysicsComponentIterator* bodiesIt);
-	void UpdateAABB(PhysicsComponent& body);
 
 	void PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt);
 	void AddPhysicsBodyToQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body);
@@ -57,7 +56,6 @@ private:
 
 	static TransformComponent& GetTransformComponent(const PhysicsComponent& body);
 	static MeshComponent& GetMeshComponent(const PhysicsComponent& body);
-	static void GenerateBoundingBox(const math::vector& shapeDimensions, BoundingBox& _outBBox);
 	static void GeneratePolygon(const PhysicsComponent& body, Polygon& _outPolygon);
 
 	math::vector m_quadTreeHalfDimensions = math::vector::zero;

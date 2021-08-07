@@ -20,7 +20,6 @@ public:
 	void Execute() override;
 
 	static void InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody);
-	static void InitAABB(PhysicsComponent& _outBody);
 };
 
 }

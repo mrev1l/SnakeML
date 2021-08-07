@@ -278,6 +278,7 @@
     <ClCompile Include="utils\math\algorithms\CollisionDetectionSAT.cpp" />
     <ClCompile Include="utils\math\matrix.cpp" />
     <ClCompile Include="utils\math\vector.cpp" />
+    <ClCompile Include="utils\types\arithmetic.cpp" />
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp" />
     <ClCompile Include="utils\types\QuadTree.cpp" />

@@ -106,7 +106,7 @@ void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object cons
 template<typename T>
 bool QuadTree<T>::Rectangle::Intersects(Rectangle other) const
 {
-	bool result = TestIntersection_AABB_AABB(
+	bool result = AABB::TestIntersection_AABB_AABB(
 		{ origin - halfDimensions, origin + halfDimensions },
 		{ other.origin - other.halfDimensions, other.origin + other.halfDimensions });
 
