@@ -265,7 +265,7 @@
     <ClCompile Include="system\ecs\ISystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\InitializeTransformComponentsSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\InitializePhysicsComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\LoadMaterialsSystem.cpp" />
@@ -330,7 +330,7 @@
     <ClInclude Include="system\ecs\ISystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h" />
-    <ClInclude Include="system\ecs\systems\InitializeTransformComponentsSystem.h" />
+    <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\LoadMaterialsSystem.h" />

@@ -12,7 +12,7 @@
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeCameraSystem.h"
 #include "ecs/systems/InitializeEntitiesSystem.h"
-#include "ecs/systems/InitializeTransformComponentsSystem.h"
+#include "ecs/systems/InitializePhysicsComponentsSystem.h"
 #include "ecs/systems/LoadMaterialsSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
@@ -58,7 +58,7 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeEntitiesSystem>());
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeTransformComponentsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
 
 	// TODO cleanup
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());

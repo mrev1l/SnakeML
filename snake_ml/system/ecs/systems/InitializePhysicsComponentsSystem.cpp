@@ -1,7 +1,7 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
-#include "InitializeTransformComponentsSystem.h"
+#include "InitializePhysicsComponentsSystem.h"
 
 #include "system/ecs/components/TransformComponent.h"
 #include "system/ecs/components/PhysicsComponent.h"
@@ -12,7 +12,7 @@ namespace snakeml
 namespace system
 {
 
-void InitializeTransformComponentsSystem::Execute()
+void InitializePhysicsComponentsSystem::Execute()
 {
 	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
 	for (const Entity& entity : entities)
@@ -28,7 +28,7 @@ void InitializeTransformComponentsSystem::Execute()
 	}
 }
 
-void InitializeTransformComponentsSystem::InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody)
+void InitializePhysicsComponentsSystem::InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody)
 {
 	_outBody.m_shape.m_momentOfInertia = _outBody.m_shape.m_mass *
 		(_outBody.m_shape.m_dimensions.x * _outBody.m_shape.m_dimensions.x + _outBody.m_shape.m_dimensions.y * _outBody.m_shape.m_dimensions.y) / 12.f;
@@ -42,7 +42,7 @@ void InitializeTransformComponentsSystem::InitPhysicsBody(const TransformCompone
 	InitAABB(_outBody);
 }
 
-void InitializeTransformComponentsSystem::InitAABB(PhysicsComponent& _outBody)
+void InitializePhysicsComponentsSystem::InitAABB(PhysicsComponent& _outBody)
 {
 	// Create Bounding Box
 	std::array<math::vector, 4> boundingBox =

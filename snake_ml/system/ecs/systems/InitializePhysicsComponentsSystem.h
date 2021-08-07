@@ -12,10 +12,10 @@ namespace system
 class TransformComponent;
 class PhysicsComponent;
 
-class InitializeTransformComponentsSystem : public ISystem
+class InitializePhysicsComponentsSystem : public ISystem
 {
 public:
-	InitializeTransformComponentsSystem() : ISystem() {}
+	InitializePhysicsComponentsSystem() : ISystem() {}
 
 	void Execute() override;
 
