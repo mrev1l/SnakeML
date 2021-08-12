@@ -25,8 +25,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -410,7 +408,7 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(PanoToCubemapRS::DstMips, panoToCubemapCB.NumMips, 5 - numMips, m_PanoToCubemapPSO->GetDefaultUAV());
 		}
 
-		const uint32_t numGroup = math::DivideByMultiple(panoToCubemapCB.CubemapSize, 16);
+		const uint32_t numGroup = DivideByMultiple(panoToCubemapCB.CubemapSize, 16);
 		Dispatch(numGroup, numGroup, 6);
 
 		mipSlice += numMips;
@@ -902,7 +900,7 @@ void DX12CommandList::GenerateMips_UAV(DX12Texture& texture)
 			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(GenerateMips::OutMip, mipCount, maxMipsNum - mipCount, m_GenerateMipsPSO->GetDefaultUAV());
 		}
 
-		Dispatch(math::DivideByMultiple(dstWidth, 8), math::DivideByMultiple(dstHeight, 8));
+		Dispatch(DivideByMultiple(dstWidth, 8), DivideByMultiple(dstHeight, 8));
 
 		UAVBarrier(stagingTexture);
 
@@ -1156,5 +1154,4 @@ void DX12CommandList::BindDescriptorHeaps()
 
 }
 #endif
-}
 }

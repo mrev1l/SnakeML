@@ -11,8 +11,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void TestMoveSnakeHeadSystem::Update(double deltaTime)
 {
@@ -57,5 +55,4 @@ void TestMoveSnakeHeadSystem::Update(double deltaTime)
 	}
 }
 
-}
 }

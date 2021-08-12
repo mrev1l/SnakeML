@@ -2,9 +2,8 @@
 
 namespace snakeml
 {
-namespace system
-{
 
+	// TODO
 #ifdef _WINDOWS
 namespace win
 {
@@ -13,5 +12,4 @@ namespace win
 using OSImplementation = class win::WinDriver;
 #endif
 
-}
 }

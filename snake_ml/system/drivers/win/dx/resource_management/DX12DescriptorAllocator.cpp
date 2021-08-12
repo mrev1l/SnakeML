@@ -7,8 +7,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -84,5 +82,4 @@ std::shared_ptr<DX12DescriptorAllocatorPage> DX12DescriptorAllocator::CreateAllo
 
 }
 #endif
-}
 }

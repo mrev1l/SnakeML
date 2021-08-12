@@ -35,8 +35,6 @@
 
 namespace snakeml
 {
-namespace math
-{
 
 constexpr float k_default_epsilon = 1e-4f;
 constexpr float k_precise_epsilon = 1e-9f;
@@ -75,5 +73,4 @@ inline bool IsNearlyEqual(float a, float b, float epsilon = k_default_epsilon)
 	return std::abs(a - b) < k_default_epsilon;
 }
 
-}
 }

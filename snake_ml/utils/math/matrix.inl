@@ -1,7 +1,7 @@
 #include "matrix.h"
 #pragma once
 
-inline const snakeml::math::matrix snakeml::math::matrix::identity =
+inline const snakeml::matrix snakeml::matrix::identity =
 {
 	1.f, 0.f, 0.f, 0.f,
 	0.f, 1.f, 0.f, 0.f,
@@ -9,12 +9,12 @@ inline const snakeml::math::matrix snakeml::math::matrix::identity =
 	0.f, 0.f, 0.f, 1.f
 };
 
-inline snakeml::math::matrix::matrix()
+inline snakeml::matrix::matrix()
 {
 	*this = identity;
 }
 
-inline snakeml::math::matrix::matrix(
+inline snakeml::matrix::matrix(
 	float _00, float _01, float _02, float _03,
 	float _10, float _11, float _12, float _13,
 	float _20, float _21, float _22, float _23,
@@ -28,17 +28,17 @@ inline snakeml::math::matrix::matrix(
 }
 
 
-inline snakeml::math::matrix::matrix(const matrix& _m)
+inline snakeml::matrix::matrix(const matrix& _m)
 {
 	copy(_m);
 }
 
-inline snakeml::math::matrix::matrix(matrix&& _m)
+inline snakeml::matrix::matrix(matrix&& _m)
 {
 	std::swap(m, _m.m);
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::inverse() const
+inline snakeml::matrix snakeml::matrix::inverse() const
 {
 	matrix augmented = *this;
 	matrix inverse = identity;
@@ -48,7 +48,7 @@ inline snakeml::math::matrix snakeml::math::matrix::inverse() const
 
 	for (size_t i = 0u; i < k_rowLength; ++i)
 	{
-		ASSERT(!math::IsNearlyZero(aug[i][i]), "Cannot inverse matrix");
+		ASSERT(!IsNearlyZero(aug[i][i]), "Cannot inverse matrix");
 
 		for (size_t j = 0u; j < k_rowLength; ++j)
 		{
@@ -75,19 +75,19 @@ inline snakeml::math::matrix snakeml::math::matrix::inverse() const
 	return inverse;
 }
 
-inline snakeml::math::matrix& snakeml::math::matrix::operator=(const matrix& _m)
+inline snakeml::matrix& snakeml::matrix::operator=(const matrix& _m)
 {
 	copy(_m);
 	return *this;
 }
 
-inline snakeml::math::matrix& snakeml::math::matrix::operator=(matrix&& _m)
+inline snakeml::matrix& snakeml::matrix::operator=(matrix&& _m)
 {
 	std::swap(m, _m.m);
 	return *this;
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator+(const matrix& _m) const
+inline snakeml::matrix snakeml::matrix::operator+(const matrix& _m) const
 {
 	return matrix(
 		m[0][0] + _m.m[0][0], m[0][1] + _m.m[0][1], m[0][2] + _m.m[0][2], m[0][3] + _m.m[0][3],
@@ -96,12 +96,12 @@ inline snakeml::math::matrix snakeml::math::matrix::operator+(const matrix& _m) 
 		m[3][0] + _m.m[3][0], m[3][1] + _m.m[3][1], m[3][2] + _m.m[3][2], m[3][3] + _m.m[3][3]);
 }
 
-inline void snakeml::math::matrix::operator+=(const matrix& _m)
+inline void snakeml::matrix::operator+=(const matrix& _m)
 {
 	*this = (*this + _m);
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator-(const matrix& _m) const
+inline snakeml::matrix snakeml::matrix::operator-(const matrix& _m) const
 {
 	return matrix(
 		m[0][0] - _m.m[0][0], m[0][1] - _m.m[0][1], m[0][2] - _m.m[0][2], m[0][3] - _m.m[0][3],
@@ -110,17 +110,17 @@ inline snakeml::math::matrix snakeml::math::matrix::operator-(const matrix& _m) 
 		m[3][0] - _m.m[3][0], m[3][1] - _m.m[3][1], m[3][2] - _m.m[3][2], m[3][3] - _m.m[3][3]);
 }
 
-inline void snakeml::math::matrix::operator-=(const matrix& _m)
+inline void snakeml::matrix::operator-=(const matrix& _m)
 {
 	*this = (*this - _m);
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator-() const
+inline snakeml::matrix snakeml::matrix::operator-() const
 {
 	return *this * -1.f;
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator*(float scalar) const
+inline snakeml::matrix snakeml::matrix::operator*(float scalar) const
 {
 	return matrix(
 		m[0][0] * scalar, m[0][1] * scalar, m[0][2] * scalar, m[0][3] * scalar,
@@ -129,7 +129,7 @@ inline snakeml::math::matrix snakeml::math::matrix::operator*(float scalar) cons
 		m[3][0] * scalar, m[3][1] * scalar, m[3][2] * scalar, m[3][3] * scalar);
 }
 
-inline snakeml::math::vector snakeml::math::matrix::operator*(snakeml::math::vector a) const
+inline snakeml::vector snakeml::matrix::operator*(snakeml::vector a) const
 {
 	return vector(
 		m[0][0] * a.x + m[1][0] * a.y + m[2][0] * a.z + m[3][0] * 1.f,
@@ -138,7 +138,7 @@ inline snakeml::math::vector snakeml::math::matrix::operator*(snakeml::math::vec
 	);
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator*(const matrix& _m) const
+inline snakeml::matrix snakeml::matrix::operator*(const matrix& _m) const
 {
 	matrix res;
 	for (size_t i = 0u; i < 16u; ++i)
@@ -150,17 +150,17 @@ inline snakeml::math::matrix snakeml::math::matrix::operator*(const matrix& _m) 
 	return res;
 }
 
-inline void snakeml::math::matrix::operator*=(const matrix& _m)
+inline void snakeml::matrix::operator*=(const matrix& _m)
 {
 	*this = *this * _m;
 }
 
-inline snakeml::math::matrix snakeml::math::matrix::operator/(float scalar) const
+inline snakeml::matrix snakeml::matrix::operator/(float scalar) const
 {
 	return *this * (1.f / scalar);
 }
 
-inline void snakeml::math::matrix::copy(const matrix& _m)
+inline void snakeml::matrix::copy(const matrix& _m)
 {
 	for (size_t i = 0 ; i < k_rowLength; ++i)
 	{
@@ -172,44 +172,44 @@ inline void snakeml::math::matrix::copy(const matrix& _m)
 	}
 }
 
-inline snakeml::math::matrix ScaleMatrix(const snakeml::math::vector& scale)
+inline snakeml::matrix ScaleMatrix(const snakeml::vector& scale)
 {
-	snakeml::math::matrix scaleMatrix;
+	snakeml::matrix scaleMatrix;
 	scaleMatrix.m[0][0] = scale.x;
 	scaleMatrix.m[1][1] = scale.y;
 	scaleMatrix.m[2][2] = scale.z;
 	return scaleMatrix;
 }
 
-inline snakeml::math::matrix ScaleMatrix(float x, float y, float z)
+inline snakeml::matrix ScaleMatrix(float x, float y, float z)
 {
-	snakeml::math::vector scale(x, y, z);
-	return snakeml::math::ScaleMatrix(scale);
+	snakeml::vector scale(x, y, z);
+	return snakeml::ScaleMatrix(scale);
 }
 
-inline snakeml::math::matrix TranslationMatrix(const snakeml::math::vector& translation)
+inline snakeml::matrix TranslationMatrix(const snakeml::vector& translation)
 {
-	snakeml::math::matrix scaleMatrix;
+	snakeml::matrix scaleMatrix;
 	scaleMatrix.m[3][0] = translation.x;
 	scaleMatrix.m[3][1] = translation.y;
 	scaleMatrix.m[3][2] = translation.z;
 	return scaleMatrix;
 }
 
-inline snakeml::math::matrix TranslationMatrix(float x, float y, float z)
+inline snakeml::matrix TranslationMatrix(float x, float y, float z)
 {
-	snakeml::math::vector translation(x, y, z);
-	return snakeml::math::TranslationMatrix(translation);
+	snakeml::vector translation(x, y, z);
+	return snakeml::TranslationMatrix(translation);
 }
 
-inline snakeml::math::matrix RotationYawMatrix(float yawRad)
+inline snakeml::matrix RotationYawMatrix(float yawRad)
 {
 	/*
 	* to account for the left-handed coordinate system of DirectX,
 	* the angle needs to be flipped
 	*/
 	const float leftHandedYawRad = -yawRad;
-	snakeml::math::matrix rotationMatrix;
+	snakeml::matrix rotationMatrix;
 	float cosYaw = cosf(leftHandedYawRad);
 	float sinYaw = sinf(leftHandedYawRad);
 	rotationMatrix.m[0][0] = cosYaw;
@@ -219,14 +219,14 @@ inline snakeml::math::matrix RotationYawMatrix(float yawRad)
 	return rotationMatrix;
 }
 
-inline snakeml::math::matrix RotationPitchMatrix(float pitchRad)
+inline snakeml::matrix RotationPitchMatrix(float pitchRad)
 {
 	/*
 	* to account for the left-handed coordinate system of DirectX,
 	* the angle needs to be flipped
 	*/
 	const float leftHandedPitchRad = -pitchRad;
-	snakeml::math::matrix rotationMatrix;
+	snakeml::matrix rotationMatrix;
 	float cosPitch = cosf(leftHandedPitchRad);
 	float sinPitch = sinf(leftHandedPitchRad);
 	rotationMatrix.m[1][1] = cosPitch;
@@ -236,14 +236,14 @@ inline snakeml::math::matrix RotationPitchMatrix(float pitchRad)
 	return rotationMatrix;
 }
 
-inline snakeml::math::matrix RotationRollMatrix(float rollRad)
+inline snakeml::matrix RotationRollMatrix(float rollRad)
 {
 	/*
 	* to account for the left-handed coordinate system of DirectX,
 	* the angle needs to be flipped
 	*/
 	const float leftHandedRollRad = -rollRad;
-	snakeml::math::matrix rotationMatrix;
+	snakeml::matrix rotationMatrix;
 	float cosRoll = cosf(leftHandedRollRad);
 	float sinRoll = sinf(leftHandedRollRad);
 	rotationMatrix.m[0][0] = cosRoll;
@@ -253,12 +253,12 @@ inline snakeml::math::matrix RotationRollMatrix(float rollRad)
 	return rotationMatrix;
 }
 
-inline snakeml::math::matrix RotationMatrix(float yawRad, float pitchRad, float rollRad)
+inline snakeml::matrix RotationMatrix(float yawRad, float pitchRad, float rollRad)
 {
 	return (RotationRollMatrix(rollRad) * RotationPitchMatrix(pitchRad)) * RotationYawMatrix(yawRad);
 }
 
-inline snakeml::math::matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float nearZ, float farZ)
+inline snakeml::matrix PerspectiveMatrixLH(float fovAngleY, float aspectRatio, float nearZ, float farZ)
 {
 	float sinFov = sinf(0.5f * fovAngleY);
 	float cosFov = cosf(0.5f * fovAngleY);
@@ -267,18 +267,18 @@ inline snakeml::math::matrix PerspectiveMatrixLH(float fovAngleY, float aspectRa
 	float width = height / aspectRatio;
 	float fRange = farZ / (farZ - nearZ);
 
-	return snakeml::math::matrix(
+	return snakeml::matrix(
 		width,	0.f,	0.f,				0.f,
 		0.f,	height,	0.f,				0.f,
 		0.f,	0.f,	fRange,				1.f,
 		0.f,	0.f,	-fRange * nearZ,	0.f);
 }
 
-inline snakeml::math::matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ)
+inline snakeml::matrix OrthographicMatrixLH(float viewWidth, float viewHeight, float nearZ, float farZ)
 {
 	float fRange = 1.0f / (farZ - nearZ);
 
-	snakeml::math::matrix result;
+	snakeml::matrix result;
 	result.m[0][0] = 2.f / viewWidth;
 	result.m[1][1] = 2.f / viewHeight;
 	result.m[2][2] = fRange;
@@ -287,19 +287,19 @@ inline snakeml::math::matrix OrthographicMatrixLH(float viewWidth, float viewHei
 	return result;
 }
 
-inline snakeml::math::matrix LookAtMatrixLH(const snakeml::math::vector& eyePos, const snakeml::math::vector& lookAt, const snakeml::math::vector& up)
+inline snakeml::matrix LookAtMatrixLH(const snakeml::vector& eyePos, const snakeml::vector& lookAt, const snakeml::vector& up)
 {
-	snakeml::math::vector zaxis = (lookAt - eyePos).getNormalized();	// The "forward" vector.
-	snakeml::math::vector xaxis = up.cross(zaxis).getNormalized();		// The "right" vector.
-	snakeml::math::vector yaxis = zaxis.cross(xaxis).getNormalized();	// The "up" vector.
+	snakeml::vector zaxis = (lookAt - eyePos).getNormalized();	// The "forward" vector.
+	snakeml::vector xaxis = up.cross(zaxis).getNormalized();	// The "right" vector.
+	snakeml::vector yaxis = zaxis.cross(xaxis).getNormalized();	// The "up" vector.
 
-	snakeml::math::matrix orientation(
+	snakeml::matrix orientation(
 		xaxis.x, yaxis.x, zaxis.x, 0.0f,
 		xaxis.y, yaxis.y, zaxis.y, 0.0f,
 		xaxis.z, yaxis.z, zaxis.z, 0.0f,
 		0.0f,	 0.0f,	  0.0f,	   1.0f);
 
-	snakeml::math::matrix translation = snakeml::math::TranslationMatrix(-eyePos);
+	snakeml::matrix translation = snakeml::TranslationMatrix(-eyePos);
 
 	return translation * orientation;
 }

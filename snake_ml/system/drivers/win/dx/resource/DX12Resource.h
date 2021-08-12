@@ -38,8 +38,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -110,5 +108,4 @@ protected:
 
 }
 #endif
-}
 }

@@ -53,8 +53,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -206,5 +204,4 @@ private:
 
 }
 #endif
-}
 }

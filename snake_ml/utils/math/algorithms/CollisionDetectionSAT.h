@@ -1,8 +1,6 @@
 #pragma once
 namespace snakeml
 {
-namespace math
-{
 
 /*
 * Separation Axis Theorem
@@ -10,13 +8,12 @@ namespace math
 class SAT
 {
 public:
-	static bool TestIntersection(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices);
+	static bool TestIntersection(const std::vector<vector>& aVertices, const std::vector<vector>& bVertices);
 
 private:
-	static bool IsAxisPresent(const math::vector& axisCandidate, std::vector<math::vector>& axises);
-	static void BuildAxises(const std::vector<math::vector>& vertices, std::vector<math::vector>& _outAxises);
-	static void ProjectPolygon(const math::vector& axis, const std::vector<math::vector>& vertices, float& _outProjectionMin, float& _outProjectionMax);
+	static bool IsAxisPresent(const vector& axisCandidate, std::vector<vector>& axises);
+	static void BuildAxises(const std::vector<vector>& vertices, std::vector<vector>& _outAxises);
+	static void ProjectPolygon(const vector& axis, const std::vector<vector>& vertices, float& _outProjectionMin, float& _outProjectionMax);
 };
 
-}
 }

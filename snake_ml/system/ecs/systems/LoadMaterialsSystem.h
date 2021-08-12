@@ -9,8 +9,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class LoadMaterialsSystem : public ISystem
 {
@@ -34,25 +32,24 @@ private:
 
 	// ******* Parsing Transform components *******
 	static void ParseTransforms(const rapidjson::Document& json);
-	static void ParseTransformComponent_Position(const rapidjson::Value& json, math::vector& _outPosition);
-	static void ParseTransformComponent_Rotation(const rapidjson::Value& json, math::vector& _outRotation);
-	static void ParseTransformComponent_Scale(const rapidjson::Value& json, math::vector& _outScale);
+	static void ParseTransformComponent_Position(const rapidjson::Value& json, vector& _outPosition);
+	static void ParseTransformComponent_Rotation(const rapidjson::Value& json, vector& _outRotation);
+	static void ParseTransformComponent_Scale(const rapidjson::Value& json, vector& _outScale);
 	// *******  *******  *******  *******  ********
 
 	// ******* Parsing Physics components *******
 	static void ParsePhysicsComponents(const rapidjson::Document& json);
-	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, math::vector& _outShapeDimensions);
+	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, vector& _outShapeDimensions);
 	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
 	static void ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic);
 	// *******  *******  *******  *******  ******
 
 	// ******* Parsing Mesh components *******
 	static void ParseMeshes(const rapidjson::Document& json);
-	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::float3, types::float2>>& outVertices);
+	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<float3, float2>>& outVertices);
 	// ******* ******* ******* ******* *******
 
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 };
 
-}
 }

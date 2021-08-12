@@ -1,8 +1,6 @@
 #pragma once
 namespace snakeml
 {
-namespace math
-{
 
 class GJK
 {
@@ -11,10 +9,10 @@ public:
 	{
 		bool areIntersecting = false;
 		float penetrationDepth = 0.f;
-		math::vector penetrationVector = math::vector::zero;
+		vector penetrationVector = vector::zero;
 	};
 
-	static Intersection TestIntersection(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices, const math::vector& aCenter, const math::vector& bCenter);
+	static Intersection TestIntersection(const std::vector<vector>& aVertices, const std::vector<vector>& bVertices, const vector& aCenter, const vector& bCenter);
 
 private:
 	/*
@@ -24,24 +22,23 @@ private:
 
 	struct SupportPoint
 	{
-		SupportPoint(const math::vector& p, float d) : point(p), distance(d) {}
-		math::vector	point;
+		SupportPoint(const vector& p, float d) : point(p), distance(d) {}
+		vector	point;
 		float			distance;
 	};
 
-	static void FindSupportPoint(const math::vector& supportDirection, const std::vector<math::vector>& vertices, SupportPoint& _outSupportPoint);
-	static math::vector SupportFunction(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices, const math::vector& direction);
+	static void FindSupportPoint(const vector& supportDirection, const std::vector<vector>& vertices, SupportPoint& _outSupportPoint);
+	static vector SupportFunction(const std::vector<vector>& aVertices, const std::vector<vector>& bVertices, const vector& direction);
 
-	static bool HandleSimplex(std::vector<math::vector>& simplex, math::vector& _outDirection);
-	static bool HandleSimplex_LineCase(const std::vector<math::vector>& simplex, math::vector& _outDirection);
-	static bool HandleSimplex_TriangleCase(std::vector<math::vector>& simplex, math::vector& _outDirection);
+	static bool HandleSimplex(std::vector<vector>& simplex, vector& _outDirection);
+	static bool HandleSimplex_LineCase(const std::vector<vector>& simplex, vector& _outDirection);
+	static bool HandleSimplex_TriangleCase(std::vector<vector>& simplex, vector& _outDirection);
 
 	/*
 	* Expanding Polytope algorithm
 	* https://www.youtube.com/watch?v=0XQ2FSz3EK8
 	*/
-	static Intersection EPA(std::vector<math::vector>& simplex, const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices);
+	static Intersection EPA(std::vector<vector>& simplex, const std::vector<vector>& aVertices, const std::vector<vector>& bVertices);
 };
 
-}
 }

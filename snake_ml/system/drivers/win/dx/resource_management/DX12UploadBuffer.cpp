@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -99,8 +97,8 @@ DX12UploadBuffer::Page::~Page()
 
 bool DX12UploadBuffer::Page::HasSpace(size_t sizeInBytes, size_t alignment) const
 {
-	size_t alignedSize = math::AlignUp(sizeInBytes, alignment);
-	size_t alignedOffset = math::AlignUp(m_offset, alignment);
+	size_t alignedSize = AlignUp(sizeInBytes, alignment);
+	size_t alignedOffset = AlignUp(m_offset, alignment);
 
 	return alignedOffset + alignedSize <= m_pageSize;
 }
@@ -113,8 +111,8 @@ DX12UploadBuffer::Allocation DX12UploadBuffer::Page::Allocate(size_t sizeInBytes
 		throw std::bad_alloc();
 	}
 
-	size_t alignedSize = math::AlignUp(sizeInBytes, alignment);
-	m_offset = math::AlignUp(m_offset, alignment);
+	size_t alignedSize = AlignUp(sizeInBytes, alignment);
+	m_offset = AlignUp(m_offset, alignment);
 
 	Allocation allocation;
 	allocation.CPU = static_cast<uint8_t*>(m_CPUPtr) + m_offset;
@@ -132,5 +130,4 @@ void DX12UploadBuffer::Page::Reset()
 
 }
 #endif
-}
 }

@@ -9,8 +9,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -35,7 +33,7 @@ void DX12ByteAddressBuffer::CreateViews(size_t numElements, size_t elementSize)
 
 	// Make sure buffer size is aligned to 4 bytes.
 	constexpr size_t alignment = 4u;
-	m_bufferSize = math::AlignUp(numElements * elementSize, alignment);
+	m_bufferSize = AlignUp(numElements * elementSize, alignment);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
@@ -57,5 +55,4 @@ void DX12ByteAddressBuffer::CreateViews(size_t numElements, size_t elementSize)
 
 }
 #endif
-}
 }

@@ -12,8 +12,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 class Entity;
 
 #ifdef _WINDOWS
@@ -35,7 +33,7 @@ public:
 		Copy
 	};
 
-	DX12Driver(HWND windowHandle, types::uint32_t2 windowSz);
+	DX12Driver(HWND windowHandle, uint32_t2 windowSz);
 	~DX12Driver();
 
 	void SubscribeForRendering(const Entity& renderable);
@@ -58,7 +56,7 @@ public:
 	 */
 	DXGI_SAMPLE_DESC GetMultisampleQualityLevels(DXGI_FORMAT format, UINT numSamples, D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE) const;
 
-	void GetMatrices(math::matrix& outProjection, math::matrix& outOrthogonal) const;
+	void GetMatrices(matrix& outProjection, matrix& outOrthogonal) const;
 
 private:
 	void OnInitialize() override;
@@ -126,11 +124,10 @@ private:
 
 	float m_foV = 45.f;
 
-	math::matrix m_projectionMatrix;
-	math::matrix m_orthogonalMatrix;
+	matrix m_projectionMatrix;
+	matrix m_orthogonalMatrix;
 };
 
 }
 #endif
-}
 }

@@ -10,8 +10,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -36,5 +34,4 @@ REGISTER_TYPE(DX12RenderComponent);
 
 }
 #endif
-}
 }

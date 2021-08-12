@@ -2,8 +2,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 
 template<typename T>
 class QuadTree
@@ -11,8 +9,8 @@ class QuadTree
 public:
 	struct Rectangle
 	{
-		math::vector origin;
-		math::vector halfDimensions;
+		vector origin;
+		vector halfDimensions;
 
 		bool Intersects(Rectangle other) const;
 	};
@@ -57,5 +55,4 @@ private:
 
 #include "QuadTree.inl"
 
-}
 }

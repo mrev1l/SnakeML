@@ -3,8 +3,6 @@
 
 namespace snakeml
 {
-namespace math
-{
 
 class matrix
 {
@@ -67,5 +65,4 @@ inline matrix LookAtMatrixLH(const vector& eyePos, const vector& lookAt, const v
 
 #include "matrix.inl"
 
-}
 }

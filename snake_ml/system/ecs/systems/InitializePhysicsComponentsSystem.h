@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class TransformComponent;
 class PhysicsComponent;
@@ -22,5 +20,4 @@ public:
 	static void InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody);
 };
 
-}
 }

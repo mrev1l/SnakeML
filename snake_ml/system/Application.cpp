@@ -26,8 +26,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 Application::Application() : Singleton()
 {
@@ -41,7 +39,7 @@ void Application::Initialize()
 {
 	constexpr std::wstring_view windowClassName(L"SnakeML_WindowClass");
 	constexpr std::wstring_view windowTitle(L"snake_ml");
-	constexpr types::uint32_t2 windowSz = { 720, 720 };
+	constexpr uint32_t2 windowSz = { 720, 720 };
 
 #ifdef _WINDOWS
 	new win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
@@ -69,7 +67,7 @@ void Application::Initialize()
 
 void Application::Run()
 {
-	system::IOSDriver::GetInstance()->RunOSMainLoop();
+	IOSDriver::GetInstance()->RunOSMainLoop();
 }
 
 void Application::Shutdown()
@@ -118,8 +116,7 @@ void Application::Render()
 void Application::Resize(uint32_t width, uint32_t height)
 {
 	// TODO
-	//system::IRenderDriver::GetInstance()->Resize(width, height);
+	//IRenderDriver::GetInstance()->Resize(width, height);
 }
 
-}
 }

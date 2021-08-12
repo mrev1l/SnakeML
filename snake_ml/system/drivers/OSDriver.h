@@ -9,10 +9,8 @@
 
 namespace snakeml
 {
-namespace system
-{
 
-class IOSDriver : public patterns::Singleton<IOSDriver>
+class IOSDriver : public Singleton<IOSDriver>
 {
 public:
 	IOSDriver() = default;
@@ -29,8 +27,8 @@ public:
 
 	virtual void LogMessage(std::wstring msg) const = 0;
 
-	patterns::Event<OSImplementation, uint64_t>	m_onInputEvent;
-	patterns::Event<OSImplementation, double>	m_onUpdateEvent;
+	Event<OSImplementation, uint64_t>	m_onInputEvent;
+	Event<OSImplementation, double>		m_onUpdateEvent;
 
 protected:
 	virtual void OnInitialize() = 0;
@@ -40,5 +38,4 @@ protected:
 	virtual void OnUpdate() = 0;
 };
 
-}
 }

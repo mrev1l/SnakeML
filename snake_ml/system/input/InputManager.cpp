@@ -9,8 +9,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 InputManager::InputManager()
 {
@@ -22,11 +20,10 @@ void InputManager::ProcessInput(uint64_t inputKey)
 	switch (static_cast<SupportedKey>(inputKey))
 	{
 	case SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
-	//case SupportedKey::F11: system::RenderDriver::GetInstance()->SetFullscreenMode(!system::RenderDriver::GetInstance()->IsInFullscreen(), system::OSDriver::GetInstance()->GetWindowHandle()); break;
+	//case SupportedKey::F11: RenderDriver::GetInstance()->SetFullscreenMode(!RenderDriver::GetInstance()->IsInFullscreen(), OSDriver::GetInstance()->GetWindowHandle()); break;
 	default:
 		break;
 	}
 }
 
-}
 }

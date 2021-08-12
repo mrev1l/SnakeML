@@ -9,10 +9,8 @@
 
 namespace snakeml
 {
-namespace system
-{
 
-class ECSManager : public patterns::Singleton<ECSManager>
+class ECSManager : public Singleton<ECSManager>
 {
 public:
 	ECSManager() = default;
@@ -45,5 +43,4 @@ private:
 
 };
 
-}
 }

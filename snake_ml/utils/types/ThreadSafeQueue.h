@@ -36,8 +36,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 
 template<typename T>
 class ThreadSafeQueue
@@ -134,5 +132,4 @@ size_t ThreadSafeQueue<T>::Size() const
 	return m_queue.size();
 }
 
-}
 }

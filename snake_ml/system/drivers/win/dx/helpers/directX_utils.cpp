@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -204,5 +202,4 @@ void DX12Utils::ReportLiveObjects()
 
 }
 #endif
-}
 }

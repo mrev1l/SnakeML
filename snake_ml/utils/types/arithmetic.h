@@ -2,8 +2,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 // TODO rename file
 #define declare_type2(type) \
 struct type##2 \
@@ -31,11 +29,10 @@ declare_type3(float);
 // TODO : Move to algorithm space
 struct AABB
 {
-	math::vector min, max;
+	vector min, max;
 
 	static bool TestIntersection_AABB_AABB(const AABB& a, const AABB& b);
-	static AABB GenerateAABB(const math::vector& dimensions, const math::vector& position, const math::vector& rotation);
+	static AABB GenerateAABB(const vector& dimensions, const vector& position, const vector& rotation);
 };
 
-}
 }

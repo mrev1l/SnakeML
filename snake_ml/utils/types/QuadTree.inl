@@ -67,10 +67,10 @@ void QuadTree<T>::SubDivide()
 {
 	ASSERT(!m_isSubDivided, "Trying to re-subdivide the QuadTree.");
 
-	math::vector northwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
-	math::vector northeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
-	math::vector southwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
-	math::vector southeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
+	vector northwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
+	vector northeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y + m_boundary.halfDimensions.y / 2.f, 0.f };
+	vector southwestOrigin = { m_boundary.origin.x - m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
+	vector southeastOrigin = { m_boundary.origin.x + m_boundary.halfDimensions.x / 2.f, m_boundary.origin.y - m_boundary.halfDimensions.y / 2.f, 0.f };
 
 	Rectangle northwest{ northwestOrigin, m_boundary.halfDimensions / 2.f };
 	Rectangle northeast{ northeastOrigin, m_boundary.halfDimensions / 2.f };

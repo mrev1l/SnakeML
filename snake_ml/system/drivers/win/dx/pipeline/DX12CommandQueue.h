@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -50,8 +48,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Fence>							m_d3d12Fence;
 	std::atomic_uint64_t										m_fenceValue;
 
-	types::ThreadSafeQueue<CommandListEntry>					m_inFlightCommandLists;
-	types::ThreadSafeQueue<std::shared_ptr<DX12CommandList>>	m_availableCommandLists;
+	ThreadSafeQueue<CommandListEntry>					m_inFlightCommandLists;
+	ThreadSafeQueue<std::shared_ptr<DX12CommandList>>	m_availableCommandLists;
 
 	// A thread to process in-flight command lists.
 	std::thread m_processInFlightCommandListsThread;
@@ -62,5 +60,4 @@ private:
 
 }
 #endif
-}
 }

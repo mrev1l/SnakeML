@@ -4,19 +4,12 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 struct BoxShape
 {
-	math::vector m_dimensions;
+	vector m_dimensions;
 	float m_mass;
 	float m_momentOfInertia; // m * (w*w + h*h) / 12.f
-};
-
-struct AABB
-{
-	math::vector min, max;
 };
 
 class PhysicsComponent : public IComponent
@@ -26,16 +19,15 @@ public:
 	ComponentType GetComponentType() const override { return ComponentType::PhysicsComponent; }
 
 	BoxShape m_shape;
-	types::AABB m_aabb;
-	math::vector m_position;
-	math::vector m_rotation;
-	math::vector m_velocity;
-	math::vector m_angularVelocity;
-	math::vector m_acceleration;
-	math::vector m_angularAcceleration;
+	AABB m_aabb;
+	vector m_position;
+	vector m_rotation;
+	vector m_velocity;
+	vector m_angularVelocity;
+	vector m_acceleration;
+	vector m_angularAcceleration;
 	bool m_isDynamic = false;
 };
 REGISTER_TYPE(PhysicsComponent);
 
-}
 }

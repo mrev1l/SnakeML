@@ -17,8 +17,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 TransformComponent* PhysicsSystem::s_emptyTransformComponent = new TransformComponent();
 MeshComponent* PhysicsSystem::s_emptyMeshComponent = new MeshComponent();
@@ -42,7 +40,7 @@ void PhysicsSystem::Update(double deltaTime)
 		const float dt = timeToSimulate > k_physicsTimeStep ? k_physicsTimeStep : timeToSimulate;
 		timeToSimulate -= dt;
 
-		types::QuadTree<PhysicsComponent> qt(types::QuadTree<PhysicsComponent>::Rectangle{ math::vector::zero, m_quadTreeHalfDimensions });
+		QuadTree<PhysicsComponent> qt(QuadTree<PhysicsComponent>::Rectangle{ vector::zero, m_quadTreeHalfDimensions });
 		std::vector<NarrowPhasePair> narrowPhase;
 
 		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<PhysicsComponentIterator>();
@@ -53,7 +51,7 @@ void PhysicsSystem::Update(double deltaTime)
 		BroadPhaseStep(qt, bodiesIt, narrowPhase);
 		NarrowPhaseIntersectionSolutionStep(narrowPhase);
 	}
-	while (!math::IsNearlyZero(timeToSimulate, math::k_default_epsilon));
+	while (!IsNearlyZero(timeToSimulate, k_default_epsilon));
 }
 
 void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator* bodiesIt, double dt)
@@ -92,12 +90,12 @@ void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator* bodiesIt)
 		PhysicsComponent& body = bodiesIt->At(i);
 		if (body.m_isDynamic)
 		{
-			body.m_aabb = types::AABB::GenerateAABB(body.m_shape.m_dimensions, body.m_position, body.m_rotation);
+			body.m_aabb = AABB::GenerateAABB(body.m_shape.m_dimensions, body.m_position, body.m_rotation);
 		}
 	}
 }
 
-void PhysicsSystem::PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt)
+void PhysicsSystem::PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt)
 {
 	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
 	{
@@ -106,12 +104,12 @@ void PhysicsSystem::PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree
 	}
 }
 
-void PhysicsSystem::AddPhysicsBodyToQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body)
+void PhysicsSystem::AddPhysicsBodyToQuadTree(QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body)
 {
-	quadTree.AddObject(types::QuadTree<PhysicsComponent>::Object{ {body.m_position, {(body.m_aabb.max - body.m_aabb.min) / 2.f}}, body });
+	quadTree.AddObject(QuadTree<PhysicsComponent>::Object{ {body.m_position, {(body.m_aabb.max - body.m_aabb.min) / 2.f}}, body });
 }
 
-void PhysicsSystem::BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase)
+void PhysicsSystem::BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase)
 {
 	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
 	{
@@ -125,10 +123,10 @@ void PhysicsSystem::BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, 
 	}
 }
 
-void PhysicsSystem::CalculateBroadphaseForBody(const types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase)
+void PhysicsSystem::CalculateBroadphaseForBody(const QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase)
 {
-	const types::QuadTree<PhysicsComponent>::Rectangle boundary = { body.m_position, body.m_aabb.max - body.m_aabb.min };
-	std::vector<const types::QuadTree<PhysicsComponent>::Object const*> objects;
+	const QuadTree<PhysicsComponent>::Rectangle boundary = { body.m_position, body.m_aabb.max - body.m_aabb.min };
+	std::vector<const QuadTree<PhysicsComponent>::Object const*> objects;
 
 	quadTree.GetObjects(boundary, objects);
 
@@ -138,10 +136,10 @@ void PhysicsSystem::CalculateBroadphaseForBody(const types::QuadTree<PhysicsComp
 		{
 			continue;
 		}
-		const types::AABB& a = body.m_aabb;
-		const types::AABB& b = object->userData.m_aabb;
+		const AABB& a = body.m_aabb;
+		const AABB& b = object->userData.m_aabb;
 
-		const bool areIntersecting = types::AABB::TestIntersection_AABB_AABB(a, b);
+		const bool areIntersecting = AABB::TestIntersection_AABB_AABB(a, b);
 
 		if (areIntersecting)
 		{
@@ -160,7 +158,7 @@ void PhysicsSystem::CalculateBroadphaseForBody(const types::QuadTree<PhysicsComp
 
 void PhysicsSystem::NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase)
 {
-	math::GJK::Intersection foundIntersection;
+	GJK::Intersection foundIntersection;
 	for (const auto& pair : narrowPhase)
 	{
 		ResolveNarrowPhase(pair, foundIntersection);
@@ -172,24 +170,24 @@ void PhysicsSystem::NarrowPhaseIntersectionSolutionStep(const std::vector<Narrow
 	}
 }
 
-void PhysicsSystem::ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, math::GJK::Intersection& _outFoundGJK_Intersection)
+void PhysicsSystem::ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, GJK::Intersection& _outFoundGJK_Intersection)
 {
-	const bool isSAT_IntersectionFound = math::SAT::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon);
+	const bool isSAT_IntersectionFound = SAT::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon);
 	if (isSAT_IntersectionFound)
 	{
-		_outFoundGJK_Intersection = math::GJK::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon, narrowPhase.a.physicsObject.m_position, narrowPhase.b.physicsObject.m_position);
+		_outFoundGJK_Intersection = GJK::TestIntersection(narrowPhase.a.polygon, narrowPhase.b.polygon, narrowPhase.a.physicsObject.m_position, narrowPhase.b.physicsObject.m_position);
 	}
 }
 
-void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, const math::GJK::Intersection& intersection)
+void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, const GJK::Intersection& intersection)
 {
 	if (narrowPhase.a.physicsObject.m_isDynamic)
 	{
 		narrowPhase.a.physicsObject.m_position -= intersection.penetrationVector * intersection.penetrationDepth;
 
-		math::vector reflectedVelocity = narrowPhase.a.physicsObject.m_velocity - (-intersection.penetrationVector * 2.f * narrowPhase.a.physicsObject.m_velocity.dot(-intersection.penetrationVector));
+		vector reflectedVelocity = narrowPhase.a.physicsObject.m_velocity - (-intersection.penetrationVector * 2.f * narrowPhase.a.physicsObject.m_velocity.dot(-intersection.penetrationVector));
 		narrowPhase.a.physicsObject.m_velocity = reflectedVelocity;
-		narrowPhase.a.physicsObject.m_acceleration = math::vector::zero;
+		narrowPhase.a.physicsObject.m_acceleration = vector::zero;
 
 		IOSDriver::GetInstance()->LogMessage(L"INTERSECTION\n");
 	}
@@ -200,14 +198,14 @@ void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outP
 	const MeshComponent& mesh = GetMeshComponent(body);
 	const TransformComponent& transform = GetTransformComponent(body);
 
-	const math::matrix scaleMatrix = math::ScaleMatrix(transform.m_scale.x, transform.m_scale.y, transform.m_scale.z);
-	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(transform.m_rotation.y), math::ConvertToRadians(transform.m_rotation.x), math::ConvertToRadians(transform.m_rotation.z));
-	const math::matrix translationMatrix = math::TranslationMatrix(transform.m_position.x, transform.m_position.y, transform.m_position.z);
-	const math::matrix modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+	const matrix scaleMatrix = ScaleMatrix(transform.m_scale.x, transform.m_scale.y, transform.m_scale.z);
+	const matrix rotationMatrix = RotationMatrix(ConvertToRadians(transform.m_rotation.y), ConvertToRadians(transform.m_rotation.x), ConvertToRadians(transform.m_rotation.z));
+	const matrix translationMatrix = TranslationMatrix(transform.m_position.x, transform.m_position.y, transform.m_position.z);
+	const matrix modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
 	for (const auto& vertex : mesh.m_vertices)
 	{
-		const math::vector v = { vertex.first.x, vertex.first.y, vertex.first.z };
+		const vector v = { vertex.first.x, vertex.first.y, vertex.first.z };
 		_outPolygon.push_back(modelMatrix * v);
 	}
 }
@@ -244,5 +242,4 @@ MeshComponent& PhysicsSystem::GetMeshComponent(const PhysicsComponent& body)
 	return *s_emptyMeshComponent;
 }
 
-}
 }

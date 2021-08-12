@@ -5,17 +5,15 @@
 
 namespace snakeml
 {
-namespace math
-{
 
-bool SAT::TestIntersection(const std::vector<math::vector>& aVertices, const std::vector<math::vector>& bVertices)
+bool SAT::TestIntersection(const std::vector<vector>& aVertices, const std::vector<vector>& bVertices)
 {
-	std::vector<math::vector> axises;
+	std::vector<vector> axises;
 
 	BuildAxises(aVertices, axises);
 	BuildAxises(bVertices, axises);
 
-	for (const math::vector& axis : axises)
+	for (const vector& axis : axises)
 	{
 		float aProjectionMin = FLT_MAX, aProjectionMax = -FLT_MAX, bProjectionMin = FLT_MAX, bProjectionMax = -FLT_MAX;
 
@@ -33,25 +31,25 @@ bool SAT::TestIntersection(const std::vector<math::vector>& aVertices, const std
 	return true; // no separating axis found
 }
 
-bool SAT::IsAxisPresent(const math::vector& axisCandidate, std::vector<math::vector>& axises)
+bool SAT::IsAxisPresent(const vector& axisCandidate, std::vector<vector>& axises)
 {
-	const float axisDirectionEqualityThreshold = cosf(math::ConvertToRadians(1.f));
-	const auto AreTheSameAxis = [axisCandidate, axisDirectionEqualityThreshold](const math::vector& a) -> bool
+	const float axisDirectionEqualityThreshold = cosf(ConvertToRadians(1.f));
+	const auto AreTheSameAxis = [axisCandidate, axisDirectionEqualityThreshold](const vector& a) -> bool
 	{
 		const float dot = axisCandidate.dot(a);
-		return math::IsNearlyEqual(std::abs(dot), 1.f, axisDirectionEqualityThreshold);
+		return IsNearlyEqual(std::abs(dot), 1.f, axisDirectionEqualityThreshold);
 	};
 
 	return std::find_if(axises.begin(), axises.end(), AreTheSameAxis) != axises.end();
 }
 
-void SAT::BuildAxises(const std::vector<math::vector>& vertices, std::vector<math::vector>& _outAxises)
+void SAT::BuildAxises(const std::vector<vector>& vertices, std::vector<vector>& _outAxises)
 {
 	for (size_t i = 0u; i < vertices.size(); ++i)
 	{
 		const size_t j = (i + 1) % vertices.size();
-		const math::vector edge = math::perpendicular2d(vertices[j] - vertices[i]);
-		const math::vector axisCandidate = edge.getNormalized();
+		const vector edge = perpendicular2d(vertices[j] - vertices[i]);
+		const vector axisCandidate = edge.getNormalized();
 
 		// don't allow the same axis to occur multiple times
 		if (!IsAxisPresent(axisCandidate, _outAxises))
@@ -61,9 +59,9 @@ void SAT::BuildAxises(const std::vector<math::vector>& vertices, std::vector<mat
 	}
 }
 
-void SAT::ProjectPolygon(const math::vector& axis, const std::vector<math::vector>& vertices, float& _outProjectionMin, float& _outProjectionMax)
+void SAT::ProjectPolygon(const vector& axis, const std::vector<vector>& vertices, float& _outProjectionMin, float& _outProjectionMax)
 {
-	for (const math::vector& vertex : vertices)
+	for (const vector& vertex : vertices)
 	{
 		const float projection = vertex.dot(axis);
 		_outProjectionMin = std::min(_outProjectionMin, projection);
@@ -71,5 +69,4 @@ void SAT::ProjectPolygon(const math::vector& axis, const std::vector<math::vecto
 	}
 }
 
-}
 }

@@ -35,8 +35,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 
 class HighResolutionClock
 {
@@ -70,5 +68,4 @@ private:
 	std::chrono::high_resolution_clock::duration m_totalTime;
 };
 
-}
 }

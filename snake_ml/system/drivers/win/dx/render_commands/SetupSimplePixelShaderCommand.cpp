@@ -9,13 +9,11 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
 
-SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture, const math::matrix& mvp)
+SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture, const matrix& mvp)
 	: DX12RenderCommand()
 	, m_pipelineState(pipelineState)
 	, m_rootSignature(rootSignature)
@@ -34,5 +32,4 @@ void SetupSimplePixelShaderCommand::Execute(std::shared_ptr<DX12CommandList> com
 
 }
 #endif
-}
 }

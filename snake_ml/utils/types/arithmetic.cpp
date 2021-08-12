@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 
 bool AABB::TestIntersection_AABB_AABB(const AABB& a, const AABB& b)
 {
@@ -18,21 +16,21 @@ bool AABB::TestIntersection_AABB_AABB(const AABB& a, const AABB& b)
 	return !(isABehindB || isABeforeB || isAAboveA || isABelowB);
 }
 
-AABB AABB::GenerateAABB(const math::vector& dimensions, const math::vector& position, const math::vector& rotation)
+AABB AABB::GenerateAABB(const vector& dimensions, const vector& position, const vector& rotation)
 {
 	// Generate Bounding Box
-	std::array<math::vector, 4> boundingBox =
+	std::array<vector, 4> boundingBox =
 	{
-		math::vector{-dimensions.x / 2.f, -dimensions.y / 2.f, 0.f},
-		math::vector{-dimensions.x / 2.f, +dimensions.y / 2.f, 0.f},
-		math::vector{+dimensions.x / 2.f, -dimensions.y / 2.f, 0.f},
-		math::vector{+dimensions.x / 2.f, +dimensions.y / 2.f, 0.f}
+		vector{-dimensions.x / 2.f, -dimensions.y / 2.f, 0.f},
+		vector{-dimensions.x / 2.f, +dimensions.y / 2.f, 0.f},
+		vector{+dimensions.x / 2.f, -dimensions.y / 2.f, 0.f},
+		vector{+dimensions.x / 2.f, +dimensions.y / 2.f, 0.f}
 	};
 
 	// Calc transform matrix for Bounding Box vertices
-	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(rotation.y), math::ConvertToRadians(rotation.x), math::ConvertToRadians(rotation.z));
-	const math::matrix translationMatrix = math::TranslationMatrix(position.x, position.y, position.z);
-	const math::matrix transformMatrix = rotationMatrix * translationMatrix;
+	const matrix rotationMatrix = RotationMatrix(ConvertToRadians(rotation.y), ConvertToRadians(rotation.x), ConvertToRadians(rotation.z));
+	const matrix translationMatrix = TranslationMatrix(position.x, position.y, position.z);
+	const matrix transformMatrix = rotationMatrix * translationMatrix;
 
 	// Transform Bounding Box vertices
 	for (auto& vertex : boundingBox)
@@ -53,5 +51,4 @@ AABB AABB::GenerateAABB(const math::vector& dimensions, const math::vector& posi
 	return result;
 }
 
-}
 }

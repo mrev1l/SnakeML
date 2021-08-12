@@ -11,8 +11,7 @@
 
 namespace snakeml
 {
-namespace system
-{
+	// TODO win namespace?
 #ifdef _WINDOWS
 
 void WinUtils::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName, const WNDPROC& winProc)
@@ -109,5 +108,4 @@ void WinUtils::LoadFileIntoBuffer(const char* filename, std::string& fileBuffer)
 }
 
 #endif
-}
 }

@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 // TODO Remove?
 class TestMoveSnakeHeadSystem : public ISystem
 {
@@ -17,5 +15,4 @@ public:
 	void Update(double deltaTime) override;
 };
 
-}
 }

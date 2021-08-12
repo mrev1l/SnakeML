@@ -20,8 +20,6 @@
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -29,7 +27,7 @@ namespace win
 void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
 	CameraComponent& camera = ECSManager::GetInstance()->GetComponentsPool().GetComponents<CameraComponentIterator>()->At(0);
-	math::matrix cameraMatrix = math::LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
+	matrix cameraMatrix = LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
 
 	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();
 	/*const*/ TransformComponent& transformComponent = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
@@ -37,23 +35,23 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	//test TODO
 	{
-		//transformComponent.m_rotation += math::vector::forward * 0.3f;
+		//transformComponent.m_rotation += vector::forward * 0.3f;
 		//physicsComponent.m_rotation = transformComponent.m_rotation;
 	}
 
-	math::matrix projection, orthogonal;
+	matrix projection, orthogonal;
 	const win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
 	dx12Driver->GetMatrices(projection, orthogonal);
 
-	const math::matrix scaleMatrix = math::ScaleMatrix(transformComponent.m_scale.x, transformComponent.m_scale.y, transformComponent.m_scale.z);
-	const math::matrix rotationMatrix = math::RotationMatrix(math::ConvertToRadians(transformComponent.m_rotation.y), math::ConvertToRadians(transformComponent.m_rotation.x), math::ConvertToRadians(transformComponent.m_rotation.z));
-	const math::matrix translationMatrix = math::TranslationMatrix(transformComponent.m_position.x, transformComponent.m_position.y, transformComponent.m_position.z);
+	const matrix scaleMatrix = ScaleMatrix(transformComponent.m_scale.x, transformComponent.m_scale.y, transformComponent.m_scale.z);
+	const matrix rotationMatrix = RotationMatrix(ConvertToRadians(transformComponent.m_rotation.y), ConvertToRadians(transformComponent.m_rotation.x), ConvertToRadians(transformComponent.m_rotation.z));
+	const matrix translationMatrix = TranslationMatrix(transformComponent.m_position.x, transformComponent.m_position.y, transformComponent.m_position.z);
 
-	const math::matrix modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+	const matrix modelMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
 	if (renderableComponent.m_pipelineState)
 	{
-		const math::matrix mvpMatrix = modelMatrix * cameraMatrix * orthogonal;
+		const matrix mvpMatrix = modelMatrix * cameraMatrix * orthogonal;
 
 		outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture, mvpMatrix));
 		outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_vertexBuffer));
@@ -61,12 +59,12 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	if (renderableComponent.m_debugPipelineState)
 	{
-		types::AABB aabb = physicsComponent.m_aabb;
+		AABB aabb = physicsComponent.m_aabb;
 		float width = abs(aabb.max.x - aabb.min.x);
 		float height = abs(aabb.max.y - aabb.min.y);
-		const math::matrix debugScaleMatrix = math::ScaleMatrix(width, height, 1.f);
-		const math::matrix debugModelMatrix = debugScaleMatrix * translationMatrix;
-		const math::matrix debugMvpMatrix = debugModelMatrix * cameraMatrix * orthogonal;
+		const matrix debugScaleMatrix = ScaleMatrix(width, height, 1.f);
+		const matrix debugModelMatrix = debugScaleMatrix * translationMatrix;
+		const matrix debugMvpMatrix = debugModelMatrix * cameraMatrix * orthogonal;
 
 		outRenderCommands.push_back(std::make_unique<SetupAABBPixelShaderCommand>(renderableComponent.m_debugPipelineState, renderableComponent.m_debugRootSignature, debugMvpMatrix));
 		outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_debugVertexBuffer));
@@ -75,5 +73,4 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 }
 #endif
-}
 }

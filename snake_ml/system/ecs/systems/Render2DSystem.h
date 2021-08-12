@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class Render2DSystem : public ISystem
 {
@@ -17,5 +15,4 @@ public:
 	void Update(double deltaTime) override;
 };
 
-}
 }

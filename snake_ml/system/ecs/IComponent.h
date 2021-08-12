@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 enum class ComponentType : uint32_t
 {
@@ -148,5 +146,4 @@ inline T* IComponent::As()
 	return nullptr;
 }
 
-}
 }

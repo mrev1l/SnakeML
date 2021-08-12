@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace patterns
-{
 
 /*
 * TODO:
@@ -140,5 +138,4 @@ private:
 	std::vector<Subscription> m_subscriptions;
 };
 
-}
 }

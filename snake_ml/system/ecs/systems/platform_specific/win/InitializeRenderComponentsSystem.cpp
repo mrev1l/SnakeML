@@ -11,13 +11,11 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
 
-std::vector<std::pair<types::float3, types::float3>> InitializeRenderComponentsSystem::s_debugAABBVertices
+std::vector<std::pair<float3, float3>> InitializeRenderComponentsSystem::s_debugAABBVertices
 {
 	{ { -0.5f, +0.5f, 0.f }, { 1.f, 1.f, 1.f } },
 	{ { +0.5f, -0.5f, 0.f }, { 1.f, 1.f, 1.f } },
@@ -99,7 +97,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePath, _outRenderComponent.m_texture);
 
 	// TODO FIX by separating main and debug rendering data
-	const std::vector<std::pair<types::float3, types::float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<types::float3, types::float2>>() : meshComponent.m_vertices;
+	const std::vector<std::pair<float3, float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<float3, float2>>() : meshComponent.m_vertices;
 	InitRenderComponent_LoadBuffers(commandList, vertices, s_debugAABBVertices, _outRenderComponent.m_vertexBuffer, _outRenderComponent.m_debugVertexBuffer);
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob, debugVertexShaderBlob, debugPixelShaderBlob;
@@ -139,8 +137,8 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::sha
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadBuffers(
 	std::shared_ptr<DX12CommandList> commandList,
-	const std::vector<std::pair<types::float3, types::float2>>& geometryVertices, 
-	const std::vector<std::pair<types::float3, types::float3>>& debugGeometryVertices, 
+	const std::vector<std::pair<float3, float2>>& geometryVertices, 
+	const std::vector<std::pair<float3, float3>>& debugGeometryVertices, 
 	DX12VertexBuffer& _outGeometryVB, 
 	DX12VertexBuffer& _outDebugGeometryVB)
 {
@@ -346,7 +344,7 @@ DXGI_FORMAT InitializeRenderComponentsSystem::GetInputLayoutFormat(MaterialCompo
 	default:
 		static_assert(static_cast<size_t>(MaterialComponent::InputLayoutEntries::Count) == 3u);
 	}
-	ASSERT(false, "InitializeRenderComponentsSystem::GetInputLayoutFormat Incorrect input param");
+	ASSERT(false, "InitializeRenderComponentsGetInputLayoutFormat Incorrect input param");
 	return DXGI_FORMAT_UNKNOWN;
 }
 
@@ -360,7 +358,7 @@ DX12Utils::DX12ShaderSemanticName InitializeRenderComponentsSystem::GetShaderSem
 	default:
 		static_assert(static_cast<size_t>(MaterialComponent::InputLayoutEntries::Count) == 3u);
 	}
-	ASSERT(false, "InitializeRenderComponentsSystem::GetShaderSemanticName Incorrect input param");
+	ASSERT(false, "InitializeRenderComponentsGetShaderSemanticName Incorrect input param");
 	return DX12Utils::DX12ShaderSemanticName::Color;
 }
 
@@ -391,7 +389,7 @@ std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRoo
 	{
 		switch (rootParamsIds[i])
 		{
-		case snakeml::system::win::MatricesCB:
+		case snakeml::win::MatricesCB:
 		{
 			rootParameters[i].InitAsConstants(
 				GetRootParameterNumValues(RootParameters::MatricesCB),
@@ -400,7 +398,7 @@ std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRoo
 				GetRootParameterShaderVisibility(RootParameters::MatricesCB));
 		}
 		break;
-		case snakeml::system::win::Textures:
+		case snakeml::win::Textures:
 		{
 			rootParameters[i].InitAsDescriptorTable(
 				GetRootParameterNumValues(RootParameters::Textures),
@@ -455,7 +453,7 @@ UINT InitializeRenderComponentsSystem::GetRootParameterNumValues(RootParameters 
 	default:
 		static_assert(RootParameters::NumRootParameters == 2u);
 	}
-	ASSERT(false, "InitializeRenderComponentsSystem::GetRootParameterNumValues Incorrect input param");
+	ASSERT(false, "InitializeRenderComponentsGetRootParameterNumValues Incorrect input param");
 	return 0u;
 }
 
@@ -468,11 +466,10 @@ D3D12_SHADER_VISIBILITY InitializeRenderComponentsSystem::GetRootParameterShader
 	default:
 		static_assert(RootParameters::NumRootParameters == 2u);
 	}
-	ASSERT(false, "InitializeRenderComponentsSystem::GetRootParameterShaderVisibility Incorrect input param");
+	ASSERT(false, "InitializeRenderComponentsGetRootParameterShaderVisibility Incorrect input param");
 	return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
 }
 
 }
 #endif
-}
 }

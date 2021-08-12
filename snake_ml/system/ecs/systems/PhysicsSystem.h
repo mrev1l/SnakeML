@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class PhysicsComponent;
 class PhysicsComponentIterator;
@@ -24,8 +22,8 @@ public:
 	void Update(double deltaTime) override;
 
 private:
-	using BoundingBox = std::array<math::vector, 4>;
-	using Polygon = std::vector<math::vector>;
+	using BoundingBox = std::array<vector, 4>;
+	using Polygon = std::vector<vector>;
 	struct NarrowPhaseBody
 	{
 		NarrowPhaseBody(PhysicsComponent& physicsObj, Polygon&& poly) : physicsObject(physicsObj), polygon(std::move(poly)) { }
@@ -44,21 +42,21 @@ private:
 
 	void UpdateAABBs(const PhysicsComponentIterator* bodiesIt);
 
-	void PopulateQuadTree(types::QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt);
-	void AddPhysicsBodyToQuadTree(types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body);
+	void PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt);
+	void AddPhysicsBodyToQuadTree(QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body);
 
-	void BroadPhaseStep(types::QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase);
-	void CalculateBroadphaseForBody(const types::QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase);
+	void BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase);
+	void CalculateBroadphaseForBody(const QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase);
 
 	void NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase);
-	void ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, math::GJK::Intersection& foundIntersection);
-	void ResolveIntersection(const NarrowPhasePair& narrowPhase, const math::GJK::Intersection& intersection);
+	void ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, GJK::Intersection& foundIntersection);
+	void ResolveIntersection(const NarrowPhasePair& narrowPhase, const GJK::Intersection& intersection);
 
 	static TransformComponent& GetTransformComponent(const PhysicsComponent& body);
 	static MeshComponent& GetMeshComponent(const PhysicsComponent& body);
 	static void GeneratePolygon(const PhysicsComponent& body, Polygon& _outPolygon);
 
-	math::vector m_quadTreeHalfDimensions = math::vector::zero;
+	vector m_quadTreeHalfDimensions = vector::zero;
 
 	static TransformComponent*	s_emptyTransformComponent;
 	static MeshComponent*		s_emptyMeshComponent;
@@ -66,5 +64,4 @@ private:
 	static constexpr uint32_t	k_quadTreeHalfDimensionsMargin = 10u;
 };
 
-}
 }

@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class ISystem
 {
@@ -26,5 +24,4 @@ private:
 	static uint32_t s_globalSystemIdCounter;
 };
 
-}
 }

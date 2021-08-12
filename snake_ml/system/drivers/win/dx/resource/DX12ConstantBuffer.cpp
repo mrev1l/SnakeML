@@ -9,8 +9,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -29,7 +27,7 @@ void DX12ConstantBuffer::CreateViews(size_t numElements, size_t elementSize)
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC d3d12ConstantBufferViewDesc;
 	d3d12ConstantBufferViewDesc.BufferLocation = m_d3d12Resource->GetGPUVirtualAddress();
-	d3d12ConstantBufferViewDesc.SizeInBytes = static_cast<UINT>(math::AlignUp(m_sizeInBytes, 16));
+	d3d12ConstantBufferViewDesc.SizeInBytes = static_cast<UINT>(AlignUp(m_sizeInBytes, 16));
 
 	DX12Driver* dx12Driver = (DX12Driver*)DX12Driver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
@@ -48,5 +46,4 @@ D3D12_CPU_DESCRIPTOR_HANDLE DX12ConstantBuffer::GetUnorderedAccessView(const D3D
 
 }
 #endif
-}
 }

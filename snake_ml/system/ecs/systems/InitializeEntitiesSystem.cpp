@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void InitializeEntitiesSystem::Execute()
 {
@@ -42,5 +40,4 @@ void InitializeEntitiesSystem::Execute()
 	}
 }
 
-}
 }

@@ -7,8 +7,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class Entity;
 
@@ -26,7 +24,7 @@ public:
 };
 
 class IRenderDriver
-	: public patterns::Singleton<IRenderDriver>
+	: public Singleton<IRenderDriver>
 {
 public:
 	IRenderDriver() = default;
@@ -55,5 +53,4 @@ private:
 	uint64_t m_frameCounter = 0u;
 };
 
-}
 }

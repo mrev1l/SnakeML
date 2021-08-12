@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void ECSManager::ExecuteSystem(const std::unique_ptr<ISystem>& system) const
 {
@@ -39,5 +37,4 @@ void ECSManager::Update(double deltaTime)
 	m_systemsToUnschedule.clear();
 }
 
-}
 }

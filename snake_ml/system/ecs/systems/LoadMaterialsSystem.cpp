@@ -12,8 +12,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void LoadMaterialsSystem::Execute()
 {
@@ -163,7 +161,7 @@ void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
 	}
 }
 
-void LoadMaterialsSystem::ParseTransformComponent_Position(const rapidjson::Value& json, math::vector& _outPosition)
+void LoadMaterialsSystem::ParseTransformComponent_Position(const rapidjson::Value& json, vector& _outPosition)
 {
 	ASSERT(json.HasMember("position") && json["position"].IsArray() && json["position"].Size() == 3u, "Invalid position json");
 
@@ -172,7 +170,7 @@ void LoadMaterialsSystem::ParseTransformComponent_Position(const rapidjson::Valu
 	_outPosition = { positionJson[0].GetFloat(), positionJson[1].GetFloat(), positionJson[2].GetFloat() };
 }
 
-void LoadMaterialsSystem::ParseTransformComponent_Rotation(const rapidjson::Value& json, math::vector& _outRotation)
+void LoadMaterialsSystem::ParseTransformComponent_Rotation(const rapidjson::Value& json, vector& _outRotation)
 {
 	ASSERT(json.HasMember("rotation") && json["rotation"].IsArray() && json["rotation"].Size() == 3u, "Invalid rotation json");
 
@@ -181,7 +179,7 @@ void LoadMaterialsSystem::ParseTransformComponent_Rotation(const rapidjson::Valu
 	_outRotation = { rotationJson[0].GetFloat(), rotationJson[1].GetFloat(), rotationJson[2].GetFloat() };
 }
 
-void LoadMaterialsSystem::ParseTransformComponent_Scale(const rapidjson::Value& json, math::vector& _outScale)
+void LoadMaterialsSystem::ParseTransformComponent_Scale(const rapidjson::Value& json, vector& _outScale)
 {
 	ASSERT(json.HasMember("scale") && json["scale"].IsArray() && json["scale"].Size() == 3u, "Invalid scale json");
 
@@ -213,7 +211,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 	}
 }
 
-void LoadMaterialsSystem::ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, math::vector& _outShapeDimensions)
+void LoadMaterialsSystem::ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, vector& _outShapeDimensions)
 {
 	ASSERT(json.HasMember("shape_dimensions") && json["shape_dimensions"].IsArray() && json["shape_dimensions"].Size() == 3u, "Invalid shape dimension json");
 
@@ -257,7 +255,7 @@ void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
 	}
 }
 
-void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::float3, types::float2>>& outVertices)
+void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<float3, float2>>& outVertices)
 {
 	if (!(json.HasMember("vertices") && json["vertices"].IsArray()))
 	{
@@ -267,7 +265,7 @@ void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json
 	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
 	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
 
-	outVertices.resize(static_cast<std::vector<std::pair<types::float3, types::float3>>::size_type>(verticesArray.Size()));
+	outVertices.resize(static_cast<std::vector<std::pair<float3, float3>>::size_type>(verticesArray.Size()));
 	for (auto& vertex : outVertices)
 	{
 		if (vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u)
@@ -301,5 +299,4 @@ void LoadMaterialsSystem::ParseIndicesArray(const rapidjson::Document& json, std
 }
 
 
-}
 }

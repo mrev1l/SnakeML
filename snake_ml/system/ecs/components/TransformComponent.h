@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class TransformComponent : public IComponent
 {
@@ -15,11 +13,10 @@ public:
 	virtual ~TransformComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::TransformComponent; }
 
-	math::vector m_position;
-	math::vector m_rotation;
-	math::vector m_scale;
+	vector m_position;
+	vector m_rotation;
+	vector m_scale;
 };
 REGISTER_TYPE(TransformComponent);
 
-}
 }

@@ -10,7 +10,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	using namespace snakeml;
 
-	system::Application snake_ml;
+	Application snake_ml;
 	snake_ml.Initialize();
 	snake_ml.Run();
 	snake_ml.Shutdown();

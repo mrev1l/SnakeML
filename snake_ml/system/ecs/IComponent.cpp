@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void IComponent::RegisterFactory(ComponentType objType, Factory* objFactory)
 {
@@ -34,5 +32,3 @@ void Iterator::RegisterCastTableEntry(ComponentType type, const std::type_info& 
 }
 
 }
-}
-

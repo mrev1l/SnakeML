@@ -4,8 +4,6 @@
 
 namespace snakeml
 {
-namespace patterns
-{
 
 template<class T>
 class Singleton
@@ -25,5 +23,4 @@ private:
 template<class T>
 T* Singleton<T>::s_instance = nullptr;
 
-}
 }

@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 ComponentsPool::~ComponentsPool()
 {
@@ -34,5 +32,4 @@ void ComponentsPool::DeleteComponents()
 	}
 }
 
-}
 }

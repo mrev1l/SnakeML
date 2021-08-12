@@ -11,8 +11,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -35,8 +33,8 @@ private:
 	static void InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::wstring texturePath, DX12Texture& _outTexture);
 	static void InitRenderComponent_LoadBuffers(
 		std::shared_ptr<DX12CommandList> commandList,
-		const std::vector<std::pair<types::float3, types::float2>>& geometryVertices,
-		const std::vector<std::pair<types::float3, types::float3>>& debugGeometryVertices,
+		const std::vector<std::pair<float3, float2>>& geometryVertices,
+		const std::vector<std::pair<float3, float3>>& debugGeometryVertices,
 		DX12VertexBuffer& _outGeometryVB,
 		DX12VertexBuffer& _outDebugGeometryVB);
 	static void InitRenderComponent_LoadShaders(
@@ -93,7 +91,7 @@ private:
 	static UINT GetRootParameterNumValues(RootParameters paramType);
 	static D3D12_SHADER_VISIBILITY GetRootParameterShaderVisibility(RootParameters paramType);
 
-	static std::vector<std::pair<types::float3, types::float3>> s_debugAABBVertices;
+	static std::vector<std::pair<float3, float3>> s_debugAABBVertices;
 	static std::vector<MaterialComponent::InputLayoutEntries> s_debugInputLayoutEntries;
 	static constexpr const wchar_t* s_debugVSPath = L"data/shaders/VS_MvpColor.cso";
 	static constexpr const wchar_t* s_debugPSPath = L"data/shaders/PS_Color.cso";
@@ -101,5 +99,4 @@ private:
 
 }
 #endif
-}
 }

@@ -7,8 +7,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -69,5 +67,4 @@ void DX12StructuredBuffer::CreateViews(size_t numElements, size_t elementSize)
 
 }
 #endif
-}
 }

@@ -10,8 +10,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -252,5 +250,4 @@ uint32_t DX12DynamicDescriptorHeap::ComputeStaleDescriptorCount() const
 
 }
 #endif
-}
 }

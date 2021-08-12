@@ -14,8 +14,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 namespace wip
 {
 
@@ -28,14 +26,13 @@ void WIP_System::Update(double deltaTime)
 	{
 		PhysicsComponent& body = *entityPtr->m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
-		const math::vector force = math::vector{ 1.0f, 0.5f, 0.f };
-		const math::vector accDelta = (force * -1.f * 1000.f / body.m_shape.m_mass) * deltaTime;
+		const vector force = vector{ 1.0f, 0.5f, 0.f };
+		const vector accDelta = (force * -1.f * 1000.f / body.m_shape.m_mass) * deltaTime;
 		body.m_acceleration += accDelta;
 	}
 
 	ECSManager::GetInstance()->UnscheduleSystem(this);
 }
 
-}
 }
 }

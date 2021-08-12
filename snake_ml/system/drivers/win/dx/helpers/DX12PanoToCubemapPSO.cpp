@@ -10,8 +10,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -84,5 +82,4 @@ DX12PanoToCubemapPSO::DX12PanoToCubemapPSO()
 
 }
 #endif
-}
 }

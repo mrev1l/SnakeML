@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class InitializeEntitiesSystem : public ISystem
 {
@@ -16,5 +14,4 @@ public:
 	void Execute() override;
 };
 
-}
 }

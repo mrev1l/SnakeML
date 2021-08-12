@@ -5,9 +5,5 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 }
-}
-

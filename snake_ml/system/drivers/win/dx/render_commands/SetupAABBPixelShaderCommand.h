@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -17,7 +15,7 @@ class DX12RootSignature;
 class SetupAABBPixelShaderCommand : public DX12RenderCommand
 {
 public:
-	SetupAABBPixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const math::matrix& mvp);
+	SetupAABBPixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const matrix& mvp);
 	~SetupAABBPixelShaderCommand() = default;
 
 	void Execute(std::shared_ptr<DX12CommandList> commandList) override;
@@ -25,11 +23,10 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 	const DX12RootSignature& m_rootSignature;
-	const math::matrix m_mvpMatrix;
+	const matrix m_mvpMatrix;
 
 };
 
 }
 #endif
-}
 }

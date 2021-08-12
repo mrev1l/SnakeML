@@ -9,13 +9,11 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
 
-WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::uint32_t2 windowSz)
+WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, uint32_t2 windowSz)
 	: IOSDriver()
 	, m_windowSz(windowSz)
 {
@@ -57,8 +55,8 @@ void WinDriver::OnInitialize()
 
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
-	new system::win::DX12Driver(m_windowHandle, m_windowSz);
-	system::IRenderDriver::GetInstance()->Initialize();
+	new win::DX12Driver(m_windowHandle, m_windowSz);
+	IRenderDriver::GetInstance()->Initialize();
 }
 
 void WinDriver::OnRunOSMainLoop()
@@ -89,7 +87,7 @@ HINSTANCE WinDriver::GetHInstance()
 LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	IOSDriver* osDriver = IOSDriver::GetInstance();
-	if (system::IRenderDriver::GetInstance() && system::IRenderDriver::GetInstance()->IsInitialized())
+	if (IRenderDriver::GetInstance() && IRenderDriver::GetInstance()->IsInitialized())
 	{
 		switch (message)
 		{
@@ -133,5 +131,4 @@ void WinDriver::OnUpdate()
 
 }
 #endif
-}
 }

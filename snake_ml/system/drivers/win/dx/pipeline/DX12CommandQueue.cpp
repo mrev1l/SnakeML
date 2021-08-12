@@ -12,8 +12,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 namespace win
 {
 
@@ -215,6 +213,3 @@ void DX12CommandQueue::ProccessInFlightCommandLists()
 
 }
 }
-}
-
-

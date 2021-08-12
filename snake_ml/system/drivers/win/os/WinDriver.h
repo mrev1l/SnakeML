@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -20,7 +18,7 @@ class WinDriver
 	: public IOSDriver
 {
 public:
-	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::uint32_t2 windowSz);
+	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, uint32_t2 windowSz);
 	~WinDriver();
 
 	void GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) const override;
@@ -38,11 +36,10 @@ private:
 	void OnUpdate() override;
 
 	HWND m_windowHandle;
-	types::uint32_t2 m_windowSz;
-	types::HighResolutionClock m_updateClock;
+	uint32_t2 m_windowSz;
+	HighResolutionClock m_updateClock;
 };
 
 }
 #endif
-}
 }

@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class ComponentsPool
 {
@@ -40,7 +38,7 @@ inline void ComponentsPool::InsertComponents(Iterator* it)
 }
 
 template<class ComponentsIterator>
-inline ComponentsIterator* snakeml::system::ComponentsPool::GetComponents() const
+inline ComponentsIterator* snakeml::ComponentsPool::GetComponents() const
 {
 	const std::type_info& tInfo = typeid(ComponentsIterator);
 	if (Iterator* it = m_componentsPool2.at(tInfo.hash_code()))
@@ -50,5 +48,4 @@ inline ComponentsIterator* snakeml::system::ComponentsPool::GetComponents() cons
 	return nullptr;
 }
 
-}
 }

@@ -6,8 +6,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void IRenderDriver::Initialize()
 {
@@ -32,5 +30,4 @@ void IRenderDriver::Render()
 	++m_frameCounter;
 }
 
-}
 }

@@ -7,8 +7,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class Entity
 {
@@ -17,5 +15,4 @@ public:
 	std::unordered_map<ComponentType, IComponent*> m_components;
 };
 
-}
 }

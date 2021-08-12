@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void Render2DSystem::Update(double deltaTime)
 {
@@ -24,5 +22,4 @@ void Render2DSystem::Update(double deltaTime)
 	}
 }
 
-}
 }

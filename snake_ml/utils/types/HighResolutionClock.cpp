@@ -5,8 +5,6 @@
 
 namespace snakeml
 {
-namespace types
-{
 
 HighResolutionClock::HighResolutionClock()
 	: m_deltaTime(0)
@@ -70,5 +68,4 @@ double HighResolutionClock::GetTotalSeconds() const
 	return m_totalTime.count() * 1e-9;
 }
 
-}
 }

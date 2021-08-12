@@ -5,10 +5,7 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 uint32_t ISystem::s_globalSystemIdCounter = 0;
 
-}
 }

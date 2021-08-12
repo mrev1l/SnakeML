@@ -11,8 +11,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 #ifdef _WINDOWS
 namespace win
 {
@@ -394,5 +392,4 @@ DX12DescriptorAllocation DX12Texture::CreateUnorderedAccessView(const D3D12_UNOR
 
 }
 #endif
-}
 }

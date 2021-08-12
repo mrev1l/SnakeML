@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 void InitializeCameraSystem::Execute()
 {
@@ -24,5 +22,4 @@ void InitializeCameraSystem::Execute()
 	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<CameraComponentIterator>(it);
 }
 
-}
 }

@@ -8,8 +8,6 @@
 
 namespace snakeml
 {
-namespace system
-{
 
 class MaterialComponent : public IComponent
 {
@@ -33,5 +31,4 @@ public:
 };
 REGISTER_TYPE(MaterialComponent);
 
-}
 }

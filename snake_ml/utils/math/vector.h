@@ -2,9 +2,7 @@
 
 namespace snakeml
 {
-namespace math
-{
-
+// TODO rename?
 class vector
 {
 public:
@@ -46,5 +44,4 @@ public:
 
 #include "vector.inl"
 
-}
 }
