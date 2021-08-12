@@ -4,33 +4,29 @@ namespace snakeml
 {
 namespace types
 {
+// TODO rename file
+#define declare_type2(type) \
+struct type##2 \
+{ \
+	type x, y; \
+} 
 
-template<typename T>
-class vec2
-{
-public:
-	T m_x;
-	T m_y;
-};
+#define declare_type3(type) \
+struct type##3 \
+{ \
+	type x, y, z; \
+}
 
-template<typename T>
-class vec3
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-};
+#define declare_type4(type) \
+struct type##3 \
+{ \
+	type x, y, z, w; \
+}
 
-template<typename T>
-class vec4
-{
-public:
-	T m_x;
-	T m_y;
-	T m_z;
-	T m_w;
-};
+declare_type2(uint32_t);
+declare_type2(float);
+
+declare_type3(float);
 
 // TODO : Move to algorithm space
 struct AABB

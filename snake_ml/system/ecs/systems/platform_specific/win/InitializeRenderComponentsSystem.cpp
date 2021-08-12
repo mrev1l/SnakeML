@@ -17,7 +17,7 @@ namespace system
 namespace win
 {
 
-std::vector<std::pair<types::vec3<float>, types::vec3<float>>> InitializeRenderComponentsSystem::s_debugAABBVertices
+std::vector<std::pair<types::float3, types::float3>> InitializeRenderComponentsSystem::s_debugAABBVertices
 {
 	{ { -0.5f, +0.5f, 0.f }, { 1.f, 1.f, 1.f } },
 	{ { +0.5f, -0.5f, 0.f }, { 1.f, 1.f, 1.f } },
@@ -99,7 +99,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePath, _outRenderComponent.m_texture);
 
 	// TODO FIX by separating main and debug rendering data
-	const std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<types::vec3<float>, types::vec2<float>>>() : meshComponent.m_vertices;
+	const std::vector<std::pair<types::float3, types::float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<types::float3, types::float2>>() : meshComponent.m_vertices;
 	InitRenderComponent_LoadBuffers(commandList, vertices, s_debugAABBVertices, _outRenderComponent.m_vertexBuffer, _outRenderComponent.m_debugVertexBuffer);
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob, debugVertexShaderBlob, debugPixelShaderBlob;
@@ -139,8 +139,8 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::sha
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadBuffers(
 	std::shared_ptr<DX12CommandList> commandList,
-	const std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& geometryVertices, 
-	const std::vector<std::pair<types::vec3<float>, types::vec3<float>>>& debugGeometryVertices, 
+	const std::vector<std::pair<types::float3, types::float2>>& geometryVertices, 
+	const std::vector<std::pair<types::float3, types::float3>>& debugGeometryVertices, 
 	DX12VertexBuffer& _outGeometryVB, 
 	DX12VertexBuffer& _outDebugGeometryVB)
 {

@@ -35,7 +35,7 @@ public:
 		Copy
 	};
 
-	DX12Driver(HWND windowHandle, types::vec2<uint32_t> windowSz);
+	DX12Driver(HWND windowHandle, types::uint32_t2 windowSz);
 	~DX12Driver();
 
 	void SubscribeForRendering(const Entity& renderable);

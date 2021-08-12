@@ -41,7 +41,7 @@ void Application::Initialize()
 {
 	constexpr std::wstring_view windowClassName(L"SnakeML_WindowClass");
 	constexpr std::wstring_view windowTitle(L"snake_ml");
-	constexpr types::vec2<uint32_t> windowSz = {720, 720};
+	constexpr types::uint32_t2 windowSz = { 720, 720 };
 
 #ifdef _WINDOWS
 	new win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);

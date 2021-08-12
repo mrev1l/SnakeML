@@ -257,7 +257,7 @@ void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
 	}
 }
 
-void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices)
+void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::float3, types::float2>>& outVertices)
 {
 	if (!(json.HasMember("vertices") && json["vertices"].IsArray()))
 	{
@@ -267,7 +267,7 @@ void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json
 	const rapidjson::GenericArray<true, rapidjson::Value>& verticesArray = json["vertices"].GetArray();
 	rapidjson::Value::ConstValueIterator vertexIt = verticesArray.Begin();
 
-	outVertices.resize(static_cast<std::vector<std::pair<types::vec3<float>, types::vec3<float>>>::size_type>(verticesArray.Size()));
+	outVertices.resize(static_cast<std::vector<std::pair<types::float3, types::float3>>::size_type>(verticesArray.Size()));
 	for (auto& vertex : outVertices)
 	{
 		if (vertexIt->HasMember("pos") && (*vertexIt)["pos"].IsArray() && (*vertexIt)["pos"].Size() == 3u)

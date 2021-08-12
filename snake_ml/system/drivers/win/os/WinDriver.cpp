@@ -15,13 +15,13 @@ namespace system
 namespace win
 {
 
-WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::vec2<uint32_t> windowSz)
+WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, types::uint32_t2 windowSz)
 	: IOSDriver()
 	, m_windowSz(windowSz)
 {
 	const HINSTANCE hInstance = GetHInstance();
 	WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
-	m_windowHandle = WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.m_x, windowSz.m_y);
+	m_windowHandle = WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.x, windowSz.y);
 }
 
 WinDriver::~WinDriver()
@@ -35,8 +35,8 @@ WinDriver::~WinDriver()
 
 void WinDriver::GetAppDimensions(uint32_t& _outWidth, uint32_t& _outHeight) const
 {
-	_outWidth = m_windowSz.m_x;
-	_outHeight = m_windowSz.m_y;
+	_outWidth = m_windowSz.x;
+	_outHeight = m_windowSz.y;
 }
 
 void WinDriver::LogMessage(std::wstring message) const

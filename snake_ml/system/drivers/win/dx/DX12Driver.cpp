@@ -20,12 +20,12 @@ namespace system
 namespace win
 {
 
-DX12Driver::DX12Driver(HWND windowHandle, types::vec2<uint32_t> windowSz)
+DX12Driver::DX12Driver(HWND windowHandle, types::uint32_t2 windowSz)
 	: IRenderDriver()
 	, m_osWindowHandle(windowHandle)
-	, m_clientWidth(static_cast<FLOAT>(windowSz.m_x))
-	, m_clientHeight(static_cast<FLOAT>(windowSz.m_y))
-	, m_viewport(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<FLOAT>(windowSz.m_x), static_cast<FLOAT>(windowSz.m_y)))
+	, m_clientWidth(static_cast<FLOAT>(windowSz.x))
+	, m_clientHeight(static_cast<FLOAT>(windowSz.y))
+	, m_viewport(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<FLOAT>(windowSz.x), static_cast<FLOAT>(windowSz.y)))
 	, m_scissorRect(CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX))
 {
 	for (int i = 0; i < s_backBufferCount; ++i)

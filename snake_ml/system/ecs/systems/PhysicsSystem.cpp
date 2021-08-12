@@ -207,7 +207,7 @@ void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outP
 
 	for (const auto& vertex : mesh.m_vertices)
 	{
-		const math::vector v = { vertex.first.m_x, vertex.first.m_y, vertex.first.m_z };
+		const math::vector v = { vertex.first.x, vertex.first.y, vertex.first.z };
 		_outPolygon.push_back(modelMatrix * v);
 	}
 }

@@ -48,7 +48,7 @@ private:
 
 	// ******* Parsing Mesh components *******
 	static void ParseMeshes(const rapidjson::Document& json);
-	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::vec3<float>, types::vec2<float>>>& outVertices);
+	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<types::float3, types::float2>>& outVertices);
 	// ******* ******* ******* ******* *******
 
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
