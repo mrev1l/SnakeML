@@ -14,7 +14,7 @@ namespace snakeml
 namespace win
 {
 
-class DX12RenderComponent : public IComponent
+class DX12RenderComponent : public ComponentBaseImpl<DX12RenderComponent>
 {
 public:
 	virtual ~DX12RenderComponent() = default;

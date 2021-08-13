@@ -13,7 +13,7 @@ ComponentsPool::~ComponentsPool()
 
 Iterator* ComponentsPool::GetComponents(ComponentType type) const
 {
-	for (auto componentIt : m_componentsPool2)
+	for (auto componentIt : m_componentsPool)
 	{
 		ASSERT(componentIt.second->Size(), "[Components Pool] : Missconfigured component iterator.");
 		if (componentIt.second->GetInterfacePtr(0)->GetComponentType() == type)
@@ -26,7 +26,7 @@ Iterator* ComponentsPool::GetComponents(ComponentType type) const
 
 void ComponentsPool::DeleteComponents()
 {
-	for (auto& component : m_componentsPool2)
+	for (auto& component : m_componentsPool)
 	{
 		IComponent::DeleteIterator(component.second->GetInterfacePtr(0)->GetComponentType(), component.second);
 	}

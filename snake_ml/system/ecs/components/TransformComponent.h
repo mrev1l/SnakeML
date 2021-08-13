@@ -7,7 +7,7 @@
 namespace snakeml
 {
 
-class TransformComponent : public IComponent
+class TransformComponent : public ComponentBaseImpl<TransformComponent>
 {
 public:
 	virtual ~TransformComponent() = default;

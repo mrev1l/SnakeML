@@ -21,14 +21,4 @@ void IComponent::DeleteIterator(ComponentType objType, Iterator* it)
 	factories.at(objType)->DeleteIterator(it);
 }
 
-void IComponent::RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo)
-{
-	s_castTable.insert({ type, typeInfo });
-}
-
-void Iterator::RegisterCastTableEntry(ComponentType type, const std::type_info& typeInfo)
-{
-	s_castTable.insert({ type, typeInfo });
-}
-
 }

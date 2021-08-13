@@ -12,7 +12,7 @@ struct BoxShape
 	float m_momentOfInertia; // m * (w*w + h*h) / 12.f
 };
 
-class PhysicsComponent : public IComponent
+class PhysicsComponent : public ComponentBaseImpl<PhysicsComponent>
 {
 public:
 	virtual ~PhysicsComponent() = default;

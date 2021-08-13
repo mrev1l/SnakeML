@@ -24,8 +24,7 @@ public:
 private:
 	void DeleteComponents();
 
-	std::unordered_map<ComponentType, Iterator*> m_componentsPool;
-	std::unordered_map<size_t, Iterator*> m_componentsPool2;
+	std::unordered_map<size_t, Iterator*> m_componentsPool;
 };
 
 template<class ComponentT>
@@ -33,15 +32,15 @@ inline void ComponentsPool::InsertComponents(Iterator* it)
 {
 	const std::type_info& tInfo = typeid(ComponentT);
 	const size_t hashCode = tInfo.hash_code();
-	ASSERT(!m_componentsPool2.contains(hashCode), "Inserting into an existing component pool.");
-	m_componentsPool2.insert({ hashCode, it });
+	ASSERT(!m_componentsPool.contains(hashCode), "Inserting into an existing component pool.");
+	m_componentsPool.insert({ hashCode, it });
 }
 
 template<class ComponentsIterator>
 inline ComponentsIterator* snakeml::ComponentsPool::GetComponents() const
 {
 	const std::type_info& tInfo = typeid(ComponentsIterator);
-	if (Iterator* it = m_componentsPool2.at(tInfo.hash_code()))
+	if (Iterator* it = m_componentsPool.at(tInfo.hash_code()))
 	{
 		return it->As<ComponentsIterator>();
 	}
