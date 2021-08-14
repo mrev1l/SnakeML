@@ -46,9 +46,9 @@ inline void EntityComponentPool::InsertComponents_AttachComponentsToEntities(Ite
 
 	ComponentsIterator* concreteIterator = it->As<ComponentsIterator>();
 	ASSERT(concreteIterator, "[EntityComponentPool::InsertComponents] Missconfigured input paramter.");
-	for (size_t componentIdx = 0; componentIdx < concreteIterator->Size(); ++componentIdx)
+	ComponentsIterator& iteratorRef = *concreteIterator;
+	for (auto& component : iteratorRef)
 	{
-		auto& component = concreteIterator->At(componentIdx); //  TODO const
 		AttachComponentToEntity(&component);
 	}
 }

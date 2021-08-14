@@ -72,7 +72,7 @@ void InitializeRenderComponentsSystem::Execute()
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	ASSERT(meshesIt->Size() >= materialsIt->Size(), "Renderables initialization is going to fail");
+	ASSERT(meshesIt->Size() >= materialsIt->Size(), "Renderables initialization is going to fail"); // TODO >= or == ?
 	for (size_t i = 0; i < materialsIt->Size(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponentsIt->At(i);

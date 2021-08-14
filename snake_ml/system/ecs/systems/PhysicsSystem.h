@@ -37,15 +37,15 @@ private:
 		NarrowPhaseBody b;
 	};
 
-	void SimulatePhysics(const PhysicsComponentIterator* bodiesIt, double dt);
+	void SimulatePhysics(const PhysicsComponentIterator& bodiesIt, double dt);
 	void SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, double dt);
 
-	void UpdateAABBs(const PhysicsComponentIterator* bodiesIt);
+	void UpdateAABBs(const PhysicsComponentIterator& bodiesIt);
 
-	void PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt);
+	void PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator& bodiesIt);
 	void AddPhysicsBodyToQuadTree(QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body);
 
-	void BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase);
+	void BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator& bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase);
 	void CalculateBroadphaseForBody(const QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase);
 
 	void NarrowPhaseIntersectionSolutionStep(const std::vector<NarrowPhasePair>& narrowPhase);

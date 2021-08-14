@@ -45,20 +45,19 @@ void PhysicsSystem::Update(double deltaTime)
 
 		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponents<PhysicsComponentIterator>();
 
-		SimulatePhysics(bodiesIt, dt);
-		UpdateAABBs(bodiesIt);
-		PopulateQuadTree(qt, bodiesIt);
-		BroadPhaseStep(qt, bodiesIt, narrowPhase);
+		SimulatePhysics(*bodiesIt, dt);
+		UpdateAABBs(*bodiesIt);
+		PopulateQuadTree(qt, *bodiesIt);
+		BroadPhaseStep(qt, *bodiesIt, narrowPhase);
 		NarrowPhaseIntersectionSolutionStep(narrowPhase);
 	}
 	while (!IsNearlyZero(timeToSimulate, k_default_epsilon));
 }
 
-void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator* bodiesIt, double dt)
+void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator& bodiesIt, double dt)
 {
-	for (size_t idx = 0; idx < bodiesIt->Size(); ++idx)
+	for (PhysicsComponent& body : bodiesIt)
 	{
-		PhysicsComponent& body = bodiesIt->At(idx);
 		TransformComponent& transform = GetTransformComponent(body);
 
 		if (body.m_isDynamic)
@@ -83,11 +82,10 @@ void PhysicsSystem::SimulatePhysicsStep(PhysicsComponent& body, TransformCompone
 	transform.m_rotation = body.m_rotation;
 }
 
-void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator* bodiesIt)
+void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator& bodiesIt)
 {
-	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
+	for (PhysicsComponent& body : bodiesIt)
 	{
-		PhysicsComponent& body = bodiesIt->At(i);
 		if (body.m_isDynamic)
 		{
 			body.m_aabb = AABB::GenerateAABB(body.m_shape.m_dimensions, body.m_position, body.m_rotation);
@@ -95,11 +93,10 @@ void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator* bodiesIt)
 	}
 }
 
-void PhysicsSystem::PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt)
+void PhysicsSystem::PopulateQuadTree(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator& bodiesIt)
 {
-	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
+	for (PhysicsComponent& body : bodiesIt)
 	{
-		PhysicsComponent& body = bodiesIt->At(i);
 		AddPhysicsBodyToQuadTree(quadTree, body);
 	}
 }
@@ -109,11 +106,10 @@ void PhysicsSystem::AddPhysicsBodyToQuadTree(QuadTree<PhysicsComponent>& quadTre
 	quadTree.AddObject(QuadTree<PhysicsComponent>::Object{ {body.m_position, {(body.m_aabb.max - body.m_aabb.min) / 2.f}}, body });
 }
 
-void PhysicsSystem::BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator* bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase)
+void PhysicsSystem::BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const PhysicsComponentIterator& bodiesIt, std::vector<NarrowPhasePair>& _outNarrowPhase)
 {
-	for (size_t i = 0u; i < bodiesIt->Size(); ++i)
+	for (PhysicsComponent& body : bodiesIt)
 	{
-		PhysicsComponent& body = bodiesIt->At(i);
 		if (!body.m_isDynamic)
 		{
 			continue;

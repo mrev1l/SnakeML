@@ -17,6 +17,7 @@ enum class ComponentType : uint32_t
 	Size
 };
 
+// TODO c-cast -> static_cast
 #define REGISTER_TYPE(ObjectType) \
 	class ObjectType##Iterator : public IteratorBaseImpl<ObjectType##Iterator> { \
 	public: \
@@ -31,10 +32,13 @@ enum class ComponentType : uint32_t
 			ObjectType* concreteArray = (ObjectType*)m_data; \
 			return concreteArray[idx]; \
 		} \
-	protected: \
-		IComponent* GetElement(size_t idx) override { \
-			ObjectType* concreteArray = (ObjectType*)m_data; \
-			return &concreteArray[idx]; \
+		\
+		ObjectType* begin() const { \
+			return static_cast<ObjectType*>(m_data); \
+		} \
+		\
+		ObjectType* end() const { \
+			return static_cast<ObjectType*>(m_data) + m_count; \
 		} \
 	}; \
 	\
@@ -78,8 +82,6 @@ public:
 	T* As();
 
 protected:
-	virtual IComponent* GetElement(size_t idx) = 0;
-
 	IComponent* m_data;
 	size_t m_count;
 };
