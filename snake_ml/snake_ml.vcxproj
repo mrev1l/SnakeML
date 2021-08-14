@@ -262,13 +262,13 @@
     <ClCompile Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.cpp" />
     <ClCompile Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
-    <ClCompile Include="system\ecs\ComponentsPool.cpp" />
+    <ClCompile Include="system\ecs\EntityComponentPool.cpp" />
     <ClCompile Include="system\ecs\ECSManager.cpp" />
     <ClCompile Include="system\ecs\Entity.cpp" />
     <ClCompile Include="system\ecs\IComponent.cpp" />
     <ClCompile Include="system\ecs\ISystem.cpp" />
+    <ClCompile Include="system\ecs\SystemsPool.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
-    <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializePhysicsComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
@@ -322,7 +322,7 @@
     <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.h" />
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
-    <ClInclude Include="system\ecs\ComponentsPool.h" />
+    <ClInclude Include="system\ecs\EntityComponentPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
     <ClInclude Include="system\ecs\components\MeshComponent.h" />
@@ -333,8 +333,8 @@
     <ClInclude Include="system\ecs\Entity.h" />
     <ClInclude Include="system\ecs\IComponent.h" />
     <ClInclude Include="system\ecs\ISystem.h" />
+    <ClInclude Include="system\ecs\SystemsPool.h" />
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
-    <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
@@ -463,6 +463,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="system\ecs\EntityComponentPool.inl" />
+    <None Include="system\ecs\ECSManager.inl" />
     <None Include="utils\math\matrix.inl" />
     <None Include="utils\math\vector.inl" />
     <None Include="utils\types\QuadTree.inl" />

@@ -54,8 +54,8 @@ void LoadMaterialsSystem::Execute()
 	//	ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
 	//	ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
 
-	//	//ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::MaterialComponent, it);
-	//	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MaterialComponentIterator>(it);
+	//	//ECSManager::GetInstance()->GetEntityComponentPool().InsertComponents(ComponentType::MaterialComponent, it);
+	//	ECSManager::GetInstance()->GetEntityComponentPool().InsertComponents<MaterialComponentIterator>(it);
 	//}
 }
 
@@ -92,7 +92,7 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 			ParseMaterialComponent_TexturePath(materialJson, material.m_texturePath);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MaterialComponentIterator>(it);
+		ECSManager::GetInstance()->InsertComponents<MaterialComponentIterator>(it);
 	}
 }
 
@@ -157,7 +157,7 @@ void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
 			ParseTransformComponent_Scale(transformJson, transform.m_scale);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<TransformComponentIterator>(it);
+		ECSManager::GetInstance()->InsertComponents<TransformComponentIterator>(it);
 	}
 }
 
@@ -207,7 +207,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 			ParsePhysicsComponents_IsDynamic(physicsComponentJson, physicsComponent.m_isDynamic);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<PhysicsComponentIterator>(it);
+		ECSManager::GetInstance()->InsertComponents<PhysicsComponentIterator>(it);
 	}
 }
 
@@ -251,7 +251,7 @@ void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
 			ParseMeshes_VerticesArray(meshComponentJson, meshComponent.m_vertices);
 		}
 
-		ECSManager::GetInstance()->GetComponentsPool().InsertComponents<MeshComponentIterator>(it);
+		ECSManager::GetInstance()->InsertComponents<MeshComponentIterator>(it);
 	}
 }
 

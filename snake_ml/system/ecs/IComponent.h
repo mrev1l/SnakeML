@@ -62,14 +62,16 @@ static ObjectType##Factory global_##ObjectType##Factory; \
 
 class IComponent;
 
+// TODO Add impl file and clean up
+
 class Iterator
 {
 public:
 	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) { };
 	virtual ~Iterator() = default;
+	virtual void Clear() = 0;
 	virtual const std::type_info& GetTypeInfo() const = 0;
 
-	IComponent* GetInterfacePtr(size_t idx) { return GetElement(idx); }
 	size_t Size() const { return m_count; }
 
 	template<class T>
@@ -87,6 +89,11 @@ class IteratorBaseImpl : public Iterator
 {
 public:
 	IteratorBaseImpl(IComponent* data, size_t num) : Iterator(data, num) { };
+	void Clear() override
+	{
+		T* ConcreteIterator = As<T>();
+		IComponent::DeleteIterator(ConcreteIterator->At(0).GetComponentType(), this);
+	}
 	const std::type_info& GetTypeInfo() const override
 	{
 		/*static*/ const std::type_info& info = typeid(T);

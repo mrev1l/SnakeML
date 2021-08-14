@@ -45,16 +45,13 @@
     <ClCompile Include="system\ecs\IComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\ComponentsPool.cpp">
+    <ClCompile Include="system\ecs\EntityComponentPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\ecs\ISystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\ecs\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\ecs\systems\InitializeEntitiesSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp">
@@ -180,6 +177,9 @@
     <ClCompile Include="utils\types\arithmetic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\ecs\SystemsPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -227,7 +227,7 @@
     <ClInclude Include="system\ecs\IComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\ecs\ComponentsPool.h">
+    <ClInclude Include="system\ecs\EntityComponentPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\ISystem.h">
@@ -237,9 +237,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\InitializeEntitiesSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h">
@@ -392,6 +389,9 @@
     <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\ecs\SystemsPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -409,6 +409,12 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="utils\types\QuadTree.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="system\ecs\EntityComponentPool.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="system\ecs\ECSManager.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

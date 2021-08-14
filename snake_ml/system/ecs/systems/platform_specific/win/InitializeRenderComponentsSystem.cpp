@@ -41,16 +41,16 @@ void InitializeRenderComponentsSystem::Execute()
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	Iterator* materialComponents = ECSManager::GetInstance()->GetComponentsPool().GetComponents(ComponentType::MaterialComponent);
+	Iterator* materialComponents = ECSManager::GetInstance()->GetEntityComponentPool().GetComponents(ComponentType::MaterialComponent);
 	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialComponents->Size());
-	ECSManager::GetInstance()->GetComponentsPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
+	ECSManager::GetInstance()->GetEntityComponentPool().InsertComponents(ComponentType::DX12RenderComponent, renderComponentsIt);
 	DX12RenderComponent* renderComponents = (DX12RenderComponent*)renderComponentsIt->GetData();
 
 	for (size_t i = 0u; i < entities.size(); ++i)
 	{
 		DX12RenderComponent& renderComponent = renderComponents[i];
-		const MaterialComponent& materialComponent = *((MaterialComponent*)entities[i].m_components.at(ComponentType::MaterialComponent));
-		const MeshComponent& mesh = *((MeshComponent*)entities[i].m_components.at(ComponentType::MeshComponent));
+		const MaterialComponent& materialComponent = *((MaterialComponent*)entities[i].m_entityComponentPool.at(ComponentType::MaterialComponent));
+		const MeshComponent& mesh = *((MeshComponent*)entities[i].m_entityComponentPool.at(ComponentType::MeshComponent));
 
 		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
 	}
@@ -62,11 +62,10 @@ void InitializeRenderComponentsSystem::Execute()
 	}*/
 
 	// OLD
-	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<MaterialComponentIterator>();
-	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<MeshComponentIterator>();
+	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponents<MaterialComponentIterator>();
+	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponents<MeshComponentIterator>();
 
 	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialsIt->Size());
-	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
 
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
@@ -88,6 +87,8 @@ void InitializeRenderComponentsSystem::Execute()
 		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);
 	}
+
+	ECSManager::GetInstance()->InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12CommandList> commandList, const MaterialComponent& materialComponent, const MeshComponent& meshComponent, DX12RenderComponent& _outRenderComponent)

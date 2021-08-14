@@ -43,7 +43,7 @@ void PhysicsSystem::Update(double deltaTime)
 		QuadTree<PhysicsComponent> qt(QuadTree<PhysicsComponent>::Rectangle{ vector::zero, m_quadTreeHalfDimensions });
 		std::vector<NarrowPhasePair> narrowPhase;
 
-		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponentsPool().GetComponents<PhysicsComponentIterator>();
+		PhysicsComponentIterator* bodiesIt = ECSManager::GetInstance()->GetComponents<PhysicsComponentIterator>();
 
 		SimulatePhysics(bodiesIt, dt);
 		UpdateAABBs(bodiesIt);

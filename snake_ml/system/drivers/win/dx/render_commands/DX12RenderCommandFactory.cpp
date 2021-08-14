@@ -8,6 +8,7 @@
 #include "SetupSimplePixelShaderCommand.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
+#include "system/drivers/win/dx/pipeline/DX12CommandList.h" // Todo check if needed
 
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 #include "system/ecs/components/CameraComponent.h"
@@ -17,7 +18,6 @@
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
-#include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -26,7 +26,7 @@ namespace win
 
 void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
-	CameraComponent& camera = ECSManager::GetInstance()->GetComponentsPool().GetComponents<CameraComponentIterator>()->At(0);
+	CameraComponent& camera = ECSManager::GetInstance()->GetComponents<CameraComponentIterator>()->At(0);
 	matrix cameraMatrix = LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
 
 	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();

@@ -6,35 +6,40 @@
 namespace snakeml
 {
 
+std::vector<Entity>& ECSManager::GetEntities()
+{
+	return m_entityComponentPool.GetEntities();
+}
+
+Entity* ECSManager::GetEntity(uint32_t id)
+{
+	std::vector<Entity>& entities = m_entityComponentPool.GetEntities();
+	auto entityIt = std::find_if(entities.begin(), entities.end(), [id](const Entity& entity) { return entity.m_entityId == id; });
+	if (entityIt != entities.end())
+	{
+		return entityIt._Ptr;
+	}
+	return nullptr;
+}
+
 void ECSManager::ExecuteSystem(const std::unique_ptr<ISystem>& system) const
 {
-	system->Execute();
+	m_systemsPool.ExecuteSystem(system);
 }
 
 void ECSManager::ScheduleSystem(std::unique_ptr<ISystem>&& system)
 {
-	m_systems.emplace_back(std::move(system));
+	m_systemsPool.ScheduleSystem(std::forward<std::unique_ptr<ISystem>&&>(system));
 }
 
 void ECSManager::UnscheduleSystem(const ISystem* system)
 {
-	ASSERT(system, "[ECSManager::UnscheduleSystem] : Empty system");
-	m_systemsToUnschedule.insert(system->m_id);
+	m_systemsPool.UnscheduleSystem(system);
 }
 
 void ECSManager::Update(double deltaTime)
 {
-	for (const std::unique_ptr<ISystem>& system : m_systems)
-	{
-		system->Update(deltaTime);
-	}
-
-	for (const uint32_t id : m_systemsToUnschedule)
-	{
-		auto ShouldEraseSystem = [id](const std::unique_ptr<ISystem>& system) -> bool { return system->m_id == id; };
-		m_systems.erase(std::remove_if(m_systems.begin(), m_systems.end(), ShouldEraseSystem));
-	}
-	m_systemsToUnschedule.clear();
+	m_systemsPool.Update(deltaTime);
 }
 
 }

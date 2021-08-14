@@ -19,7 +19,7 @@ void InitializeCameraSystem::Execute()
 	camera.m_focusPoint =	{ 0.f, 0.f, 0.f };
 	camera.m_upDirection =	{ 0.f, 1.f, 0.f };
 
-	ECSManager::GetInstance()->GetComponentsPool().InsertComponents<CameraComponentIterator>(it);
+	ECSManager::GetInstance()->InsertComponents<CameraComponentIterator>(it);
 }
 
 }
