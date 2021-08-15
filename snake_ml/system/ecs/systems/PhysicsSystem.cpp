@@ -208,32 +208,24 @@ void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outP
 
 TransformComponent& PhysicsSystem::GetTransformComponent(const PhysicsComponent& body)
 {
-	const Entity* entityPtr = ECSManager::GetInstance()->GetEntity(body.m_entityId);
-	ASSERT(entityPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
-	if (entityPtr)
+	const Entity& entity = ECSManager::GetInstance()->GetEntity(body.m_entityId);
+	TransformComponent* transformPtr = entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+	ASSERT(transformPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
+	if (transformPtr)
 	{
-		TransformComponent* transformPtr = entityPtr->m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
-		ASSERT(transformPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
-		if (transformPtr)
-		{
-			return *transformPtr;
-		}
+		return *transformPtr;
 	}
 	return *s_emptyTransformComponent;
 }
 
 MeshComponent& PhysicsSystem::GetMeshComponent(const PhysicsComponent& body)
 {
-	const Entity* entityPtr = ECSManager::GetInstance()->GetEntity(body.m_entityId);
-	ASSERT(entityPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
-	if (entityPtr)
+	const Entity& entity = ECSManager::GetInstance()->GetEntity(body.m_entityId);
+	MeshComponent* meshPtr = entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
+	ASSERT(meshPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
+	if (meshPtr)
 	{
-		MeshComponent* meshPtr = entityPtr->m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
-		ASSERT(meshPtr, "[PhysicsSystem::GeneratePolygon] : Missconfigured entity.");
-		if (meshPtr)
-		{
-			return *meshPtr;
-		}
+		return *meshPtr;
 	}
 	return *s_emptyMeshComponent;
 }

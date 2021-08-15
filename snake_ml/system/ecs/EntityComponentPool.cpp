@@ -11,6 +11,17 @@ EntityComponentPool::~EntityComponentPool()
 	DeleteComponents();
 }
 
+std::unordered_map<uint32_t, Entity>& EntityComponentPool::GetEntities()
+{
+	return m_entitiesPool;
+}
+
+Entity& EntityComponentPool::GetEntity(uint32_t entityId)
+{
+	ASSERT(m_entitiesPool.contains(entityId), "[EntityComponentPool::GetEntity] invalid entity id");
+	return m_entitiesPool[entityId];
+}
+
 void EntityComponentPool::DeleteComponents()
 {
 	for (auto& component : m_componentsPool)

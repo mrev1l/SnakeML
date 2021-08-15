@@ -15,7 +15,6 @@
 #include "ecs/systems/LoadMaterialsSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
-#include "ecs/systems/TestMoveSnakeHeadSystem.h"
 #include "ecs/systems/WIP_System.h"
 
 #include "input/InputManager.h"

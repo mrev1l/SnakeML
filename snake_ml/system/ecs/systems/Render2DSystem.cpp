@@ -12,12 +12,12 @@ namespace snakeml
 void Render2DSystem::Update(double deltaTime)
 {
 	IRenderDriver* renderDriver = IRenderDriver::GetInstance();
-	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
-	for (const Entity& entity : entities)
+	const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
+	for (const std::pair<uint32_t, Entity>& entity : entities)
 	{
-		if (entity.m_components.contains(ComponentType::DX12RenderComponent))
+		if (entity.second.m_components.contains(ComponentType::DX12RenderComponent))
 		{
-			renderDriver->SubscribeForRendering(entity);
+			renderDriver->SubscribeForRendering(entity.second);
 		}
 	}
 }

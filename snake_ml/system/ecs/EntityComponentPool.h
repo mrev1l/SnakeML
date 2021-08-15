@@ -20,7 +20,8 @@ public:
 	template<class ComponentsIterator>
 	ComponentsIterator* GetComponents() const;
 
-	inline std::vector<Entity>& GetEntities() { return m_entities; }
+	std::unordered_map<uint32_t, Entity>& GetEntities();
+	Entity& GetEntity(uint32_t entityId);
 
 private:
 	template<class ComponentsIterator>
@@ -28,7 +29,7 @@ private:
 	void DeleteComponents();
 
 	std::unordered_map<size_t, Iterator*> m_componentsPool;
-	std::vector<Entity> m_entities; // TODO : rework into unordered_map
+	std::unordered_map<uint32_t, Entity> m_entitiesPool;
 };
 
 #include "EntityComponentPool.inl"

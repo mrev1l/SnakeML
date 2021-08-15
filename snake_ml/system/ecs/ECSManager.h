@@ -20,8 +20,8 @@ public:
 	template<class ComponentsIterator>
 	ComponentsIterator* GetComponents() const;
 
-	std::vector<Entity>& GetEntities();
-	Entity* GetEntity(uint32_t id);
+	std::unordered_map<uint32_t, Entity>& GetEntities();
+	Entity& GetEntity(uint32_t id);
 
 	void ExecuteSystem(const std::unique_ptr<ISystem>& system) const;
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);

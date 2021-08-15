@@ -54,9 +54,6 @@
     <ClCompile Include="system\ecs\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\TestMoveSnakeHeadSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\drivers\win\dx\DX12RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -237,9 +234,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\TestMoveSnakeHeadSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\types\ThreadSafeQueue.h">

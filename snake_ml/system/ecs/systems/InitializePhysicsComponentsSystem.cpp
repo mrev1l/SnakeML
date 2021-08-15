@@ -12,14 +12,14 @@ namespace snakeml
 
 void InitializePhysicsComponentsSystem::Execute()
 {
-	const std::vector<Entity>& entities = ECSManager::GetInstance()->GetEntities();
-	for (const Entity& entity : entities)
+	const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
+	for (const std::pair<uint32_t, Entity>& entity : entities)
 	{
-		if (entity.m_components.find(ComponentType::TransformComponent) != entity.m_components.end() &&
-			entity.m_components.find(ComponentType::PhysicsComponent) != entity.m_components.end())
+		if (entity.second.m_components.find(ComponentType::TransformComponent) != entity.second.m_components.end() &&
+			entity.second.m_components.find(ComponentType::PhysicsComponent) != entity.second.m_components.end())
 		{
-			TransformComponent& transform = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
-			PhysicsComponent& body = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+			TransformComponent& transform = *entity.second.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+			PhysicsComponent& body = *entity.second.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
 			InitPhysicsBody(transform, body);
 		}

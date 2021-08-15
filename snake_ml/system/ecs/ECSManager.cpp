@@ -6,20 +6,14 @@
 namespace snakeml
 {
 
-std::vector<Entity>& ECSManager::GetEntities()
+std::unordered_map<uint32_t, Entity>& ECSManager::GetEntities()
 {
 	return m_entityComponentPool.GetEntities();
 }
 
-Entity* ECSManager::GetEntity(uint32_t id)
+Entity& ECSManager::GetEntity(uint32_t id)
 {
-	std::vector<Entity>& entities = m_entityComponentPool.GetEntities();
-	auto entityIt = std::find_if(entities.begin(), entities.end(), [id](const Entity& entity) { return entity.m_entityId == id; });
-	if (entityIt != entities.end())
-	{
-		return entityIt._Ptr;
-	}
-	return nullptr;
+	return m_entityComponentPool.GetEntity(id);
 }
 
 void ECSManager::ExecuteSystem(const std::unique_ptr<ISystem>& system) const
