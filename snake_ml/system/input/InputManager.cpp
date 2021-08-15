@@ -20,7 +20,6 @@ void InputManager::ProcessInput(uint64_t inputKey)
 	switch (static_cast<SupportedKey>(inputKey))
 	{
 	case SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
-	//case SupportedKey::F11: RenderDriver::GetInstance()->SetFullscreenMode(!RenderDriver::GetInstance()->IsInFullscreen(), OSDriver::GetInstance()->GetWindowHandle()); break;
 	default:
 		break;
 	}

@@ -56,10 +56,8 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
 
-	// TODO cleanup
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
-	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<TestMoveSnakeHeadSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
 
@@ -109,12 +107,6 @@ void Application::Update(double dt)
 void Application::Render()
 {
 	IRenderDriver::GetInstance()->Render();
-}
-
-void Application::Resize(uint32_t width, uint32_t height)
-{
-	// TODO
-	//IRenderDriver::GetInstance()->Resize(width, height);
 }
 
 }

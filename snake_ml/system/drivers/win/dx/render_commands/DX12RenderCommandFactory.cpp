@@ -8,13 +8,12 @@
 #include "SetupSimplePixelShaderCommand.h"
 
 #include "system/drivers/win/dx/DX12Driver.h"
-#include "system/drivers/win/dx/pipeline/DX12CommandList.h" // Todo check if needed
 
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 #include "system/ecs/components/CameraComponent.h"
 #include "system/ecs/components/TransformComponent.h"
-#include "system/ecs/components/PhysicsComponent.h" // TODO ???
-#include "system/ecs/components/MaterialComponent.h" // ???
+#include "system/ecs/components/PhysicsComponent.h"
+#include "system/ecs/components/MaterialComponent.h"
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
@@ -30,14 +29,8 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 	matrix cameraMatrix = LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
 
 	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();
-	/*const*/ TransformComponent& transformComponent = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
-	/*const*/ PhysicsComponent& physicsComponent = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
-
-	//test TODO
-	{
-		//transformComponent.m_rotation += vector::forward * 0.3f;
-		//physicsComponent.m_rotation = transformComponent.m_rotation;
-	}
+	const TransformComponent& transformComponent = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+	const PhysicsComponent& physicsComponent = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
 	matrix projection, orthogonal;
 	const win::DX12Driver* dx12Driver = (win::DX12Driver*)IRenderDriver::GetInstance();
@@ -59,9 +52,9 @@ void DX12RenderCommandFactory::BuildRenderCommands(const Entity& entity, std::ve
 
 	if (renderableComponent.m_debugPipelineState)
 	{
-		AABB aabb = physicsComponent.m_aabb;
-		float width = abs(aabb.max.x - aabb.min.x);
-		float height = abs(aabb.max.y - aabb.min.y);
+		const AABB aabb = physicsComponent.m_aabb;
+		const float width = abs(aabb.max.x - aabb.min.x);
+		const float height = abs(aabb.max.y - aabb.min.y);
 		const matrix debugScaleMatrix = ScaleMatrix(width, height, 1.f);
 		const matrix debugModelMatrix = debugScaleMatrix * translationMatrix;
 		const matrix debugMvpMatrix = debugModelMatrix * cameraMatrix * orthogonal;

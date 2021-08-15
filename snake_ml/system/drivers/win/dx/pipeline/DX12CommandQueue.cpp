@@ -157,7 +157,7 @@ void DX12CommandQueue::WaitForFenceValue(uint64_t fenceValue)
 {
 	if (!IsFenceComplete(fenceValue))
 	{
-		auto eventHandle = WinUtils::CreateEventHandle();
+		auto eventHandle = win::WinUtils::CreateEventHandle();
 
 		// Is this function thread safe?
 		m_d3d12Fence->SetEventOnCompletion(fenceValue, eventHandle);

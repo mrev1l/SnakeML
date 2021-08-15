@@ -19,7 +19,7 @@ void LoadMaterialsSystem::Execute()
 	constexpr const char* jsonName = "data\\assets\\levels\\level_0\\level_0.txt";
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
-	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
+	win::WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
 	/*bool isParsed = !jsonDocument.ParseInsitu(const_cast<char*>(jsonString.c_str())).HasParseError();
 	auto error = jsonDocument.GetParseError();*/
@@ -113,7 +113,7 @@ void LoadMaterialsSystem::ParseMaterialComponent_VSPath(const rapidjson::Value& 
 	}
 
 	std::string vs = json["vs"].GetString();
-	WinUtils::StringToWstring(vs.c_str(), outVSName);
+	win::WinUtils::StringToWstring(vs.c_str(), outVSName);
 }
 
 void LoadMaterialsSystem::ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName)
@@ -125,7 +125,7 @@ void LoadMaterialsSystem::ParseMaterialComponent_PSPath(const rapidjson::Value& 
 	}
 
 	std::string ps = json["ps"].GetString();
-	WinUtils::StringToWstring(ps.c_str(), outPSName);
+	win::WinUtils::StringToWstring(ps.c_str(), outPSName);
 }
 
 void LoadMaterialsSystem::ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath)
@@ -134,7 +134,7 @@ void LoadMaterialsSystem::ParseMaterialComponent_TexturePath(const rapidjson::Va
 	const bool isString = hasTexturePath ? json["texture"].IsString() : false;
 	if (hasTexturePath && isString)
 	{
-		WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
+		win::WinUtils::StringToWstring(json["texture"].GetString(), outTexturePath);
 	}
 }
 

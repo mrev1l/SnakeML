@@ -18,8 +18,8 @@ WinDriver::WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle,
 	, m_windowSz(windowSz)
 {
 	const HINSTANCE hInstance = GetHInstance();
-	WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
-	m_windowHandle = WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.x, windowSz.y);
+	win::WinUtils::RegisterWindowClass(hInstance, windowClassName, &WndProc);
+	m_windowHandle = win::WinUtils::CreateWindow(windowClassName, hInstance, windowTitle, windowSz.x, windowSz.y);
 }
 
 WinDriver::~WinDriver()
