@@ -463,6 +463,7 @@
   <ItemGroup>
     <None Include="system\ecs\EntityComponentPool.inl" />
     <None Include="system\ecs\ECSManager.inl" />
+    <None Include="system\ecs\IComponent.inl" />
     <None Include="utils\math\matrix.inl" />
     <None Include="utils\math\vector.inl" />
     <None Include="utils\types\QuadTree.inl" />

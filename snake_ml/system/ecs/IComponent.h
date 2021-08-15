@@ -17,19 +17,18 @@ enum class ComponentType : uint32_t
 	Size
 };
 
-// TODO c-cast -> static_cast
 #define REGISTER_TYPE(ObjectType) \
 	class ObjectType##Iterator : public IteratorBaseImpl<ObjectType##Iterator> { \
 	public: \
 		ObjectType##Iterator(IComponent* data, size_t num) : IteratorBaseImpl<ObjectType##Iterator>(data, num) { \
 		} \
 		virtual ~ObjectType##Iterator() { \
-			ObjectType* concreteArray = (ObjectType*)m_data; \
+			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
 			delete[] concreteArray; \
 		} \
 		\
 		ObjectType& At(size_t idx) const { \
-			ObjectType* concreteArray = (ObjectType*)m_data; \
+			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
 			return concreteArray[idx]; \
 		} \
 		\
@@ -58,7 +57,7 @@ enum class ComponentType : uint32_t
 			return new ObjectType##Iterator(new ObjectType[num](), num); \
 		} \
 		virtual void DeleteIterator(Iterator* it) override { \
-			ObjectType##Iterator* itToDelete = (ObjectType##Iterator*)it; \
+			ObjectType##Iterator* itToDelete = static_cast<ObjectType##Iterator*>(it); \
 			delete itToDelete; \
 		} \
 }; \
@@ -66,15 +65,13 @@ static ObjectType##Factory global_##ObjectType##Factory; \
 
 class IComponent;
 
-// TODO Add impl file and clean up
-
 class Iterator
 {
 public:
 	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) { };
 	virtual ~Iterator() = default;
+
 	virtual void Clear() = 0;
-	virtual const std::type_info& GetTypeInfo() const = 0;
 
 	size_t Size() const { return m_count; }
 
@@ -82,6 +79,8 @@ public:
 	T* As();
 
 protected:
+	virtual const std::type_info& GetTypeInfo() const = 0;
+
 	IComponent* m_data;
 	size_t m_count;
 };
@@ -91,16 +90,12 @@ class IteratorBaseImpl : public Iterator
 {
 public:
 	IteratorBaseImpl(IComponent* data, size_t num) : Iterator(data, num) { };
-	void Clear() override
-	{
-		T* ConcreteIterator = As<T>();
-		IComponent::DeleteIterator(ConcreteIterator->At(0).GetComponentType(), this);
-	}
-	const std::type_info& GetTypeInfo() const override
-	{
-		/*static*/ const std::type_info& info = typeid(T);
-		return info;
-	}
+	virtual ~IteratorBaseImpl() = default;
+
+	void Clear() override;
+
+protected:
+	const std::type_info& GetTypeInfo() const override;
 };
 
 class Factory
@@ -119,7 +114,6 @@ class IComponent
 public:
 	virtual ~IComponent() = default;
 	virtual ComponentType GetComponentType() const = 0;
-	virtual const std::type_info& GetTypeInfo() const = 0;
 
 	template<class T>
 	T* As();
@@ -130,6 +124,9 @@ public:
 
 	uint32_t m_entityId = -1;
 
+protected:
+	virtual const std::type_info& GetTypeInfo() const = 0;
+
 private:
 	inline static std::unordered_map<ComponentType, Factory*> factories;
 };
@@ -137,41 +134,11 @@ private:
 template<class T>
 class ComponentBaseImpl : public IComponent
 {
-public:
-	const std::type_info& GetTypeInfo() const override
-	{
-		// TODO
-		/*static*/ const std::type_info& info = typeid(T);
-		return info;
-	}
+protected:
+	const std::type_info& GetTypeInfo() const override;
+	
 };
 
-template<class T>
-inline T* Iterator::As()
-{
-	const std::type_info& tInfo = typeid(T);
-	const std::type_info& thisTypeInfo = GetTypeInfo();
-
-	if (tInfo == thisTypeInfo)
-	{
-		return static_cast<T*>(this);
-	}
-
-	return nullptr;
-}
-
-template<class T>
-inline T* IComponent::As()
-{
-	const std::type_info& tInfo = typeid(T);
-	const std::type_info& thisTypeInfo = GetTypeInfo();
-
-	if (tInfo == thisTypeInfo)
-	{
-		return static_cast<T*>(this);
-	}
-
-	return nullptr;
-}
+#include "IComponent.inl"
 
 }

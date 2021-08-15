@@ -411,5 +411,8 @@
     <None Include="system\ecs\ECSManager.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="system\ecs\IComponent.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
