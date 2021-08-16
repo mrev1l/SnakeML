@@ -9,7 +9,7 @@
 namespace snakeml
 {
 
-class MaterialComponent : public ComponentBaseImpl<MaterialComponent>
+class MaterialComponent : public IComponentCastableImpl<MaterialComponent>
 {
 public:
 	enum class InputLayoutEntries

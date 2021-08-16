@@ -1,7 +1,8 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
-#include <unordered_map>
+
+#include "utils/patterns/castable.h"
 
 namespace snakeml
 {
@@ -18,9 +19,9 @@ enum class ComponentType : uint32_t
 };
 
 #define REGISTER_TYPE(ObjectType) \
-	class ObjectType##Iterator : public IteratorBaseImpl<ObjectType##Iterator> { \
+	class ObjectType##Iterator : public IteratorCastableImpl<ObjectType##Iterator> { \
 	public: \
-		ObjectType##Iterator(IComponent* data, size_t num) : IteratorBaseImpl<ObjectType##Iterator>(data, num) { \
+		ObjectType##Iterator(IComponent* data, size_t num) : IteratorCastableImpl<ObjectType##Iterator>(data, num) { \
 		} \
 		virtual ~ObjectType##Iterator() { \
 			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
@@ -30,6 +31,10 @@ enum class ComponentType : uint32_t
 		ObjectType& At(size_t idx) const { \
 			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
 			return concreteArray[idx]; \
+		} \
+		\
+		void Clear() override { \
+			IComponent::DeleteIterator(At(0).GetComponentType(), this); \
 		} \
 		\
 		ObjectType* begin() const { \
@@ -65,7 +70,7 @@ static ObjectType##Factory global_##ObjectType##Factory; \
 
 class IComponent;
 
-class Iterator
+class Iterator : public ICastable
 {
 public:
 	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) { };
@@ -75,28 +80,11 @@ public:
 
 	size_t Size() const { return m_count; }
 
-	template<class T>
-	T* As();
-
 protected:
-	virtual const std::type_info& GetTypeInfo() const = 0;
-
 	IComponent* m_data;
 	size_t m_count;
 };
-
-template<class T>
-class IteratorBaseImpl : public Iterator
-{
-public:
-	IteratorBaseImpl(IComponent* data, size_t num) : Iterator(data, num) { };
-	virtual ~IteratorBaseImpl() = default;
-
-	void Clear() override;
-
-protected:
-	const std::type_info& GetTypeInfo() const override;
-};
+REGISTER_CASTABLE_TYPE(Iterator);
 
 class Factory
 {
@@ -109,14 +97,11 @@ public:
 	virtual void DeleteIterator(Iterator* it) = 0;
 };
 
-class IComponent
+class IComponent : public ICastable
 {
 public:
 	virtual ~IComponent() = default;
 	virtual ComponentType GetComponentType() const = 0;
-
-	template<class T>
-	T* As();
 
 	static void RegisterFactory(ComponentType objType, Factory* objFactory);
 	static Iterator* CreateIterator(ComponentType objType, size_t num);
@@ -124,21 +109,9 @@ public:
 
 	uint32_t m_entityId = -1;
 
-protected:
-	virtual const std::type_info& GetTypeInfo() const = 0;
-
 private:
 	inline static std::unordered_map<ComponentType, Factory*> factories;
 };
-
-template<class T>
-class ComponentBaseImpl : public IComponent
-{
-protected:
-	const std::type_info& GetTypeInfo() const override;
-	
-};
-
-#include "IComponent.inl"
+REGISTER_CASTABLE_TYPE(IComponent);
 
 }

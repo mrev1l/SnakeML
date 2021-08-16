@@ -386,6 +386,9 @@
     <ClInclude Include="system\ecs\SystemsPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\patterns\castable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\VS_MvpColor.hlsl" />
@@ -409,9 +412,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="system\ecs\ECSManager.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="system\ecs\IComponent.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

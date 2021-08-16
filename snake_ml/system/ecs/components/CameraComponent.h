@@ -5,7 +5,7 @@
 namespace snakeml
 {
 
-class CameraComponent : public ComponentBaseImpl<CameraComponent>
+class CameraComponent : public IComponentCastableImpl<CameraComponent>
 {
 public:
 	virtual ~CameraComponent() = default;

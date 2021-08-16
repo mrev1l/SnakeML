@@ -348,6 +348,7 @@
     <ClInclude Include="utils\math\matrix.h" />
     <ClInclude Include="utils\math\vector.h" />
     <ClInclude Include="utils\os_defines.h" />
+    <ClInclude Include="utils\patterns\castable.h" />
     <ClInclude Include="utils\patterns\event.h" />
     <ClInclude Include="utils\patterns\singleton.h" />
     <ClInclude Include="utils\snake_math.h" />
@@ -463,7 +464,6 @@
   <ItemGroup>
     <None Include="system\ecs\EntityComponentPool.inl" />
     <None Include="system\ecs\ECSManager.inl" />
-    <None Include="system\ecs\IComponent.inl" />
     <None Include="utils\math\matrix.inl" />
     <None Include="utils\math\vector.inl" />
     <None Include="utils\types\QuadTree.inl" />

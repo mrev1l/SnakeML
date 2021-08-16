@@ -5,7 +5,7 @@
 namespace snakeml
 {
 
-class MeshComponent : public ComponentBaseImpl<MeshComponent>
+class MeshComponent : public IComponentCastableImpl<MeshComponent>
 {
 public:
 	virtual ~MeshComponent() = default;

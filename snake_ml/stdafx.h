@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);
