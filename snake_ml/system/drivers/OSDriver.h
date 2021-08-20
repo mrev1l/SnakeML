@@ -27,10 +27,13 @@ public:
 
 	virtual void LogMessage(std::wstring msg) const = 0;
 
-	Event<OSImplementation, uint64_t>	m_onInputEvent;
-	Event<OSImplementation, double>		m_onUpdateEvent;
+	Event<IOSDriver, uint64_t>	m_onInputEvent;
+	Event<IOSDriver, double>	m_onUpdateEvent;
 
 protected:
+	void SendInputEvent(uint64_t);
+	void SendUpdateEvent(double);
+
 	virtual void OnInitialize() = 0;
 	virtual void OnRunOSMainLoop() = 0;
 	virtual void OnQuit() = 0;

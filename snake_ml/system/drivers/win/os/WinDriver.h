@@ -12,10 +12,7 @@ namespace snakeml
 namespace win
 {
 
-using WindowHandle = HWND;
-
-class WinDriver
-	: public IOSDriver
+class WinDriver : public IOSDriver
 {
 public:
 	WinDriver(const wchar_t* windowClassName, const wchar_t* windowTitle, uint32_t2 windowSz);

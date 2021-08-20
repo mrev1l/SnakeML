@@ -86,7 +86,7 @@ HINSTANCE WinDriver::GetHInstance()
 
 LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	IOSDriver* osDriver = IOSDriver::GetInstance();
+	WinDriver* osDriver = (WinDriver*)IOSDriver::GetInstance();
 	if (IRenderDriver::GetInstance() && IRenderDriver::GetInstance()->IsInitialized())
 	{
 		switch (message)
@@ -96,7 +96,7 @@ LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 			break;
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
-			osDriver->m_onInputEvent.Dispatch(wParam);
+			osDriver->SendInputEvent(wParam);
 			break;
 			// The default window procedure will play a system notification sound 
 			// when pressing the Alt+Enter keyboard combination if this message is 
@@ -126,7 +126,7 @@ void WinDriver::OnQuit()
 void WinDriver::OnUpdate()
 {
 	m_updateClock.Tick();
-	m_onUpdateEvent.Dispatch(m_updateClock.GetDeltaSeconds());
+	SendUpdateEvent(m_updateClock.GetDeltaSeconds());
 }
 
 }
