@@ -177,6 +177,15 @@
     <ClCompile Include="system\ecs\SystemsPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\ecs\systems\InputHandlingSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -387,6 +396,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\patterns\castable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\input\InputKeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\InputHandlingSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\components\DebugRenderComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,12 +3,11 @@
 #pragma once
 #include "DX12RenderTarget.h"
 
-#include "system/drivers/win/dx/pipeline/DX12CommandQueue.h"
-#include "system/drivers/win/dx/resource_management/DX12DescriptorAllocator.h"
+#include "helpers/DX12DebugRenderingSettings.h"
+#include "pipeline/DX12CommandQueue.h"
+#include "resource_management/DX12DescriptorAllocator.h"
 
 #include "system/drivers/RenderDriver.h"
-
-#include <array>
 
 namespace snakeml
 {
@@ -58,6 +57,8 @@ public:
 
 	void GetMatrices(matrix& outProjection, matrix& outOrthogonal) const;
 
+	const DX12DebugRenderingSettings& GetDebugRenderingSettings() const { return m_debugRenderingSettings; }
+
 private:
 	void OnInitialize() override;
 	void OnShutdown() override;
@@ -100,6 +101,8 @@ private:
 	DX12RenderTarget m_renderTarget;
 	DX12Texture m_backBufferTextures[s_backBufferCount];
 	UINT m_currentBackBufferIndex = 0;
+
+	DX12DebugRenderingSettings m_debugRenderingSettings;
 
 	// Synchronization objects
 	std::array<uint64_t, s_backBufferCount> m_frameFenceValues = {};

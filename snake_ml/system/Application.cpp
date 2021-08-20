@@ -11,7 +11,9 @@
 
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeCameraSystem.h"
+#include "ecs/systems/InitializeDebugRenderComponentsSystem.h"
 #include "ecs/systems/InitializePhysicsComponentsSystem.h"
+#include "ecs/systems/InputHandlingSystem.h"
 #include "ecs/systems/LoadMaterialsSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
@@ -42,20 +44,24 @@ void Application::Initialize()
 #ifdef _WINDOWS
 	new win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
 #endif
-	new InputManager();
-
 	IOSDriver::GetInstance()->Initialize();
-
 	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this, std::placeholders::_1));
+
+	new InputManager();
+	InputManager::GetInstance()->m_onInputEvent.Subscribe(this, std::bind(&Application::OnInput, this, std::placeholders::_1));
 
 	new ECSManager();
 
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LoadMaterialsSystem>());
+#ifdef _WINDOWS
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
+#endif
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
 
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<InputHandlingSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
@@ -74,6 +80,14 @@ void Application::Shutdown()
 	delete ecsManager;
 	delete osDriver;
 	delete inputMgr;
+}
+
+void Application::OnInput(InputKey inputKey)
+{
+	if (inputKey == InputKey::ESC)
+	{
+		IOSDriver::GetInstance()->Quit();
+	}
 }
 
 void Application::Update(double dt)

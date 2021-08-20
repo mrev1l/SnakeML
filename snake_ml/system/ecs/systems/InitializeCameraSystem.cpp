@@ -8,10 +8,10 @@
 
 namespace snakeml
 {
-
+// todo rework into init level system
 void InitializeCameraSystem::Execute()
 {
-	CameraComponentIterator* it = (CameraComponentIterator*)IComponent::CreateIterator(ComponentType::CameraComponent, 1);
+	CameraComponentIterator* it = IComponent::CreateIterator(ComponentType::CameraComponent, 1)->As<CameraComponentIterator>();
 	CameraComponent& camera = it->At(0);
 
 	camera.m_entityId = 1;

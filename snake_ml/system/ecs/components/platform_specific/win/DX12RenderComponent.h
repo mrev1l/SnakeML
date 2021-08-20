@@ -24,11 +24,6 @@ public:
 	DX12VertexBuffer m_vertexBuffer;
 	DX12RootSignature m_rootSignature;
 	DX12Texture m_texture;
-
-	// AABB Debug rendering TODO extract?
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> m_debugPipelineState;
-	DX12VertexBuffer m_debugVertexBuffer;
-	DX12RootSignature m_debugRootSignature;
 };
 REGISTER_TYPE(DX12RenderComponent);
 

@@ -125,6 +125,8 @@ void DX12Driver::OnInitialize()
 	InitializeBackBufferTextures();
 	InitializeRenderTarget();
 	InitializeMatrices();
+
+	m_debugRenderingSettings.Init();
 }
 
 void DX12Driver::OnShutdown()

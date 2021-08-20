@@ -17,12 +17,8 @@ InputManager::InputManager()
 
 void InputManager::ProcessInput(uint64_t inputKey)
 {
-	switch (static_cast<SupportedKey>(inputKey))
-	{
-	case SupportedKey::ESC: IOSDriver::GetInstance()->Quit(); break;
-	default:
-		break;
-	}
+	const InputKey key = static_cast<InputKey>(inputKey);
+	m_onInputEvent.Dispatch(key);
 }
 
 }

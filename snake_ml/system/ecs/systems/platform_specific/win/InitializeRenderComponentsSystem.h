@@ -34,39 +34,24 @@ private:
 	static void InitRenderComponent_LoadBuffers(
 		std::shared_ptr<DX12CommandList> commandList,
 		const std::vector<std::pair<float3, float2>>& geometryVertices,
-		const std::vector<std::pair<float3, float3>>& debugGeometryVertices,
-		DX12VertexBuffer& _outGeometryVB,
-		DX12VertexBuffer& _outDebugGeometryVB);
+		DX12VertexBuffer& _outGeometryVB);
 	static void InitRenderComponent_LoadShaders(
 		const std::wstring& vsPath,
 		const std::wstring& psPath,
-		const std::wstring& debugVsPath,
-		const std::wstring& debugPsPath,
 		Microsoft::WRL::ComPtr<ID3DBlob>& _outVsBlob,
-		Microsoft::WRL::ComPtr<ID3DBlob>& _outPsBlob,
-		Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugVsBlob,
-		Microsoft::WRL::ComPtr<ID3DBlob>& _outDebugPsBlob);
+		Microsoft::WRL::ComPtr<ID3DBlob>& _outPsBlob);
 	static void InitRenderComponent_InitializeRootSignatures(
 		const std::vector<RootParameters>& rootParamsIds,
-		const std::vector<RootParameters>& debugRootParamsIds,
-		DX12RootSignature& _outRootSignature,
-		DX12RootSignature& _outDebugRootSignature);
+		DX12RootSignature& _outRootSignature);
 	static void InitRenderComponent_GenerateInputLayouts(
 		const std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries,
-		const std::vector<MaterialComponent::InputLayoutEntries>& debugInputLayoutEntries,
-		std::vector<D3D12_INPUT_ELEMENT_DESC>& _outInputLayout,
-		std::vector<D3D12_INPUT_ELEMENT_DESC>& _outDebugInputLayout);
+		std::vector<D3D12_INPUT_ELEMENT_DESC>& _outInputLayout);
 	static void InitRenderComponent_InitializePSOs(
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> debugRootSignature,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout,
-		const std::vector<D3D12_INPUT_ELEMENT_DESC>& debugInputLayout,
 		Microsoft::WRL::ComPtr<ID3DBlob> vsBlob,
-		Microsoft::WRL::ComPtr<ID3DBlob> debugVsBlob,
 		Microsoft::WRL::ComPtr<ID3DBlob> psBlob,
-		Microsoft::WRL::ComPtr<ID3DBlob> debugPsBlob,
-		Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outPipelineState,
-		Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outDebugPipelineState);
+		Microsoft::WRL::ComPtr<ID3D12PipelineState>& _outPipelineState);
 	
 	static void CreateRootSignature(
 		const std::vector<CD3DX12_ROOT_PARAMETER1>& rootParameters,
@@ -86,15 +71,8 @@ private:
 	static void GenerateInputLayout(const std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries, std::vector<D3D12_INPUT_ELEMENT_DESC>& outInputLayout);
 	
 	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters(const std::vector<RootParameters>& rootParamsIds, const D3D12_DESCRIPTOR_RANGE1* descriptorRange);
-	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters_Main(const D3D12_DESCRIPTOR_RANGE1* descriptorRange);
-	static std::vector<CD3DX12_ROOT_PARAMETER1> CreateRootParameters_Debug();
 	static UINT GetRootParameterNumValues(RootParameters paramType);
 	static D3D12_SHADER_VISIBILITY GetRootParameterShaderVisibility(RootParameters paramType);
-
-	static std::vector<std::pair<float3, float3>> s_debugAABBVertices;
-	static std::vector<MaterialComponent::InputLayoutEntries> s_debugInputLayoutEntries;
-	static constexpr const wchar_t* s_debugVSPath = L"data/shaders/VS_MvpColor.cso";
-	static constexpr const wchar_t* s_debugPSPath = L"data/shaders/PS_Color.cso";
 };
 
 }

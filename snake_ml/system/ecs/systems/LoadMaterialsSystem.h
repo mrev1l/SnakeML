@@ -9,7 +9,7 @@
 
 namespace snakeml
 {
-
+// todo rework into load level system
 class LoadMaterialsSystem : public ISystem
 {
 public:

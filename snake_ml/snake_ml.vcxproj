@@ -236,6 +236,7 @@
     <ClCompile Include="system\Application.cpp" />
     <ClCompile Include="system\drivers\OSDriver.cpp" />
     <ClCompile Include="system\drivers\RenderDriver.cpp" />
+    <ClCompile Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.cpp" />
     <ClCompile Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource\DX12Buffer.cpp" />
@@ -269,7 +270,9 @@
     <ClCompile Include="system\ecs\ISystem.cpp" />
     <ClCompile Include="system\ecs\SystemsPool.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializePhysicsComponentsSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\InputHandlingSystem.cpp" />
     <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\LoadMaterialsSystem.cpp" />
@@ -293,6 +296,7 @@
     <ClInclude Include="system\Application.h" />
     <ClInclude Include="system\drivers\OSDriver.h" />
     <ClInclude Include="system\drivers\RenderDriver.h" />
+    <ClInclude Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.h" />
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\dx\resource\DX12Buffer.h" />
@@ -321,6 +325,7 @@
     <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.h" />
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
+    <ClInclude Include="system\ecs\components\DebugRenderComponent.h" />
     <ClInclude Include="system\ecs\EntityComponentPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
@@ -334,12 +339,15 @@
     <ClInclude Include="system\ecs\ISystem.h" />
     <ClInclude Include="system\ecs\SystemsPool.h" />
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
+    <ClInclude Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h" />
+    <ClInclude Include="system\ecs\systems\InputHandlingSystem.h" />
     <ClInclude Include="system\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\LoadMaterialsSystem.h" />
     <ClInclude Include="system\ecs\systems\Render2DSystem.h" />
     <ClInclude Include="system\ecs\systems\WIP_System.h" />
+    <ClInclude Include="system\input\InputKeys.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
     <ClInclude Include="utils\math\algorithms\CollisionDetectionGJK.h" />

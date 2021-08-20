@@ -30,14 +30,4 @@ private:
 
 }
 #endif
-
-// key mappings from windows defines to project defines
-enum class SupportedKey : uint64_t
-{
-#ifdef _WINDOWS
-	ESC = VK_ESCAPE,
-	F11 = VK_F11,
-#endif
-};
-
 }
