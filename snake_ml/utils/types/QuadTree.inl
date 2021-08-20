@@ -91,16 +91,17 @@ void QuadTree<T>::SubDivide()
 template<typename T>
 void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult)
 {
-	// TODO : indenting
-	if (std::find_if(_outResult.begin(), _outResult.end(),
-		[obj](const Object* a)
-		{
-			return &(a->userData) == &(obj.userData);
-		}) != _outResult.end())
+	const auto IsObjPresent = [obj](const Object* a) -> bool
+	{
+		return &(a->userData) == &(obj.userData);
+	};
+	
+	if (std::find_if(_outResult.begin(), _outResult.end(), IsObjPresent) != _outResult.end())
 	{
 		return;
 	}
-		_outResult.push_back(&obj);
+	
+	_outResult.push_back(&obj);
 }
 
 template<typename T>

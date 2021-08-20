@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/math/algorithms/AABB.h"
+
 namespace snakeml
 {
 

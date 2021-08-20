@@ -2,7 +2,7 @@
 
 namespace snakeml
 {
-// TODO rename?
+
 class vector
 {
 public:

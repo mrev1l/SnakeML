@@ -1,6 +1,7 @@
 #pragma once
 
 #include "system/ecs/IComponent.h"
+#include "utils/math/algorithms/AABB.h"
 
 namespace snakeml
 {

@@ -280,6 +280,7 @@
     <ClCompile Include="system\ecs\systems\WIP_System.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
+    <ClCompile Include="utils\math\algorithms\AABB.cpp" />
     <ClCompile Include="utils\math\algorithms\CollisionDetectionGJK.cpp" />
     <ClCompile Include="utils\math\algorithms\CollisionDetectionSAT.cpp" />
     <ClCompile Include="utils\math\matrix.cpp" />
@@ -350,6 +351,7 @@
     <ClInclude Include="system\input\InputKeys.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="utils\math\algorithms\AABB.h" />
     <ClInclude Include="utils\math\algorithms\CollisionDetectionGJK.h" />
     <ClInclude Include="utils\math\algorithms\CollisionDetectionSAT.h" />
     <ClInclude Include="utils\math\math_utils.h" />
