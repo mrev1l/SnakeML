@@ -15,48 +15,17 @@ namespace snakeml
 
 void LoadMaterialsSystem::Execute()
 {
-	// NEW TODO
 	constexpr const char* jsonName = "data\\assets\\levels\\level_0\\level_0.txt";
 	rapidjson::Document jsonDocument;
 	std::string jsonString;
 	win::WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
 
-	/*bool isParsed = !jsonDocument.ParseInsitu(const_cast<char*>(jsonString.c_str())).HasParseError();
-	auto error = jsonDocument.GetParseError();*/
 	ParseJsonString(jsonString.c_str(), jsonDocument);
 
-	/*bool hasMaterials = jsonDocument.HasMember("material_components");
-	hasMaterials &= jsonDocument["material_components"].IsArray();*/
 	ParseMaterials(jsonDocument);
 	ParseMeshes(jsonDocument);
 	ParseTransforms(jsonDocument);
 	ParsePhysicsComponents(jsonDocument);
-
-	int stop = 34;
-	return;
-	// OLD
-	//{
-	//	constexpr uint32_t materialsNum = 1u;
-	//	constexpr const char* jsonName = "data\\assets\\levels\\test\\2dmaterialcomponentjson.txt";
-
-	//	rapidjson::Document jsonDocument;
-	//	std::string jsonString;
-	//	WinUtils::LoadFileIntoBuffer(jsonName, jsonString);
-
-	//	ParseJsonString(jsonString.c_str(), jsonDocument);
-
-	//	MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsNum);
-	//	MaterialComponent& material = *(MaterialComponent*)it->At(0);
-
-	//	ParseComponent_EntityId(jsonDocument, material.m_entityId);
-	//	ParseMaterialComponent_VerticesArray(jsonDocument, material.m_inputLayoutEntries);
-	//	ParseMaterialComponent_VSPath(jsonDocument, material.m_vs);
-	//	ParseMaterialComponent_PSPath(jsonDocument, material.m_ps);
-	//	ParseMaterialComponent_TexturePath(jsonDocument, material.m_texturePath);
-
-	//	//ECSManager::GetInstance()->GetEntityComponentPool().InsertComponents(ComponentType::MaterialComponent, it);
-	//	ECSManager::GetInstance()->GetEntityComponentPool().InsertComponents<MaterialComponentIterator>(it);
-	//}
 }
 
 void LoadMaterialsSystem::ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson)

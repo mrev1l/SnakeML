@@ -20,7 +20,6 @@ class DX12RenderComponent;
 class DX12Texture;
 class DX12VertexBuffer;
 
-// TODO REVIEW OPTIONAL CREATION
 class InitializeRenderComponentsSystem : public ISystem
 {
 public:
