@@ -6,6 +6,8 @@
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/components/platform_specific/win/DX12RenderComponent.h"
 
@@ -103,12 +105,12 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadShaders(
 {
 	if(!vsPath.empty())
 	{
-		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(vsPath.c_str(), &_outVsBlob));
+		WinUtils::ThrowIfFailed(D3DReadFileToBlob(vsPath.c_str(), &_outVsBlob));
 	}
 	
 	if (!psPath.empty())
 	{
-		DX12Utils::ThrowIfFailed(D3DReadFileToBlob(psPath.c_str(), &_outPsBlob));
+		WinUtils::ThrowIfFailed(D3DReadFileToBlob(psPath.c_str(), &_outPsBlob));
 	}
 }
 
@@ -178,7 +180,7 @@ void InitializeRenderComponentsSystem::CreateRootSignature(
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription;
-	rootSignatureDescription.Init_1_1(rootParameters.size(), rootParameters.data(), numStaticSamplers, pStaticSamplers, rootSignatureFlags);
+	rootSignatureDescription.Init_1_1(static_cast<UINT>(rootParameters.size()), rootParameters.data(), numStaticSamplers, pStaticSamplers, rootSignatureFlags);
 	
 	_outRootSignature.SetRootSignatureDesc(rootSignatureDescription.Desc_1_1, featureData.HighestVersion);
 }
@@ -226,7 +228,7 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 	D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 		sizeof(PipelineStateStream), &pipelineStateStream
 	};
-	DX12Utils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
+	WinUtils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&_outPipelineState)));
 }
 
 DXGI_FORMAT InitializeRenderComponentsSystem::GetInputLayoutFormat(MaterialComponent::InputLayoutEntries layoutEntry)

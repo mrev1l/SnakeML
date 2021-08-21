@@ -33,7 +33,7 @@ inline snakeml::matrix::matrix(const matrix& _m)
 	copy(_m);
 }
 
-inline snakeml::matrix::matrix(matrix&& _m)
+inline snakeml::matrix::matrix(matrix&& _m) noexcept
 {
 	std::swap(m, _m.m);
 }
@@ -81,7 +81,7 @@ inline snakeml::matrix& snakeml::matrix::operator=(const matrix& _m)
 	return *this;
 }
 
-inline snakeml::matrix& snakeml::matrix::operator=(matrix&& _m)
+inline snakeml::matrix& snakeml::matrix::operator=(matrix&& _m) noexcept
 {
 	std::swap(m, _m.m);
 	return *this;

@@ -19,6 +19,8 @@
 #include "system/drivers/win/dx/resource_management/DX12ResourceStateTracker.h"
 #include "system/drivers/win/dx/resource_management/DX12UploadBuffer.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 #include "third_party/win/DirectXTex/DirectXTex/DirectXTex.h"
 
 #include <filesystem>
@@ -37,8 +39,8 @@ DX12CommandList::DX12CommandList(D3D12_COMMAND_LIST_TYPE type)
 {
 	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
 
-	DX12Utils::ThrowIfFailed(device->CreateCommandAllocator(m_d3d12CommandListType, IID_PPV_ARGS(&m_d3d12CommandAllocator)));
-	DX12Utils::ThrowIfFailed(device->CreateCommandList(0, m_d3d12CommandListType, m_d3d12CommandAllocator.Get(),
+	WinUtils::ThrowIfFailed(device->CreateCommandAllocator(m_d3d12CommandListType, IID_PPV_ARGS(&m_d3d12CommandAllocator)));
+	WinUtils::ThrowIfFailed(device->CreateCommandList(0, m_d3d12CommandListType, m_d3d12CommandAllocator.Get(),
 		nullptr, IID_PPV_ARGS(&m_d3d12CommandList)));
 
 	m_uploadBuffer = std::make_unique<DX12UploadBuffer>();
@@ -179,19 +181,19 @@ void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstri
 		if (filePath.extension() == ".dds")
 		{
 			// Use DDS texture loader.
-			DX12Utils::ThrowIfFailed(LoadFromDDSFile(fileName.c_str(), DirectX::DDS_FLAGS_NONE, &metadata, scratchImage));
+			WinUtils::ThrowIfFailed(LoadFromDDSFile(fileName.c_str(), DirectX::DDS_FLAGS_NONE, &metadata, scratchImage));
 		}
 		else if (filePath.extension() == ".hdr")
 		{
-			DX12Utils::ThrowIfFailed(LoadFromHDRFile(fileName.c_str(), &metadata, scratchImage));
+			WinUtils::ThrowIfFailed(LoadFromHDRFile(fileName.c_str(), &metadata, scratchImage));
 		}
 		else if (filePath.extension() == ".tga")
 		{
-			DX12Utils::ThrowIfFailed(LoadFromTGAFile(fileName.c_str(), &metadata, scratchImage));
+			WinUtils::ThrowIfFailed(LoadFromTGAFile(fileName.c_str(), &metadata, scratchImage));
 		}
 		else
 		{
-			DX12Utils::ThrowIfFailed(LoadFromWICFile(fileName.c_str(), DirectX::WIC_FLAGS_NONE, &metadata, scratchImage));
+			WinUtils::ThrowIfFailed(LoadFromWICFile(fileName.c_str(), DirectX::WIC_FLAGS_NONE, &metadata, scratchImage));
 		}
 
 		if (textureUsage == TextureUsage::Albedo)
@@ -218,7 +220,7 @@ void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstri
 
 		{
 			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-			DX12Utils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
+			WinUtils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&textureDesc,
 				D3D12_RESOURCE_STATE_COMMON,
@@ -351,7 +353,7 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 		stagingDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
-		DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+		WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 			&heapProps,
 			D3D12_HEAP_FLAG_NONE,
 			&stagingDesc,
@@ -436,7 +438,7 @@ void DX12CommandList::CopyTextureSubresource(DX12Texture& texture, uint32_t firs
 		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource;
 		CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
 		CD3DX12_RESOURCE_DESC resourceDesc(CD3DX12_RESOURCE_DESC::Buffer(requiredSize));
-		DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+		WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -750,8 +752,8 @@ void DX12CommandList::Close()
 
 void DX12CommandList::Reset()
 {
-	DX12Utils::ThrowIfFailed(m_d3d12CommandAllocator->Reset());
-	DX12Utils::ThrowIfFailed(m_d3d12CommandList->Reset(m_d3d12CommandAllocator.Get(), nullptr));
+	WinUtils::ThrowIfFailed(m_d3d12CommandAllocator->Reset());
+	WinUtils::ThrowIfFailed(m_d3d12CommandList->Reset(m_d3d12CommandAllocator.Get(), nullptr));
 
 	m_resourceStateTracker->Reset();
 	m_uploadBuffer->Reset();
@@ -816,7 +818,7 @@ void DX12CommandList::GenerateMips_UAV(DX12Texture& texture)
 
 		{
 			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-			DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+			WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&stagingDesc,
@@ -939,10 +941,10 @@ void DX12CommandList::GenerateMips_BGR(DX12Texture& texture)
 	heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
 	Microsoft::WRL::ComPtr<ID3D12Heap> heap;
-	DX12Utils::ThrowIfFailed(device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
+	WinUtils::ThrowIfFailed(device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resourceCopy;
-	DX12Utils::ThrowIfFailed(device->CreatePlacedResource(
+	WinUtils::ThrowIfFailed(device->CreatePlacedResource(
 		heap.Get(),
 		0,
 		&copyDesc,
@@ -962,7 +964,7 @@ void DX12CommandList::GenerateMips_BGR(DX12Texture& texture)
 		DXGI_FORMAT_B8G8R8X8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> aliasCopy;
-	DX12Utils::ThrowIfFailed(device->CreatePlacedResource(
+	WinUtils::ThrowIfFailed(device->CreatePlacedResource(
 		heap.Get(),
 		0,
 		&aliasDesc,
@@ -1022,10 +1024,10 @@ void DX12CommandList::GenerateMips_sRGB(DX12Texture& texture)
 	heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
 	Microsoft::WRL::ComPtr<ID3D12Heap> heap;
-	DX12Utils::ThrowIfFailed(device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
+	WinUtils::ThrowIfFailed(device->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resourceCopy;
-	DX12Utils::ThrowIfFailed(device->CreatePlacedResource(
+	WinUtils::ThrowIfFailed(device->CreatePlacedResource(
 		heap.Get(),
 		0,
 		&copyDesc,
@@ -1042,7 +1044,7 @@ void DX12CommandList::GenerateMips_sRGB(DX12Texture& texture)
 	auto aliasDesc = resourceDesc;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> aliasCopy;
-	DX12Utils::ThrowIfFailed(device->CreatePlacedResource(
+	WinUtils::ThrowIfFailed(device->CreatePlacedResource(
 		heap.Get(),
 		0,
 		&aliasDesc,
@@ -1089,7 +1091,7 @@ void DX12CommandList::CopyBuffer(DX12Buffer& buffer, size_t numElements, size_t 
 		auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
 		CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
 		CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, flags);
-		DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+		WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
@@ -1106,7 +1108,7 @@ void DX12CommandList::CopyBuffer(DX12Buffer& buffer, size_t numElements, size_t 
 			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_UPLOAD);
 			CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 			Microsoft::WRL::ComPtr<ID3D12Resource> uploadResource;
-			DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+			WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&resourceDesc,

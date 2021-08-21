@@ -30,7 +30,7 @@ PhysicsSystem::PhysicsSystem()
 	m_quadTreeHalfDimensions = { quadTreeHalfWidth, quadTreeHalfHeight, 0.f };
 }
 
-void PhysicsSystem::Update(double deltaTime)
+void PhysicsSystem::Update(float deltaTime)
 {
 	//deltaTime = k_physicsTimeStep; // debug
 	float timeToSimulate = deltaTime;
@@ -54,7 +54,7 @@ void PhysicsSystem::Update(double deltaTime)
 	while (!IsNearlyZero(timeToSimulate, k_default_epsilon));
 }
 
-void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator& bodiesIt, double dt)
+void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator& bodiesIt, float dt)
 {
 	for (PhysicsComponent& body : bodiesIt)
 	{
@@ -67,7 +67,7 @@ void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator& bodiesIt, do
 	}
 }
 
-void PhysicsSystem::SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, double dt)
+void PhysicsSystem::SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, float dt)
 {
 	// Linear movement integration
 	body.m_velocity += body.m_acceleration * dt;
@@ -122,7 +122,7 @@ void PhysicsSystem::BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const P
 void PhysicsSystem::CalculateBroadphaseForBody(const QuadTree<PhysicsComponent>& quadTree, PhysicsComponent& body, std::vector<NarrowPhasePair>& _outNarrowPhase)
 {
 	const QuadTree<PhysicsComponent>::Rectangle boundary = { body.m_position, body.m_aabb.max - body.m_aabb.min };
-	std::vector<const QuadTree<PhysicsComponent>::Object const*> objects;
+	std::vector<const QuadTree<PhysicsComponent>::Object*> objects;
 
 	quadTree.GetObjects(boundary, objects);
 

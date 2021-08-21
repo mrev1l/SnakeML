@@ -19,7 +19,7 @@ class PhysicsSystem : public ISystem
 public:
 	PhysicsSystem();
 
-	void Update(double deltaTime) override;
+	void Update(float deltaTime) override;
 
 private:
 	using BoundingBox = std::array<vector, 4>;
@@ -37,8 +37,8 @@ private:
 		NarrowPhaseBody b;
 	};
 
-	void SimulatePhysics(const PhysicsComponentIterator& bodiesIt, double dt);
-	void SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, double dt);
+	void SimulatePhysics(const PhysicsComponentIterator& bodiesIt, float dt);
+	void SimulatePhysicsStep(PhysicsComponent& body, TransformComponent& transform, float dt);
 
 	void UpdateAABBs(const PhysicsComponentIterator& bodiesIt);
 

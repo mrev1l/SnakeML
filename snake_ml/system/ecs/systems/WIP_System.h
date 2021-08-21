@@ -14,7 +14,7 @@ class WIP_System : public ISystem
 public:
 	WIP_System() : ISystem() {}
 
-	void Update(double deltaTime) override;
+	void Update(float deltaTime) override;
 };
 
 }

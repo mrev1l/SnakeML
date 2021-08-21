@@ -6,6 +6,8 @@
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/helpers/directX_utils.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -22,7 +24,7 @@ DX12DescriptorAllocatorPage::DX12DescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_T
 	heapDesc.Type = m_heapType;
 	heapDesc.NumDescriptors = m_numDescriptorsInHeap;
 
-	DX12Utils::ThrowIfFailed(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_d3d12DescriptorHeap)));
+	WinUtils::ThrowIfFailed(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_d3d12DescriptorHeap)));
 
 	m_baseDescriptor = m_d3d12DescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize(m_heapType);

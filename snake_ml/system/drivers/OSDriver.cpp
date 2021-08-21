@@ -11,7 +11,7 @@ void IOSDriver::SendInputEvent(uint64_t keyCode)
 	m_onInputEvent.Dispatch(keyCode);
 }
 
-void IOSDriver::SendUpdateEvent(double dt)
+void IOSDriver::SendUpdateEvent(float dt)
 {
 	m_onUpdateEvent.Dispatch(dt);
 }

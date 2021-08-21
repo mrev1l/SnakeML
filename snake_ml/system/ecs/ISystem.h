@@ -14,7 +14,7 @@ public:
 	virtual ~ISystem() = 0 {};
 
 	virtual void Execute() {} // TODO: private + friend class?
-	virtual void Update(double deltaTime) {} // TODO: private + friend class?
+	virtual void Update(float deltaTime) {} // TODO: private + friend class?
 
 	uint32_t m_id = 0;
 

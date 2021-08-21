@@ -27,7 +27,7 @@ public:
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 	void UnscheduleSystem(const ISystem* system);
 
-	void Update(double deltaTime);
+	void Update(float deltaTime);
 
 private:
 	EntityComponentPool m_entityComponentPool;

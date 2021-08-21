@@ -21,7 +21,7 @@ public:
 
 private:
 	void OnInput(InputKey inputKey);
-	void Update(double dt);
+	void Update(float dt);
 	void Render();
 };
 

@@ -26,7 +26,6 @@ public:
 		Color		= 2
 	};
 
-	static void ThrowIfFailed(HRESULT hr);
 	static void EnableDebugLayer();
 	static Microsoft::WRL::ComPtr<IDXGIAdapter4> GetAdapter(bool useWarp);
 	static Microsoft::WRL::ComPtr<ID3D12Device2> CreateDevice(Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter);

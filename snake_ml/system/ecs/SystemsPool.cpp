@@ -22,7 +22,7 @@ void SystemsPool::UnscheduleSystem(const ISystem* system)
 	m_systemsToUnschedule.insert(system->m_id);
 }
 
-void SystemsPool::Update(double deltaTime)
+void SystemsPool::Update(float deltaTime)
 {
 	for (const std::unique_ptr<ISystem>& system : m_systems)
 	{

@@ -38,7 +38,7 @@ bool QuadTree<T>::AddObject(const Object& point)
 }
 
 template<typename T>
-void QuadTree<T>::GetObjects(QuadTree<T>::Rectangle boundary, std::vector<const Object const*>& _outResult) const
+void QuadTree<T>::GetObjects(QuadTree<T>::Rectangle boundary, std::vector<const Object*>& _outResult) const
 {
 	if (!m_boundary.Intersects(boundary))
 	{
@@ -89,7 +89,7 @@ void QuadTree<T>::SubDivide()
 }
 
 template<typename T>
-void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult)
+void QuadTree<T>::TryPushObject(const Object& obj, std::vector<const Object*>& _outResult)
 {
 	const auto IsObjPresent = [obj](const Object* a) -> bool
 	{

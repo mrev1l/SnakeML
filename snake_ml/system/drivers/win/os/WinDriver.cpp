@@ -53,7 +53,7 @@ void WinDriver::OnInitialize()
 		SetCurrentDirectoryW(path);
 	}
 
-	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	WinUtils::ThrowIfFailed(CoInitializeEx(NULL, COINIT_MULTITHREADED));
 
 	new win::DX12Driver(m_windowHandle, m_windowSz);
 	IRenderDriver::GetInstance()->Initialize();
@@ -126,7 +126,7 @@ void WinDriver::OnQuit()
 void WinDriver::OnUpdate()
 {
 	m_updateClock.Tick();
-	SendUpdateEvent(m_updateClock.GetDeltaSeconds());
+	SendUpdateEvent(static_cast<float>( m_updateClock.GetDeltaSeconds()));
 }
 
 }

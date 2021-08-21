@@ -6,6 +6,8 @@
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/helpers/directX_utils.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -75,7 +77,7 @@ DX12UploadBuffer::Page::Page(size_t sizeInBytes)
 
 	const CD3DX12_HEAP_PROPERTIES heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	const CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(m_pageSize);
-	DX12Utils::ThrowIfFailed(device->CreateCommittedResource(
+	WinUtils::ThrowIfFailed(device->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,

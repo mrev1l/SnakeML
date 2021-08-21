@@ -27,7 +27,7 @@ public:
 	~QuadTree() = default;
 
 	bool AddObject(const Object& object);
-	void GetObjects(Rectangle boundary, std::vector<const Object const*>& _outResult) const;
+	void GetObjects(Rectangle boundary, std::vector<const Object*>& _outResult) const;
 
 private:
 	enum
@@ -45,7 +45,7 @@ private:
 
 	void SubDivide();
 
-	static void TryPushObject(const Object& obj, std::vector<const Object const*>& _outResult);
+	static void TryPushObject(const Object& obj, std::vector<const Object*>& _outResult);
 
 	Rectangle									m_boundary;
 	std::vector<Object>							m_objects;

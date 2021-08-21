@@ -31,7 +31,7 @@ void ECSManager::UnscheduleSystem(const ISystem* system)
 	m_systemsPool.UnscheduleSystem(system);
 }
 
-void ECSManager::Update(double deltaTime)
+void ECSManager::Update(float deltaTime)
 {
 	m_systemsPool.Update(deltaTime);
 }

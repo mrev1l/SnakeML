@@ -9,7 +9,7 @@
 namespace snakeml
 {
 
-void Render2DSystem::Update(double deltaTime)
+void Render2DSystem::Update(float deltaTime)
 {
 	IRenderDriver* renderDriver = IRenderDriver::GetInstance();
 	const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();

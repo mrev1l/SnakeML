@@ -211,7 +211,7 @@ void DX12Driver::OnRender_EndFrame_Present(std::shared_ptr<DX12CommandList> comm
 
 	UINT syncInterval = m_isVSync ? 1 : 0;
 	UINT presentFlags = m_isTearingSupported && !m_isVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
-	DX12Utils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
+	WinUtils::ThrowIfFailed(m_swapChain->Present(syncInterval, presentFlags));
 
 	m_frameFenceValues[m_currentBackBufferIndex] = commandQueue->Signal();
 	m_frameValues[m_currentBackBufferIndex] = GetFrameCount();
@@ -243,7 +243,7 @@ void DX12Driver::InitializeBackBufferTextures()
 	for (uint8_t i = 0; i < s_backBufferCount; ++i)
 	{
 		Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
-		DX12Utils::ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
+		WinUtils::ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
 
 		DX12ResourceStateTracker::AddGlobalResourceState(backBuffer.Get(), D3D12_RESOURCE_STATE_COMMON);
 

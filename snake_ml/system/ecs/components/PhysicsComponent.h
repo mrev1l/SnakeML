@@ -8,9 +8,9 @@ namespace snakeml
 
 struct BoxShape
 {
-	vector m_dimensions;
-	float m_mass;
-	float m_momentOfInertia; // m * (w*w + h*h) / 12.f
+	vector m_dimensions		= vector::zero;
+	float m_mass			= 0.f;
+	float m_momentOfInertia	= 0.f; // m * (w*w + h*h) / 12.f
 };
 
 class PhysicsComponent : public IComponentCastableImpl<PhysicsComponent>

@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include "stdafx.h"
 #include "directX_utils.h"
+#include "system/drivers/win/os/helpers/win_utils.h"
 
 namespace snakeml
 {
@@ -16,14 +17,6 @@ std::map<DX12Utils::DX12ShaderSemanticName, const char*> DX12Utils::s_semanticNa
 	{ DX12ShaderSemanticName::Color,	"COLOR" },
 };
 
-void DX12Utils::ThrowIfFailed(HRESULT hr)
-{
-	if (FAILED(hr))
-	{
-		throw std::exception();
-	}
-}
-
 void DX12Utils::EnableDebugLayer()
 {
 #if defined(_DEBUG)
@@ -31,7 +24,7 @@ void DX12Utils::EnableDebugLayer()
 	// so all possible errors generated while creating DX12 objects
 	// are caught by the debug layer.
 	Microsoft::WRL::ComPtr<ID3D12Debug> debugInterface;
-	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugInterface)));
+	WinUtils::ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugInterface)));
 	debugInterface->EnableDebugLayer();
 
 	// Register DX memory leaks reporting
@@ -47,14 +40,14 @@ Microsoft::WRL::ComPtr<IDXGIAdapter4> DX12Utils::GetAdapter(bool useWarp)
 	createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
-	ThrowIfFailed(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
+	WinUtils::ThrowIfFailed(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
 	Microsoft::WRL::ComPtr<IDXGIAdapter1> dxgiAdapter1;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> dxgiAdapter4;
 
 	if (useWarp)
 	{
-		ThrowIfFailed(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter1)));
-		ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
+		WinUtils::ThrowIfFailed(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter1)));
+		WinUtils::ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
 	}
 	else
 	{
@@ -73,7 +66,7 @@ Microsoft::WRL::ComPtr<IDXGIAdapter4> DX12Utils::GetAdapter(bool useWarp)
 				dxgiAdapterDesc1.DedicatedVideoMemory > maxDedicatedVideoMemory)
 			{
 				maxDedicatedVideoMemory = dxgiAdapterDesc1.DedicatedVideoMemory;
-				ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
+				WinUtils::ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
 			}
 		}
 	}
@@ -84,7 +77,7 @@ Microsoft::WRL::ComPtr<IDXGIAdapter4> DX12Utils::GetAdapter(bool useWarp)
 Microsoft::WRL::ComPtr<ID3D12Device2> DX12Utils::CreateDevice(Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter)
 {
 	Microsoft::WRL::ComPtr<ID3D12Device2> d3d12Device2;
-	ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
+	WinUtils::ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
 
 #if defined(_DEBUG)
 	Microsoft::WRL::ComPtr<ID3D12InfoQueue> pInfoQueue;
@@ -117,7 +110,7 @@ Microsoft::WRL::ComPtr<ID3D12Device2> DX12Utils::CreateDevice(Microsoft::WRL::Co
 		NewFilter.DenyList.NumIDs = _countof(DenyIds);
 		NewFilter.DenyList.pIDList = DenyIds;
 
-		ThrowIfFailed(pInfoQueue->PushStorageFilter(&NewFilter));
+		WinUtils::ThrowIfFailed(pInfoQueue->PushStorageFilter(&NewFilter));
 	}
 #endif
 
@@ -159,7 +152,7 @@ Microsoft::WRL::ComPtr<IDXGISwapChain4> DX12Utils::CreateSwapChain(HWND hWnd, Mi
 	createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
-	ThrowIfFailed(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory4)));
+	WinUtils::ThrowIfFailed(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory4)));
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = width;
 	swapChainDesc.Height = height;
@@ -174,7 +167,7 @@ Microsoft::WRL::ComPtr<IDXGISwapChain4> DX12Utils::CreateSwapChain(HWND hWnd, Mi
 	// It is recommended to always allow tearing if tearing support is available.
 	swapChainDesc.Flags = CheckTearingSupport() ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u;
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
-	ThrowIfFailed(dxgiFactory4->CreateSwapChainForHwnd(
+	WinUtils::ThrowIfFailed(dxgiFactory4->CreateSwapChainForHwnd(
 		commandQueue.Get(),
 		hWnd,
 		&swapChainDesc,
@@ -184,9 +177,9 @@ Microsoft::WRL::ComPtr<IDXGISwapChain4> DX12Utils::CreateSwapChain(HWND hWnd, Mi
 
 	// Disable the Alt+Enter fullscreen toggle feature. Switching to fullscreen
 	// will be handled manually.
-	ThrowIfFailed(dxgiFactory4->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
+	WinUtils::ThrowIfFailed(dxgiFactory4->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
-	ThrowIfFailed(swapChain1.As(&dxgiSwapChain4));
+	WinUtils::ThrowIfFailed(swapChain1.As(&dxgiSwapChain4));
 
 	return dxgiSwapChain4;
 }

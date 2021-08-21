@@ -14,13 +14,13 @@ public:
 		float _20, float _21, float _22, float _23,
 		float _30, float _31, float _32, float _33);
 	matrix(const matrix& _m);
-	matrix(matrix&& _m);
+	matrix(matrix&& _m) noexcept;
 	~matrix() = default;
 
 	matrix inverse() const;
 
 	matrix& operator=(const matrix& _m);
-	matrix& operator=(matrix&& _m);
+	matrix& operator=(matrix&& _m) noexcept;
 
 	matrix operator+(const matrix& _m) const;
 	void operator+=(const matrix& _m);

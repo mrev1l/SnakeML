@@ -7,6 +7,8 @@
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 namespace snakeml
 {
 
@@ -86,7 +88,7 @@ void DX12DebugRenderingSettings::Init_AABBRootSignature(Microsoft::WRL::ComPtr<I
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC aabbRootSignatureDescription;
-	aabbRootSignatureDescription.Init_1_1(aabbRootParameters.size(), aabbRootParameters.data(), 0, nullptr, rootAABBSignatureFlags);
+	aabbRootSignatureDescription.Init_1_1(static_cast<UINT>(aabbRootParameters.size()), aabbRootParameters.data(), 0, nullptr, rootAABBSignatureFlags);
 
 	m_debugAABBRootSignature.SetRootSignatureDesc(aabbRootSignatureDescription.Desc_1_1, featureData.HighestVersion);
 }
@@ -99,8 +101,8 @@ void DX12DebugRenderingSettings::Init_PipelineState(Microsoft::WRL::ComPtr<ID3D1
 	CD3DX12_PIPELINE_STATE_STREAM_INPUT_LAYOUT dx12Layout = CreateAABBInputLayout();
 
 	Microsoft::WRL::ComPtr<ID3DBlob> debugVertexShaderBlob, debugPixelShaderBlob;
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(s_debugVSPath, &debugVertexShaderBlob));
-	DX12Utils::ThrowIfFailed(D3DReadFileToBlob(s_debugPSPath, &debugPixelShaderBlob));
+	WinUtils::ThrowIfFailed(D3DReadFileToBlob(s_debugVSPath, &debugVertexShaderBlob));
+	WinUtils::ThrowIfFailed(D3DReadFileToBlob(s_debugPSPath, &debugPixelShaderBlob));
 
 	PipelineStateStream pipelineStateStream = {
 		m_debugAABBRootSignature.GetRootSignature().Get(),
@@ -116,7 +118,7 @@ void DX12DebugRenderingSettings::Init_PipelineState(Microsoft::WRL::ComPtr<ID3D1
 	D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 		sizeof(PipelineStateStream), &pipelineStateStream
 	};
-	DX12Utils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&m_debugAABBPipelineState)));
+	WinUtils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&m_debugAABBPipelineState)));
 }
 
 std::vector<CD3DX12_ROOT_PARAMETER1> DX12DebugRenderingSettings::CreateAABBRootParameters()

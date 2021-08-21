@@ -15,6 +15,14 @@ namespace snakeml
 namespace win
 {
 
+void WinUtils::ThrowIfFailed(HRESULT hr)
+{
+	if (FAILED(hr))
+	{
+		throw std::exception();
+	}
+}
+
 void WinUtils::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName, const WNDPROC& winProc)
 {
 	// Register a window class for creating our render window with.
@@ -26,12 +34,12 @@ void WinUtils::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassNa
 	windowClass.cbClsExtra = 0;
 	windowClass.cbWndExtra = 0;
 	windowClass.hInstance = hInst;
-	windowClass.hIcon = ::LoadIcon(hInst, NULL);
+	windowClass.hIcon = ::LoadIcon(hInst, L"");
 	windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	windowClass.lpszMenuName = NULL;
 	windowClass.lpszClassName = windowClassName;
-	windowClass.hIconSm = ::LoadIcon(hInst, NULL);
+	windowClass.hIconSm = ::LoadIcon(hInst, L"");
 
 	static ATOM atom = ::RegisterClassExW(&windowClass);
 	ASSERT(atom > 0, "");

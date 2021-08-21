@@ -8,6 +8,8 @@
 #include "system/drivers/win/dx/pipeline/DX12CommandList.h"
 #include "system/drivers/win/dx/pipeline/DX12RootSignature.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -228,7 +230,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DX12DynamicDescriptorHeap::CreateDe
 	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-	DX12Utils::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap)));
+	WinUtils::ThrowIfFailed(device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap)));
 
 	return descriptorHeap;
 }

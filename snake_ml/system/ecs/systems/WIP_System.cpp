@@ -17,7 +17,7 @@ namespace snakeml
 namespace wip
 {
 
-void WIP_System::Update(double deltaTime)
+void WIP_System::Update(float deltaTime)
 {
 	// Give initial nudge
 	const uint32_t entityIdToUpdate = 0;

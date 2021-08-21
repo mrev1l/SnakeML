@@ -12,7 +12,7 @@ class Render2DSystem : public ISystem
 public:
 	Render2DSystem() : ISystem() {}
 
-	void Update(double deltaTime) override;
+	void Update(float deltaTime) override;
 };
 
 }

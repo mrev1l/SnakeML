@@ -13,6 +13,7 @@ namespace win
 class WinUtils
 {
 public:
+	static void ThrowIfFailed(HRESULT hr);
 	static void RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName, const WNDPROC& winProc);
 	static HWND CreateWindow(const wchar_t* windowClassName, HINSTANCE hInst, const wchar_t* windowTitle, uint32_t width, uint32_t height);
 	static HANDLE CreateEventHandle();

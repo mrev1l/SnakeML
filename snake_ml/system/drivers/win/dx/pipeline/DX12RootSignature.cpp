@@ -6,6 +6,8 @@
 #include "system/drivers/win/dx/DX12Driver.h"
 #include "system/drivers/win/dx/helpers/directX_utils.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -148,11 +150,11 @@ void DX12RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& r
 	// Serialize the root signature.
 	Microsoft::WRL::ComPtr<ID3DBlob> rootSignatureBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
-	DX12Utils::ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&versionRootSignatureDesc,
+	WinUtils::ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&versionRootSignatureDesc,
 		rootSignatureVersion, &rootSignatureBlob, &errorBlob));
 
 	// Create the root signature.
-	DX12Utils::ThrowIfFailed(device->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
+	WinUtils::ThrowIfFailed(device->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
 		rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 }
 
