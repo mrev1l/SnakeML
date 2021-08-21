@@ -13,8 +13,7 @@
 #include "system/ecs/components/CameraComponent.h"
 #include "system/ecs/components/DebugRenderComponent.h"
 #include "system/ecs/components/TransformComponent.h"
-#include "system/ecs/components/PhysicsComponent.h"
-#include "system/ecs/components/MaterialComponent.h"
+
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
