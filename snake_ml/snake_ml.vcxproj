@@ -269,6 +269,7 @@
     <ClCompile Include="system\ecs\IComponent.cpp" />
     <ClCompile Include="system\ecs\ISystem.cpp" />
     <ClCompile Include="system\ecs\SystemsPool.cpp" />
+    <ClCompile Include="system\ecs\systems\EntityControllerSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializePhysicsComponentsSystem.cpp" />
@@ -327,6 +328,8 @@
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
     <ClInclude Include="system\ecs\components\DebugRenderComponent.h" />
+    <ClInclude Include="system\ecs\components\EntityControllerComponent.h" />
+    <ClInclude Include="system\ecs\components\InputDataComponent.h" />
     <ClInclude Include="system\ecs\EntityComponentPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
@@ -339,6 +342,7 @@
     <ClInclude Include="system\ecs\IComponent.h" />
     <ClInclude Include="system\ecs\ISystem.h" />
     <ClInclude Include="system\ecs\SystemsPool.h" />
+    <ClInclude Include="system\ecs\systems\EntityControllerSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h" />

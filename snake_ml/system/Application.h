@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "input/InputKeys.h"
+#include "input/InputManager.h"
 #include "utils/patterns/singleton.h"
 
 namespace snakeml
@@ -20,7 +20,7 @@ public:
 	void Shutdown();
 
 private:
-	void OnInput(InputKey inputKey);
+	void OnInput(InputAction);
 	void Update(float dt);
 	void Render();
 };

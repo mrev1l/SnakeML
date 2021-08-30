@@ -96,11 +96,15 @@ LRESULT WinDriver::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 			break;
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
-			osDriver->SendInputEvent(wParam);
+			osDriver->SendKeyDownEvent(wParam);
 			break;
 			// The default window procedure will play a system notification sound 
 			// when pressing the Alt+Enter keyboard combination if this message is 
 			// not handled.
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+			osDriver->SendKeyUpEvent(wParam);
+			break;
 		case WM_SYSCHAR:
 			break;
 		case WM_DESTROY:

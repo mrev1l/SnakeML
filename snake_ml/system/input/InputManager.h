@@ -10,17 +10,61 @@
 namespace snakeml
 {
 
-class InputManager
-	: public Singleton<InputManager>
+enum class InputEvent
+{
+	Pressed,
+	Released,
+};
+
+enum class InputAction
+{
+	Exit,
+	DebugRendering,
+
+	Invalid
+};
+
+enum class InputAxis
+{
+	MoveForward,
+	MoveRight,
+
+	Invalid
+};
+
+class InputManager : public Singleton<InputManager>
 {
 public:
+	struct InputAxisData
+	{
+		InputAxis	axis;
+		float		value;
+	};
+
 	InputManager();
 	~InputManager() = default;
 
-	Event<InputManager, InputKey> m_onInputEvent;
+	void Update(float dt);
+
+	Event<InputManager, InputAction>	m_onActionPressed;
+	Event<InputManager, InputAction>	m_onActionReleased;
+	Event<InputManager, InputAxisData>	m_onInputAxisEvent;
 
 private:
-	void ProcessInput(uint64_t inputKey);
+	void ProcessKeyDown(uint64_t inputKey);
+	void ProcessKeyUp(uint64_t inputKey);
+	void ProcessInput_Action(InputAction, InputEvent);
+	void ProcessInput_Axis(InputAxisData);
+
+	std::unordered_map<InputAxis, InputAxisData>	m_activeAxes;
+	std::vector<InputAction>						m_pressedActions;
+	std::vector<InputAction>						m_releasedActions;
+
+	static InputAction GetInputAction(InputKey);
+	static InputAxisData GetInputAxis(InputKey);
+
+	static std::unordered_map<InputKey, InputAction>	s_actionsMappings;
+	static std::unordered_map<InputKey, InputAxisData>	s_axesMappings;
 };
 
 }

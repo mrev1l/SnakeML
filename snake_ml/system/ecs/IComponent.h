@@ -16,6 +16,8 @@ enum class ComponentType : uint32_t
 	PhysicsComponent,
 	MeshComponent,
 	DebugRenderComponent,
+	EntityControllerComponent,
+	InputDataComponent,
 
 	Size
 };

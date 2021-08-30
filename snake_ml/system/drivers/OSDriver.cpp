@@ -6,9 +6,14 @@
 namespace snakeml
 {
 
-void IOSDriver::SendInputEvent(uint64_t keyCode)
+void IOSDriver::SendKeyDownEvent(uint64_t keyCode)
 {
-	m_onInputEvent.Dispatch(keyCode);
+	m_onKeyDownEvent.Dispatch(keyCode);
+}
+
+void IOSDriver::SendKeyUpEvent(uint64_t keyCode)
+{
+	m_onKeyUpEvent.Dispatch(keyCode);
 }
 
 void IOSDriver::SendUpdateEvent(float dt)

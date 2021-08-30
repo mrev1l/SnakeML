@@ -11,9 +11,13 @@ namespace snakeml
 enum class InputKey : uint64_t
 {
 #ifdef _WINDOWS
-	ESC	= VK_ESCAPE,
-	F11	= VK_F11,
-	D	= 0x44,
+	ESC		= VK_ESCAPE,
+	F11		= VK_F11,
+	W		= 0x57,
+	S		= 0x53,
+	D		= 0x44,
+	A		= 0x41,
+	Num1	= VK_NUMPAD1,
 #endif
 };
 

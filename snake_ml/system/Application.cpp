@@ -12,6 +12,7 @@
 #include "ecs/ECSManager.h"
 #include "ecs/systems/InitializeCameraSystem.h"
 #include "ecs/systems/InitializeDebugRenderComponentsSystem.h"
+#include "ecs/systems/EntityControllerSystem.h"
 #include "ecs/systems/InitializePhysicsComponentsSystem.h"
 #include "ecs/systems/InputHandlingSystem.h"
 #include "ecs/systems/LoadMaterialsSystem.h"
@@ -48,7 +49,7 @@ void Application::Initialize()
 	IOSDriver::GetInstance()->m_onUpdateEvent.Subscribe(this, std::bind(&Application::Update, this, std::placeholders::_1));
 
 	new InputManager();
-	InputManager::GetInstance()->m_onInputEvent.Subscribe(this, std::bind(&Application::OnInput, this, std::placeholders::_1));
+	InputManager::GetInstance()->m_onActionReleased.Subscribe(this, std::bind(&Application::OnInput, this, std::placeholders::_1));
 
 	new ECSManager();
 
@@ -62,6 +63,7 @@ void Application::Initialize()
 
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<InputHandlingSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<EntityControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
@@ -82,9 +84,9 @@ void Application::Shutdown()
 	delete inputMgr;
 }
 
-void Application::OnInput(InputKey inputKey)
+void Application::OnInput(InputAction inputEvent)
 {
-	if (inputKey == InputKey::ESC)
+	if (inputEvent == InputAction::Exit)
 	{
 		IOSDriver::GetInstance()->Quit();
 	}
@@ -112,7 +114,7 @@ void Application::Update(float dt)
 		frameCounter = 0;
 		elapsedSeconds = 0.0;
 	}
-
+	InputManager::GetInstance()->Update(dt);
 	ECSManager::GetInstance()->Update(dt);
 	Render();
 }

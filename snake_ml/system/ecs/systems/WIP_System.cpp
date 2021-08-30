@@ -3,9 +3,7 @@
 #include "stdafx.h"
 #include "WIP_System.h"
 
-#include "system/ecs/components/MeshComponent.h"
-#include "system/ecs/components/TransformComponent.h"
-#include "system/ecs/components/PhysicsComponent.h"
+#include "system/ecs/components/EntityControllerComponent.h"
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
@@ -22,11 +20,9 @@ void WIP_System::Update(float deltaTime)
 	// Give initial nudge
 	const uint32_t entityIdToUpdate = 0;
 	Entity& entity = ECSManager::GetInstance()->GetEntity(entityIdToUpdate);
-	PhysicsComponent& body = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+	EntityControllerComponent& controller = *entity.m_components.at(ComponentType::EntityControllerComponent)->As<EntityControllerComponent>();
 
-	const vector force = vector{ 1.0f, 0.5f, 0.f };
-	const vector accDelta = (force * -1.f * 1000.f / body.m_shape.m_mass) * deltaTime;
-	body.m_acceleration += accDelta;
+	controller.m_inputVector = vector::up;
 
 	ECSManager::GetInstance()->UnscheduleSystem(this);
 }
