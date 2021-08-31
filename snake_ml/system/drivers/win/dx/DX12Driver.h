@@ -4,6 +4,8 @@
 #include "DX12RenderTarget.h"
 
 #include "helpers/DX12DebugRenderingSettings.h"
+#include "helpers/XInputHandler.h"
+
 #include "pipeline/DX12CommandQueue.h"
 #include "resource_management/DX12DescriptorAllocator.h"
 
@@ -17,8 +19,7 @@ class Entity;
 namespace win
 {
 
-class DX12Driver
-	: public IRenderDriver
+class DX12Driver : public IRenderDriver
 {
 	static constexpr std::chrono::milliseconds s_DX12FenceDefaultWait = std::chrono::milliseconds::max();
 	static constexpr uint8_t s_backBufferCount = 2u;
@@ -58,6 +59,7 @@ public:
 	void GetMatrices(matrix& outProjection, matrix& outOrthogonal) const;
 
 	const DX12DebugRenderingSettings& GetDebugRenderingSettings() const { return m_debugRenderingSettings; }
+	XInputHandler& GetXInputHandler() { return m_xInputHandler; }
 
 private:
 	void OnInitialize() override;
@@ -103,6 +105,7 @@ private:
 	UINT m_currentBackBufferIndex = 0;
 
 	DX12DebugRenderingSettings m_debugRenderingSettings;
+	XInputHandler m_xInputHandler;
 
 	// Synchronization objects
 	std::array<uint64_t, s_backBufferCount> m_frameFenceValues = {};

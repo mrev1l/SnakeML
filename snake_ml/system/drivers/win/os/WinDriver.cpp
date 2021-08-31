@@ -55,8 +55,12 @@ void WinDriver::OnInitialize()
 
 	WinUtils::ThrowIfFailed(CoInitializeEx(NULL, COINIT_MULTITHREADED));
 
-	new win::DX12Driver(m_windowHandle, m_windowSz);
-	IRenderDriver::GetInstance()->Initialize();
+	DX12Driver* dx12Driver = new win::DX12Driver(m_windowHandle, m_windowSz);
+	dx12Driver->Initialize();
+
+	XInputHandler& xInputHandler = dx12Driver->GetXInputHandler();
+	xInputHandler.m_onGamepadButtonPressed.Subscribe(this, std::bind(&WinDriver::OnGamepadButtonPressed, this, std::placeholders::_1));
+	xInputHandler.m_onGamepadButtonReleased.Subscribe(this, std::bind(&WinDriver::OnGamepadButtonReleased, this, std::placeholders::_1));
 }
 
 void WinDriver::OnRunOSMainLoop()
@@ -130,7 +134,18 @@ void WinDriver::OnQuit()
 void WinDriver::OnUpdate()
 {
 	m_updateClock.Tick();
-	SendUpdateEvent(static_cast<float>( m_updateClock.GetDeltaSeconds()));
+	((DX12Driver*)IRenderDriver::GetInstance())->GetXInputHandler().Update(); // TODO solve cast for drivers?
+	SendUpdateEvent(static_cast<float>(m_updateClock.GetDeltaSeconds()));
+}
+
+void WinDriver::OnGamepadButtonPressed(uint64_t buttonCode)
+{
+	SendKeyDownEvent(buttonCode);
+}
+
+void WinDriver::OnGamepadButtonReleased(uint64_t buttonCode)
+{
+	SendKeyUpEvent(buttonCode);
 }
 
 }

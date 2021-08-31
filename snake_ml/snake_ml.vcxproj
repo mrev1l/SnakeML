@@ -238,6 +238,7 @@
     <ClCompile Include="system\drivers\RenderDriver.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.cpp" />
+    <ClCompile Include="system\drivers\win\dx\helpers\XInputHandler.cpp" />
     <ClCompile Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\dx\resource\DX12Buffer.cpp" />
     <ClCompile Include="system\drivers\win\dx\pipeline\DX12CommandList.cpp" />
@@ -300,6 +301,7 @@
     <ClInclude Include="system\drivers\RenderDriver.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\DX12DebugRenderingSettings.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\DX12PanoToCubemapPSO.h" />
+    <ClInclude Include="system\drivers\win\dx\helpers\XInputHandler.h" />
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupAABBPixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\dx\resource\DX12Buffer.h" />
     <ClInclude Include="system\drivers\win\dx\pipeline\DX12CommandList.h" />

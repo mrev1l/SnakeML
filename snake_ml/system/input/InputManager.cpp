@@ -4,13 +4,11 @@
 #include "InputManager.h"
 
 #include "system/drivers/OSDriver.h"
-#include "system/drivers/RenderDriver.h"
-#include "system/drivers/win/os/helpers/win_utils.h"
 
 namespace snakeml
 {
 
-std::unordered_map<InputKey, InputAction> InputManager::s_actionsMappings = 
+std::unordered_map<InputKey, InputAction> InputManager::s_actionsMappings =
 {
 	{ InputKey::ESC,	InputAction::Exit },
 	{ InputKey::Num1,	InputAction::DebugRendering }
@@ -18,10 +16,17 @@ std::unordered_map<InputKey, InputAction> InputManager::s_actionsMappings =
 
 std::unordered_map<InputKey, InputManager::InputAxisData> InputManager::s_axesMappings =
 {
-	{ InputKey::W,	{ InputAxis::MoveForward,	+1.f } },
-	{ InputKey::S,	{ InputAxis::MoveForward,	-1.f } },
-	{ InputKey::D,	{ InputAxis::MoveRight,		+1.f } },
-	{ InputKey::A,	{ InputAxis::MoveRight,		-1.f } }
+	{ InputKey::W,					{ InputAxis::MoveForward,	+1.f } },
+	{ InputKey::GamepadDpadUp,		{ InputAxis::MoveForward,	+1.f } },
+
+	{ InputKey::S,					{ InputAxis::MoveForward,	-1.f } },
+	{ InputKey::GamepadDpadDown,	{ InputAxis::MoveForward,	-1.f } },
+
+	{ InputKey::D,					{ InputAxis::MoveRight,		+1.f } },
+	{ InputKey::GamepadDpadRight,	{ InputAxis::MoveRight,		+1.f } },
+
+	{ InputKey::A,					{ InputAxis::MoveRight,		-1.f } },
+	{ InputKey::GamepadDpadLeft,	{ InputAxis::MoveRight,		-1.f } }
 };
 
 InputManager::InputManager()

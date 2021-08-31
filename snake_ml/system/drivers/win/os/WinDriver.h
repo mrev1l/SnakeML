@@ -32,6 +32,9 @@ private:
 
 	void OnUpdate() override;
 
+	void OnGamepadButtonPressed(uint64_t buttonCode);
+	void OnGamepadButtonReleased(uint64_t buttonCode);
+
 	HWND m_windowHandle;
 	uint32_t2 m_windowSz;
 	HighResolutionClock m_updateClock;

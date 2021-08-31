@@ -53,6 +53,7 @@ public:
 private:
 	void ProcessKeyDown(uint64_t inputKey);
 	void ProcessKeyUp(uint64_t inputKey);
+
 	void ProcessInput_Action(InputAction, InputEvent);
 	void ProcessInput_Axis(InputAxisData);
 

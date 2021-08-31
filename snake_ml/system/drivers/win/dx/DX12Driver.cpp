@@ -140,7 +140,7 @@ void DX12Driver::OnRender()
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 	if (!commandList || !commandQueue)
 	{
-		ASSERT(false, " ACHTUNG Command Queue is missing!");
+		ASSERT(false, "[DX12Driver::OnRender] : ACHTUNG Command Queue is missing!");
 		return;
 	}
 

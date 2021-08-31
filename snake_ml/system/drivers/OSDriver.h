@@ -5,8 +5,6 @@
 #include "utils/patterns/event.h"
 #include "utils/os_defines.h"
 
-#include <functional>
-
 namespace snakeml
 {
 
@@ -29,6 +27,7 @@ public:
 
 	Event<IOSDriver, uint64_t>	m_onKeyDownEvent;
 	Event<IOSDriver, uint64_t>	m_onKeyUpEvent;
+
 	Event<IOSDriver, float>		m_onUpdateEvent;
 
 protected:
