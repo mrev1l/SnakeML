@@ -25,7 +25,10 @@ void EntityControllerSystem::Update(float dt)
 		{
 			const vector currentVelocityDirection = physics.m_velocity.getNormalized();
 			const vector newMovementDirection = CalculateNewMovingDirection(currentVelocityDirection, normalizedInput);
+
 			physics.m_velocity = newMovementDirection * s_maxMovementSpeed;
+			physics.m_rotation = CalculateNewRotation(newMovementDirection);
+
 			controller.m_inputVector = vector::zero;
 		}
 	}
@@ -53,6 +56,25 @@ vector EntityControllerSystem::CalculateNewMovingDirection(vector currentMovingD
 	{
 		return -currentMovingDirTangent;
 	}
+}
+
+vector EntityControllerSystem::CalculateNewRotation(vector currentMovingDirection)
+{
+	vector result = vector::zero;
+
+	const float movementUpDot = currentMovingDirection.dot(vector::up);
+	if (!IsNearlyZero(movementUpDot))
+	{
+		result.z = ConvertToDegrees(acosf(movementUpDot));
+	}
+	else
+	{
+		const vector movementTangent = perpendicular2d(currentMovingDirection);
+		const float movementTangetUpDot = movementTangent.dot(vector::up);
+		result.z = ConvertToDegrees(acosf(movementTangetUpDot)) - 90.f;
+	}
+
+	return result;
 }
 
 }

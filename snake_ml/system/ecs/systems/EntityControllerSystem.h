@@ -15,6 +15,7 @@ public:
 
 private:
 	vector CalculateNewMovingDirection(vector currentMovingDirection, vector inputDirection);
+	vector CalculateNewRotation(vector currentMovingDirection);
 
 	static constexpr float s_maxMovementSpeed = 100.f;
 };

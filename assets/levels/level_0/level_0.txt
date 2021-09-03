@@ -4,7 +4,7 @@
 		"entityId": 0,
 		"vs": "data/shaders/VS_MvpUV.cso",
 		"ps": "data/shaders/PS_UV.cso",
-		"texture": "data/assets/textures/Directx9.png"
+		"texture": "data/assets/textures/snake-head-0.png"
 	},
 	{
 		"entityId": 2
@@ -23,12 +23,12 @@
 	{
 		"entityId": 0,
 		"vertices": [
-			{"pos" : [ -360.0, 360.0, 0.0 ], "uv" : [0.0, 0.0]},
-			{"pos" : [ 360.0, -360.0, 0.0 ], "uv" : [1.0, 1.0]},
-			{"pos" : [ -360.0, -360.0, 0.0 ], "uv" : [0.0, 1.0]},
-			{"pos" : [ -360.0, 360.0, 0.0 ], "uv" : [0.0, 0.0]},
-			{"pos" : [ 360.0, 360.0, 0.0 ], "uv" : [1.0, 0.0]},
-			{"pos" : [ 360.0, -360.0, 0.0 ], "uv" : [1.0, 1.0]}
+			{"pos" : [ -16.0, 16.0, 0.0 ], "uv" : [0.0, 0.0]},
+			{"pos" : [ 16.0, -16.0, 0.0 ], "uv" : [1.0, 1.0]},
+			{"pos" : [ -16.0, -16.0, 0.0 ], "uv" : [0.0, 1.0]},
+			{"pos" : [ -16.0, 16.0, 0.0 ], "uv" : [0.0, 0.0]},
+			{"pos" : [ 16.0, 16.0, 0.0 ], "uv" : [1.0, 0.0]},
+			{"pos" : [ 16.0, -16.0, 0.0 ], "uv" : [1.0, 1.0]}
 		]
 	},
 	{
@@ -73,7 +73,7 @@
 		"entityId" : 0,
 		"position" : [0.0, 0.0, 0.0],
 		"rotation" : [0.0, 0.0, 0.0],
-		"scale" : [0.1, 0.1, 1.0]
+		"scale" : [1.0, 1.0, 1.0]
 	},
 	{
 		"entityId" : 2,
@@ -103,7 +103,7 @@
 "physics_components": [
 	{
 		"entityId" : 0,
-		"shape_dimensions" : [ 72.0, 72.0, 0.0 ],
+		"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
 		"shape_mass" : 1.0,
 		"is_dynamic" : true
 	},
