@@ -10,10 +10,10 @@ namespace snakeml
 class TransformComponent;
 class PhysicsComponent;
 
-class InitializePhysicsComponentsSystem : public ISystem
+class InitializePhysicsComponentsSystem : public ISystemCastableImpl<InitializePhysicsComponentsSystem>
 {
 public:
-	InitializePhysicsComponentsSystem() : ISystem() {}
+	InitializePhysicsComponentsSystem() = default;
 
 	void Execute() override;
 

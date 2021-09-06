@@ -2,24 +2,33 @@
 
 #include "system/ecs/Entity.h"
 #include "system/ecs/ISystem.h"
+#include "system/ecs/components/PhysicsComponent.h"
 
 #include "utils/math/algorithms/CollisionDetectionGJK.h"
+#include "utils/patterns/event.h"
 #include "utils/types/QuadTree.h"
 
 namespace snakeml
 {
 
-class PhysicsComponent;
-class PhysicsComponentIterator;
 class TransformComponent;
 class MeshComponent;
 
-class PhysicsSystem : public ISystem
+struct Collision
+{
+	uint32_t			entityA;
+	uint32_t			entityB;
+	CollisionChannel	collisionChannel;
+};
+
+class PhysicsSystem : public ISystemCastableImpl<PhysicsSystem>
 {
 public:
 	PhysicsSystem();
 
 	void Update(float deltaTime) override;
+
+	Event<PhysicsSystem, Collision> m_onCollisionEvent;
 
 private:
 	using BoundingBox = std::array<vector, 4>;
@@ -55,6 +64,7 @@ private:
 	static TransformComponent& GetTransformComponent(const PhysicsComponent& body);
 	static MeshComponent& GetMeshComponent(const PhysicsComponent& body);
 	static void GeneratePolygon(const PhysicsComponent& body, Polygon& _outPolygon);
+	static bool IsNarrowPhasePairPresent(std::vector<NarrowPhasePair>& narrowPhase, const PhysicsComponent& bodyA, const PhysicsComponent& bodyB);
 
 	vector m_quadTreeHalfDimensions = vector::zero;
 

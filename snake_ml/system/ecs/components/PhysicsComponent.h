@@ -6,6 +6,23 @@
 namespace snakeml
 {
 
+enum class CollisionChannel : uint32_t
+{
+	Static	= 1 << 0,
+	Dynamic	= 1 << 1,
+
+	None	= 0
+};
+inline constexpr CollisionChannel operator|(CollisionChannel a, CollisionChannel b)
+{
+	return static_cast<CollisionChannel>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+}
+inline constexpr CollisionChannel operator&(CollisionChannel a, CollisionChannel b)
+{
+	return static_cast<CollisionChannel>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+}
+static constexpr CollisionChannel CollisionChannel_ALL = CollisionChannel::Static | CollisionChannel::Dynamic;
+
 struct BoxShape
 {
 	vector m_dimensions		= vector::zero;
@@ -19,15 +36,18 @@ public:
 	virtual ~PhysicsComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::PhysicsComponent; }
 
-	BoxShape m_shape;
-	AABB m_aabb;
-	vector m_position;
-	vector m_rotation;
-	vector m_velocity;
-	vector m_angularVelocity;
-	vector m_acceleration;
-	vector m_angularAcceleration;
-	bool m_isDynamic = false;
+	BoxShape m_shape					= BoxShape();
+	AABB m_aabb							= AABB{ vector::zero, vector::zero };
+	vector m_position					= vector::zero;
+	vector m_rotation					= vector::zero;
+	vector m_velocity					= vector::zero;
+	vector m_angularVelocity			= vector::zero;
+	vector m_acceleration				= vector::zero;
+	vector m_angularAcceleration		= vector::zero;
+	// TODO : Deprecate ?
+	bool m_isDynamic					= false;
+	CollisionChannel m_collisionChannel	= CollisionChannel::None;
+	CollisionChannel m_collisionFilter	= CollisionChannel_ALL;
 };
 REGISTER_TYPE(PhysicsComponent);
 

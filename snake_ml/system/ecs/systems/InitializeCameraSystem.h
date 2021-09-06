@@ -5,10 +5,10 @@
 namespace snakeml
 {
 
-class InitializeCameraSystem : public ISystem
+class InitializeCameraSystem : public ISystemCastableImpl<InitializeCameraSystem>
 {
 public:
-	InitializeCameraSystem() : ISystem() {}
+	InitializeCameraSystem() = default;
 
 	void Execute() override;
 };

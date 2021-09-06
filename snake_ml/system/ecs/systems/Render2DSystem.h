@@ -7,10 +7,10 @@
 namespace snakeml
 {
 
-class Render2DSystem : public ISystem
+class Render2DSystem : public ISystemCastableImpl<Render2DSystem>
 {
 public:
-	Render2DSystem() : ISystem() {}
+	Render2DSystem() = default;
 
 	void Update(float deltaTime) override;
 };

@@ -20,10 +20,10 @@ class DX12RenderComponent;
 class DX12Texture;
 class DX12VertexBuffer;
 
-class InitializeRenderComponentsSystem : public ISystem
+class InitializeRenderComponentsSystem : public ISystemCastableImpl<InitializeRenderComponentsSystem>
 {
 public:
-	InitializeRenderComponentsSystem() : ISystem() {}
+	InitializeRenderComponentsSystem() = default;
 
 	void Execute() override;
 

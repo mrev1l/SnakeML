@@ -5,15 +5,16 @@
 #include "third_party/rapidjson/document.h" // rapidjson's DOM-style API
 
 #include "system/ecs/components/MaterialComponent.h"
+#include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/ISystem.h"
 
 namespace snakeml
 {
 // todo rework into load level system
-class LoadMaterialsSystem : public ISystem
+class LoadMaterialsSystem : public ISystemCastableImpl<LoadMaterialsSystem>
 {
 public:
-	LoadMaterialsSystem() : ISystem() {}
+	LoadMaterialsSystem() = default;
 
 	void Execute() override;
 
@@ -42,12 +43,18 @@ private:
 	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, vector& _outShapeDimensions);
 	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
 	static void ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic);
+	static void ParsePhysicsComponents_CollisionChannel(const rapidjson::Value& json, CollisionChannel& _outCollisionChannel);
+	static void ParsePhysicsComponents_CollisionFilter(const rapidjson::Value& json, CollisionChannel& _outCollisionFilter);
 	// *******  *******  *******  *******  ******
 
 	// ******* Parsing Mesh components *******
 	static void ParseMeshes(const rapidjson::Document& json);
 	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<float3, float2>>& outVertices);
 	// ******* ******* ******* ******* *******
+
+	// ******* Parsing Consumable components *******
+	static void ParseConsumables(const rapidjson::Document& json);
+	// ******* ********* ********* ******** ********
 
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
 };

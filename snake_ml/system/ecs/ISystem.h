@@ -7,7 +7,7 @@
 namespace snakeml
 {
 
-class ISystem
+class ISystem : public ICastable
 {
 public:
 	ISystem() : m_id(++s_globalSystemIdCounter) {}
@@ -23,5 +23,6 @@ private:
 	// Add nocopyable interface
 	static uint32_t s_globalSystemIdCounter;
 };
+REGISTER_CASTABLE_TYPE(ISystem);
 
 }

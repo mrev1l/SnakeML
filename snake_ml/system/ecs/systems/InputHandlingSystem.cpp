@@ -11,7 +11,7 @@
 namespace snakeml
 {
 
-InputHandlingSystem::InputHandlingSystem()
+InputHandlingSystem::InputHandlingSystem() : ISystemCastableImpl<InputHandlingSystem>()
 {
 	InputManager::GetInstance()->m_onActionReleased.Subscribe(this, std::bind(&InputHandlingSystem::OnInput, this, std::placeholders::_1));
 	InputManager::GetInstance()->m_onInputAxisEvent.Subscribe(this, std::bind(&InputHandlingSystem::OnAxis, this, std::placeholders::_1));

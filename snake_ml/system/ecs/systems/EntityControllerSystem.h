@@ -5,7 +5,8 @@
 namespace snakeml
 {
 
-class EntityControllerSystem : public ISystem
+// TODO : Rename into snake head controller?
+class EntityControllerSystem : public ISystemCastableImpl<EntityControllerSystem>
 {
 public:
 	EntityControllerSystem() = default;

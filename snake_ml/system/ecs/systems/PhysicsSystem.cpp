@@ -6,7 +6,6 @@
 #include "system/drivers/OSDriver.h"
 
 #include "system/ecs/components/MeshComponent.h"
-#include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/components/TransformComponent.h"
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
@@ -21,7 +20,7 @@ namespace snakeml
 TransformComponent* PhysicsSystem::s_emptyTransformComponent = new TransformComponent();
 MeshComponent* PhysicsSystem::s_emptyMeshComponent = new MeshComponent();
 
-PhysicsSystem::PhysicsSystem()
+PhysicsSystem::PhysicsSystem() : ISystemCastableImpl<PhysicsSystem>()
 {
 	uint32_t levelWidth = -1, levelHeight = -1;
 	IOSDriver::GetInstance()->GetAppDimensions(levelWidth, levelHeight);
@@ -60,7 +59,8 @@ void PhysicsSystem::SimulatePhysics(const PhysicsComponentIterator& bodiesIt, fl
 	{
 		TransformComponent& transform = GetTransformComponent(body);
 
-		if (body.m_isDynamic)
+		// TODO : Deprecate ? if (body.m_isDynamic)
+		if(body.m_collisionChannel != CollisionChannel::Static)
 		{
 			SimulatePhysicsStep(body, transform, dt);
 		}
@@ -86,7 +86,8 @@ void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator& bodiesIt)
 {
 	for (PhysicsComponent& body : bodiesIt)
 	{
-		if (body.m_isDynamic)
+		// TODO : Deprecate ? if (body.m_isDynamic)
+		if (body.m_collisionChannel != CollisionChannel::Static)
 		{
 			body.m_aabb = AABB::GenerateAABB(body.m_shape.m_dimensions, body.m_position, body.m_rotation);
 		}
@@ -110,7 +111,8 @@ void PhysicsSystem::BroadPhaseStep(QuadTree<PhysicsComponent>& quadTree, const P
 {
 	for (PhysicsComponent& body : bodiesIt)
 	{
-		if (!body.m_isDynamic)
+		// TODO : Deprecate ? if (!body.m_isDynamic)
+		if (body.m_collisionChannel == CollisionChannel::Static)
 		{
 			continue;
 		}
@@ -128,24 +130,29 @@ void PhysicsSystem::CalculateBroadphaseForBody(const QuadTree<PhysicsComponent>&
 
 	for (auto object : objects)
 	{
-		if (&object->userData.m_entityId == &body.m_entityId)
+		PhysicsComponent& a = body;
+		PhysicsComponent& b = object->userData;
+		
+		const bool isTheSameEntity = a.m_entityId == b.m_entityId;
+		const bool isCollisionFilteredOut = (a.m_collisionFilter & b.m_collisionChannel) == CollisionChannel::None;
+		const bool isAlreadyDetected = IsNarrowPhasePairPresent(_outNarrowPhase, a, b);
+
+		if(isTheSameEntity || isCollisionFilteredOut || isAlreadyDetected)
 		{
 			continue;
 		}
-		const AABB& a = body.m_aabb;
-		const AABB& b = object->userData.m_aabb;
 
-		const bool areIntersecting = AABB::TestIntersection_AABB_AABB(a, b);
+		const bool areIntersecting = AABB::TestIntersection_AABB_AABB(a.m_aabb, b.m_aabb);
 
 		if (areIntersecting)
 		{
 			Polygon polygonA, polygonB;
 			
-			GeneratePolygon(body, polygonA);
-			GeneratePolygon(object->userData, polygonB);
+			GeneratePolygon(a, polygonA);
+			GeneratePolygon(b, polygonB);
 			
-			NarrowPhaseBody narrowPhaseBodyA(body, std::forward<Polygon>(polygonA));
-			NarrowPhaseBody narrowPhaseBodyB(object->userData, std::forward<Polygon>(polygonB));
+			NarrowPhaseBody narrowPhaseBodyA(a, std::forward<Polygon>(polygonA));
+			NarrowPhaseBody narrowPhaseBodyB(b, std::forward<Polygon>(polygonB));
 
 			_outNarrowPhase.emplace_back(std::move(NarrowPhasePair(std::forward<NarrowPhaseBody>(narrowPhaseBodyA), std::forward<NarrowPhaseBody>(narrowPhaseBodyB))));
 		}
@@ -161,7 +168,16 @@ void PhysicsSystem::NarrowPhaseIntersectionSolutionStep(const std::vector<Narrow
 
 		if (foundIntersection.areIntersecting)
 		{
-			ResolveIntersection(pair, foundIntersection);
+			Collision collisionData =
+			{
+				pair.a.physicsObject.m_entityId,
+				pair.b.physicsObject.m_entityId,
+				pair.b.physicsObject.m_collisionChannel
+			};
+			m_onCollisionEvent.Dispatch(collisionData);
+			// this is first-pass
+			//ResolveIntersection(pair, foundIntersection)
+			IOSDriver::GetInstance()->LogMessage(L"INTERSECTION\n");
 		}
 	}
 }
@@ -177,15 +193,14 @@ void PhysicsSystem::ResolveNarrowPhase(const NarrowPhasePair& narrowPhase, GJK::
 
 void PhysicsSystem::ResolveIntersection(const NarrowPhasePair& narrowPhase, const GJK::Intersection& intersection)
 {
-	if (narrowPhase.a.physicsObject.m_isDynamic)
+	// TODO : Deprecate ? if (narrowPhase.a.physicsObject.m_isDynamic)
+	if (narrowPhase.a.physicsObject.m_collisionChannel == CollisionChannel::Dynamic)
 	{
 		narrowPhase.a.physicsObject.m_position -= intersection.penetrationVector * intersection.penetrationDepth;
 
 		vector reflectedVelocity = narrowPhase.a.physicsObject.m_velocity - (-intersection.penetrationVector * 2.f * narrowPhase.a.physicsObject.m_velocity.dot(-intersection.penetrationVector));
 		narrowPhase.a.physicsObject.m_velocity = reflectedVelocity;
 		narrowPhase.a.physicsObject.m_acceleration = vector::zero;
-
-		IOSDriver::GetInstance()->LogMessage(L"INTERSECTION\n");
 	}
 }
 
@@ -204,6 +219,20 @@ void PhysicsSystem::GeneratePolygon(const PhysicsComponent& body, Polygon& _outP
 		const vector v = { vertex.first.x, vertex.first.y, vertex.first.z };
 		_outPolygon.push_back(modelMatrix * v);
 	}
+}
+
+bool PhysicsSystem::IsNarrowPhasePairPresent(std::vector<NarrowPhasePair>& narrowPhase, const PhysicsComponent& bodyA, const PhysicsComponent& bodyB)
+{
+	return std::find_if(
+		narrowPhase.begin(),
+		narrowPhase.end(),
+		[bodyA, bodyB](const NarrowPhasePair& pair) -> bool
+		{
+			const bool aBodyIsPresent = pair.a.physicsObject.m_entityId == bodyA.m_entityId || pair.b.physicsObject.m_entityId == bodyA.m_entityId;
+			const bool bBodyIsPresent = pair.a.physicsObject.m_entityId == bodyB.m_entityId || pair.b.physicsObject.m_entityId == bodyB.m_entityId;
+			return aBodyIsPresent && bBodyIsPresent;
+		}
+	) != narrowPhase.end();
 }
 
 TransformComponent& PhysicsSystem::GetTransformComponent(const PhysicsComponent& body)

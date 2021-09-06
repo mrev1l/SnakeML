@@ -5,7 +5,7 @@
 namespace snakeml
 {
 
-class InitializeDebugRenderComponentsSystem : public ISystem
+class InitializeDebugRenderComponentsSystem : public ISystemCastableImpl<InitializeDebugRenderComponentsSystem>
 {
 public:
 	InitializeDebugRenderComponentsSystem() = default;

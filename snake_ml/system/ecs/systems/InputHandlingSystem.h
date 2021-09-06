@@ -5,7 +5,7 @@
 namespace snakeml
 {
 
-class InputHandlingSystem : public ISystem
+class InputHandlingSystem : public ISystemCastableImpl<InputHandlingSystem>
 {
 public:
 	InputHandlingSystem();

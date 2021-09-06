@@ -10,6 +10,7 @@
 #endif
 
 #include "ecs/ECSManager.h"
+#include "ecs/systems/ConsumablesSystem.h"
 #include "ecs/systems/InitializeCameraSystem.h"
 #include "ecs/systems/InitializeDebugRenderComponentsSystem.h"
 #include "ecs/systems/EntityControllerSystem.h"
@@ -65,6 +66,7 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<InputHandlingSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<EntityControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ConsumablesSystem>()); // TODO : ordering!
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
 

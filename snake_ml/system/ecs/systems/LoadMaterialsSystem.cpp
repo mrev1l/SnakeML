@@ -7,8 +7,8 @@
 
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/components/MeshComponent.h"
-#include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/components/TransformComponent.h"
+#include "system/ecs/components/ConsumableComponent.h"
 
 namespace snakeml
 {
@@ -26,6 +26,7 @@ void LoadMaterialsSystem::Execute()
 	ParseMeshes(jsonDocument);
 	ParseTransforms(jsonDocument);
 	ParsePhysicsComponents(jsonDocument);
+	ParseConsumables(jsonDocument);
 }
 
 void LoadMaterialsSystem::ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson)
@@ -174,6 +175,8 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 			ParsePhysicsComponents_ShapeDimensions(physicsComponentJson, physicsComponent.m_shape.m_dimensions);
 			ParsePhysicsComponents_ShapeMass(physicsComponentJson, physicsComponent.m_shape.m_mass);
 			ParsePhysicsComponents_IsDynamic(physicsComponentJson, physicsComponent.m_isDynamic);
+			ParsePhysicsComponents_CollisionChannel(physicsComponentJson, physicsComponent.m_collisionChannel);
+			ParsePhysicsComponents_CollisionFilter(physicsComponentJson, physicsComponent.m_collisionFilter);
 		}
 
 		ECSManager::GetInstance()->InsertComponents<PhysicsComponentIterator>(it);
@@ -201,6 +204,22 @@ void LoadMaterialsSystem::ParsePhysicsComponents_IsDynamic(const rapidjson::Valu
 	ASSERT(json.HasMember("is_dynamic") && json["is_dynamic"].IsBool(), "Invalid is dynamic json");
 
 	_outIsDynamic = json["is_dynamic"].GetBool();
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents_CollisionChannel(const rapidjson::Value& json, CollisionChannel& _outCollisionChannel)
+{
+	ASSERT(json.HasMember("collision_channel") && json["collision_channel"].IsUint(), "Invalid collision channel json");
+
+	const uint32_t collisionChannelData = json["collision_channel"].GetUint();
+	_outCollisionChannel = static_cast<CollisionChannel>(collisionChannelData);
+}
+
+void LoadMaterialsSystem::ParsePhysicsComponents_CollisionFilter(const rapidjson::Value& json, CollisionChannel& _outCollisionFilter)
+{
+	ASSERT(json.HasMember("collision_filter") && json["collision_filter"].IsUint(), "Invalid collision filter json");
+
+	const uint32_t collisionChannelData = json["collision_filter"].GetUint();
+	_outCollisionFilter = static_cast<CollisionChannel>(collisionChannelData);
 }
 
 void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
@@ -250,6 +269,27 @@ void LoadMaterialsSystem::ParseMeshes_VerticesArray(const rapidjson::Value& json
 		}
 
 		++vertexIt;
+	}
+}
+
+void LoadMaterialsSystem::ParseConsumables(const rapidjson::Document& json)
+{
+	const bool hasConsumables = json.HasMember("consumable_components") && json["consumable_components"].IsArray();
+	if (hasConsumables)
+	{
+		const rapidjson::GenericArray<true, rapidjson::Value>& consumablesDataArray = json["consumable_components"].GetArray();
+		const size_t consumableComponentsCount = consumablesDataArray.Size();
+
+		ConsumableComponentIterator* it = IComponent::CreateIterator(ComponentType::ConsumableComponent, consumableComponentsCount)->As<ConsumableComponentIterator>();
+		for (size_t i = 0u; i < consumableComponentsCount; ++i)
+		{
+			ConsumableComponent& consumableComponent = it->At(i);
+			const rapidjson::Value& consumableComponentJson = *(consumablesDataArray.Begin() + i);
+
+			ParseComponent_EntityId(consumableComponentJson, consumableComponent.m_entityId);
+		}
+
+		ECSManager::GetInstance()->InsertComponents<ConsumableComponentIterator>(it);
 	}
 }
 

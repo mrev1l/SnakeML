@@ -18,6 +18,7 @@ enum class ComponentType : uint32_t
 	DebugRenderComponent,
 	EntityControllerComponent,
 	InputDataComponent,
+	ConsumableComponent,
 
 	Size
 };

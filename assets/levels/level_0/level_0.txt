@@ -128,37 +128,54 @@
 		"entityId" : 0,
 		"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : true
+		"is_dynamic" : true,
+		"collision_channel" : 2,
+		"collision_filter" : 3
 	},
 	{
 		"entityId" : 2,
 		"shape_dimensions" : [ 2.0, 720.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : false
+		"is_dynamic" : false,
+		"collision_channel" : 1,
+		"collision_filter" : 2
 	},
 	{
 		"entityId" : 3,
 		"shape_dimensions" : [ 2.0, 720.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : false
+		"is_dynamic" : false,
+		"collision_channel" : 1,
+		"collision_filter" : 2
 	},
 	{
 		"entityId" : 4,
 		"shape_dimensions" : [ 720.0, 2.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : false
+		"is_dynamic" : false,
+		"collision_channel" : 1,
+		"collision_filter" : 2
 	},
 	{
 		"entityId" : 5,
 		"shape_dimensions" : [ 720.0, 2.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : false
+		"is_dynamic" : false,
+		"collision_channel" : 1,
+		"collision_filter" : 2
 	},
 	{
 		"entityId" : 6,
 		"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
 		"shape_mass" : 1.0,
-		"is_dynamic" : true
+		"is_dynamic" : true,
+		"collision_channel" : 2,
+		"collision_filter" : 2
+	}
+],
+"consumable_components": [
+	{
+		"entityId" : 6
 	}
 ]
 }

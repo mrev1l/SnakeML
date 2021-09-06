@@ -9,10 +9,10 @@ namespace snakeml
 namespace wip
 {
 
-class WIP_System : public ISystem
+class WIP_System : public ISystemCastableImpl<WIP_System>
 {
 public:
-	WIP_System() : ISystem() {}
+	WIP_System() = default;
 
 	void Update(float deltaTime) override;
 };

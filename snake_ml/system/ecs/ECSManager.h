@@ -15,6 +15,7 @@ public:
 	ECSManager() = default;
 	~ECSManager() = default;
 
+	/** Relay to entity-components pool */
 	template<class ConcreteIteratorType>
 	void InsertComponents(Iterator* it);
 	template<class ComponentsIterator>
@@ -23,11 +24,15 @@ public:
 	std::unordered_map<uint32_t, Entity>& GetEntities();
 	Entity& GetEntity(uint32_t id);
 
+	/** Relay to systems pool */
 	void ExecuteSystem(const std::unique_ptr<ISystem>& system) const;
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 	void UnscheduleSystem(const ISystem* system);
 
 	void Update(float deltaTime);
+
+	template<class SystemT>
+	SystemT* GetSystem() const;
 
 private:
 	EntityComponentPool m_entityComponentPool;
