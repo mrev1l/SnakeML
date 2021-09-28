@@ -12,6 +12,10 @@
 
 #include "system/ecs/components/TransformComponent.h"
 
+
+#include "system/ecs/components/CameraComponent.h"
+#include "system/ecs/ECSManager.h"
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -174,6 +178,22 @@ void DX12Driver::OnRender_ExecuteFrame(std::shared_ptr<DX12CommandQueue> command
 	{
 		DX12RenderCommand* dx12Command = (DX12RenderCommand*)command.get();
 		dx12Command->Execute(commandList);
+	}
+
+	// test
+	{
+		CameraComponent& camera = ECSManager::GetInstance()->GetComponents<CameraComponentIterator>()->At(0);
+		LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
+
+		commandList->SetPipelineState(testPipelineState);
+		commandList->SetGraphicsRootSignature(testRootSig);
+		commandList->SetGraphics32BitConstants(RootParameters::MatricesCB, 
+			LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection) * m_orthogonalMatrix);
+		commandList->SetGraphics32BitConstants(2, 1);
+		commandList->SetShaderResourceView(RootParameters::Textures, 0, testTexture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		commandList->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->SetVertexBuffer(0, testVertexBuffer);
+		commandList->Draw(static_cast<uint32_t>(testVertexBuffer.GetNumVertices()));
 	}
 
 	commandQueue->ExecuteCommandList(commandList);

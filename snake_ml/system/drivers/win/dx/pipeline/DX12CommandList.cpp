@@ -258,6 +258,119 @@ void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstri
 	}
 }
 
+void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::vector<std::wstring>& fileNames, TextureUsage textureUsage)
+{
+	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
+
+	std::vector<std::filesystem::path> filePaths(fileNames.size());
+
+	for (int i = 0; i < fileNames.size(); ++i)
+	{
+		filePaths[i] = std::filesystem::path(fileNames[i]);
+		if (!std::filesystem::exists(filePaths[i]))
+		{
+			throw std::exception("File not found.");
+		}
+	}
+
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources(fileNames.size());
+
+	auto iter = s_textureCache.find(fileNames[0]); // TODO: solve
+	if (iter != s_textureCache.end())
+	{
+		texture.SetTextureUsage(textureUsage);
+		texture.SetD3D12Resource(iter->second);
+		texture.CreateViews();
+		texture.SetName(fileNames[0]);
+	}
+	else
+	{
+		std::vector<DirectX::TexMetadata> metadata(fileNames.size());
+		std::vector<DirectX::ScratchImage> scratchImage(fileNames.size());
+
+		for (int i = 0; i < fileNames.size(); ++i)
+		{
+			auto filePath = filePaths[i];
+
+			if (filePath.extension() == ".dds")
+			{
+				// Use DDS texture loader.
+				WinUtils::ThrowIfFailed(LoadFromDDSFile(fileNames[i].c_str(), DirectX::DDS_FLAGS_NONE, &metadata[i], scratchImage[i]));
+			}
+			else if (filePath.extension() == ".hdr")
+			{
+				WinUtils::ThrowIfFailed(LoadFromHDRFile(fileNames[i].c_str(), &metadata[i], scratchImage[i]));
+			}
+			else if (filePath.extension() == ".tga")
+			{
+				WinUtils::ThrowIfFailed(LoadFromTGAFile(fileNames[i].c_str(), &metadata[i], scratchImage[i]));
+			}
+			else
+			{
+				WinUtils::ThrowIfFailed(LoadFromWICFile(fileNames[i].c_str(), DirectX::WIC_FLAGS_NONE, &metadata[i], scratchImage[i]));
+			}
+
+			if (textureUsage == TextureUsage::Albedo)
+			{
+				metadata[i].format = DirectX::MakeSRGB(metadata[i].format);
+			}
+
+			const DirectX::Image* pImages = scratchImage[i].GetImages();
+			ASSERT(scratchImage[i].GetImageCount() == 1, "Weird image count");
+			//for (size_t i = 0; i < scratchImage[i].GetImageCount(); ++i)
+			{
+				auto& subresource = subresources[i];
+				subresource.RowPitch = pImages[0].rowPitch;
+				subresource.SlicePitch = pImages[0].slicePitch;
+				subresource.pData = pImages[0].pixels;
+			}
+		}
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
+
+		D3D12_RESOURCE_DESC textureDesc = {};
+		textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		textureDesc.Format = metadata[0].format;
+		textureDesc.MipLevels = 1;
+		textureDesc.Alignment = 0;
+		textureDesc.DepthOrArraySize = metadata.size();
+		textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		textureDesc.Height = metadata[0].height;
+		textureDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Width = metadata[0].width;
+
+		{
+			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
+			WinUtils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
+				D3D12_HEAP_FLAG_NONE,
+				&textureDesc,
+				D3D12_RESOURCE_STATE_COMMON,
+				nullptr,
+				IID_PPV_ARGS(&textureResource)));
+		}
+		// Update the global state tracker.
+		DX12ResourceStateTracker::AddGlobalResourceState(textureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
+
+		texture.SetTextureUsage(textureUsage);
+		texture.SetD3D12Resource(textureResource);
+		texture.CreateViews();
+		texture.SetName(fileNames[0]);
+
+		CopyTextureSubresource(texture, 0, static_cast<uint32_t>(subresources.size()), subresources.data());
+
+		/*if (subresources.size() < textureResource->GetDesc().MipLevels)
+		{
+			GenerateMips(texture);
+		}*/
+
+		// Add the texture resource to the texture cache.
+		std::lock_guard<std::mutex> lock(s_textureCacheMutex);
+		s_textureCache[fileNames[0]] = textureResource.Get();
+	}
+}
+
 void DX12CommandList::ClearTexture(const DX12Texture& texture, const float clearColor[4])
 {
 	TransitionBarrier(texture, D3D12_RESOURCE_STATE_RENDER_TARGET);
