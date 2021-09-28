@@ -46,6 +46,149 @@ void InitializeRenderComponentsSystem::Execute()
 	}
 
 	ECSManager::GetInstance()->InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
+
+
+	////////////// test
+	{
+		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob;
+		InitRenderComponent_LoadShaders(L"data/shaders/VS_MvpUV.cso", L"data/shaders/PS_UV_TextureArray.cso", vertexShaderBlob, pixelShaderBlob);
+
+		CD3DX12_DESCRIPTOR_RANGE1 descriptorRange;
+		//descriptorRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0);
+		descriptorRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+		std::vector<CD3DX12_ROOT_PARAMETER1> rootParameters(3);
+		for (size_t i = 0u; i < rootParameters.size(); ++i)
+		{
+			if (i == 0)
+			{
+				rootParameters[i].InitAsConstants(
+					GetRootParameterNumValues(RootParameters::MatricesCB),
+					0,
+					0,
+					GetRootParameterShaderVisibility(RootParameters::MatricesCB));
+			}
+			else if (i == 1)
+			{
+				rootParameters[i].InitAsDescriptorTable(
+					GetRootParameterNumValues(RootParameters::Textures),
+					&descriptorRange,
+					GetRootParameterShaderVisibility(RootParameters::Textures));
+			}
+			else if (i == 2)
+			{
+				rootParameters[i].InitAsConstants(
+					1,
+					1);
+			}
+		}
+		CD3DX12_STATIC_SAMPLER_DESC linearRepeatSampler(0, D3D12_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR);
+
+		DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
+		auto device = dx12Driver->GetD3D12Device();
+
+		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
+		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
+		if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
+		{
+			featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
+		}
+
+		// Allow input layout and deny unnecessary access to certain pipeline stages.
+		D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+
+		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription;
+		rootSignatureDescription.Init_1_1(static_cast<UINT>(rootParameters.size()), rootParameters.data(), 1, &linearRepeatSampler, rootSignatureFlags);
+
+		dx12Driver->testRootSig.SetRootSignatureDesc(rootSignatureDescription.Desc_1_1, featureData.HighestVersion);
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
+		inputLayout.resize(2);
+
+		for (std::vector<D3D12_INPUT_ELEMENT_DESC>::size_type idx = 0; idx < inputLayout.size(); ++idx)
+		{
+			D3D12_INPUT_ELEMENT_DESC& inputLayourEntry = inputLayout[idx];
+
+			if (idx == 0)
+			{
+				inputLayourEntry = {
+					"POSITION",
+					0,
+					DXGI_FORMAT_R32G32B32_FLOAT,
+					0,
+					D3D12_APPEND_ALIGNED_ELEMENT,
+					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+					0
+				};
+			}
+			if (idx == 1)
+			{
+				inputLayourEntry = {
+					"TEXCOORD",
+					0,
+					DXGI_FORMAT_R32G32_FLOAT,
+					0,
+					D3D12_APPEND_ALIGNED_ELEMENT,
+					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+					0
+				};
+			}
+		}
+
+		struct PipelineStateStream
+		{
+			CD3DX12_PIPELINE_STATE_STREAM_ROOT_SIGNATURE pRootSignature;
+			CD3DX12_PIPELINE_STATE_STREAM_INPUT_LAYOUT InputLayout;
+			CD3DX12_PIPELINE_STATE_STREAM_PRIMITIVE_TOPOLOGY PrimitiveTopologyType;
+			CD3DX12_PIPELINE_STATE_STREAM_VS VS;
+			CD3DX12_PIPELINE_STATE_STREAM_PS PS;
+			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DSVFormat;
+			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RTVFormats;
+			CD3DX12_PIPELINE_STATE_STREAM_SAMPLE_DESC SampleDesc;
+			CD3DX12_PIPELINE_STATE_STREAM_RASTERIZER Rasterizer;
+		} pipelineStateStream;
+
+		// Check the best multisample quality level that can be used for the given back buffer format.
+		DXGI_SAMPLE_DESC sampleDesc = dx12Driver->GetMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, D3D12_MAX_MULTISAMPLE_SAMPLE_COUNT);
+
+		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
+		rtvFormats.NumRenderTargets = 1;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+		pipelineStateStream.pRootSignature = dx12Driver->testRootSig.GetRootSignature().Get();
+		pipelineStateStream.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
+		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
+		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.Get());
+		pipelineStateStream.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		pipelineStateStream.RTVFormats = rtvFormats;
+		pipelineStateStream.SampleDesc = sampleDesc;
+		pipelineStateStream.Rasterizer = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+
+		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
+			sizeof(PipelineStateStream), &pipelineStateStream
+		};
+		WinUtils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&dx12Driver->testPipelineState)));
+
+		std::vector<std::wstring> files =
+		{
+			L"data/assets/textures/snake-head-2.png",
+			L"data/assets/textures/snake-head-1.png"
+		};
+		commandList->LoadTextureFromFile(dx12Driver->testTexture, files);
+	}
+
+	if (commandQueue)
+	{
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		commandQueue->WaitForFenceValue(fenceValue);
+	}
+
+	int stop = 34;
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12CommandList> commandList, const MaterialComponent& materialComponent, const MeshComponent& meshComponent, DX12RenderComponent& _outRenderComponent)
@@ -56,6 +199,11 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 
 	const std::vector<std::pair<float3, float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<float3, float2>>() : meshComponent.m_vertices;
 	InitRenderComponent_LoadBuffers(commandList, vertices, _outRenderComponent.m_vertexBuffer);
+	if (materialComponent.m_entityId == 0)
+	{
+		DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
+		InitRenderComponent_LoadBuffers(commandList, vertices, dx12Driver->testVertexBuffer);
+	}
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob;
 	InitRenderComponent_LoadShaders(materialComponent.m_vs.data(), materialComponent.m_ps.data(), vertexShaderBlob, pixelShaderBlob);
@@ -67,7 +215,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	}
 	InitRenderComponent_InitializeRootSignatures(rootParamsIds, _outRenderComponent.m_rootSignature);
 
-	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout, inputLayoutDebug;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
 	InitRenderComponent_GenerateInputLayouts(materialComponent.m_inputLayoutEntries, inputLayout);
 
 	InitRenderComponent_InitializePSOs(

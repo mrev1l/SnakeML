@@ -454,6 +454,7 @@
     <FxCompile Include="resources\shaders\VS_MvpUV.hlsl" />
     <FxCompile Include="resources\shaders\PS_UV.hlsl" />
     <FxCompile Include="resources\shaders\PanoToCubemap_CS.hlsl" />
+    <FxCompile Include="resources\shaders\PS_UV_TextureArray.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="utils\math\vector.inl">
