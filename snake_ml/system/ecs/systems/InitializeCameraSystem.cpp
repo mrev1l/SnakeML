@@ -15,7 +15,7 @@ void InitializeCameraSystem::Execute()
 {
 	{
 		CameraComponentIterator* it = IComponent::CreateIterator(ComponentType::CameraComponent, 1)->As<CameraComponentIterator>();
-		CameraComponent& camera = it->At(0);
+		CameraComponent& camera = it->Add();
 
 		camera.m_entityId = 1;
 		camera.m_eyePosition =	{ 0.f, 0.f, -10.f };
@@ -27,7 +27,7 @@ void InitializeCameraSystem::Execute()
 
 	{
 		InputDataComponentIterator* it = IComponent::CreateIterator(ComponentType::InputDataComponent, 1)->As<InputDataComponentIterator>();
-		InputDataComponent& inputDataComponent = it->At(0);
+		InputDataComponent& inputDataComponent = it->Add();
 
 		inputDataComponent.m_entityId = 1;
 
@@ -36,7 +36,7 @@ void InitializeCameraSystem::Execute()
 
 	{
 		EntityControllerComponentIterator* it = IComponent::CreateIterator(ComponentType::EntityControllerComponent, 1)->As<EntityControllerComponentIterator>();
-		EntityControllerComponent& controllerComponent = it->At(0);
+		EntityControllerComponent& controllerComponent = it->Add();
 
 		controllerComponent.m_entityId = 0;
 		controllerComponent.m_inputVector = vector::zero;

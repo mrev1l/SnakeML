@@ -17,7 +17,7 @@ void InitializeDebugRenderComponentsSystem::Execute()
 	
 	for (size_t idx = 0; idx < physicsComponentsIt->Size(); ++idx)
 	{
-		DebugRenderComponent& debugRenderComponent = debugRenderComponents->At(idx);
+		DebugRenderComponent& debugRenderComponent = debugRenderComponents->Add();
 		PhysicsComponent& physicsComponent = physicsComponentsIt->At(idx);
 		
 		debugRenderComponent.m_entityId = physicsComponent.m_entityId;

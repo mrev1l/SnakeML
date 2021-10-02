@@ -63,7 +63,7 @@ void InitializeRenderComponentsSystem::Execute()
 	ASSERT(meshesIt->Size() == materialsIt->Size(), "Renderables initialization is going to fail");
 	for (size_t i = 0; i < materialsIt->Size(); ++i)
 	{
-		DX12RenderComponent& renderComponent = renderComponentsIt->At(i);
+		DX12RenderComponent& renderComponent = renderComponentsIt->Add();
 		const MaterialComponent& materialComponent = materialsIt->At(i);
 		const MeshComponent& mesh = meshesIt->At(i);
 
