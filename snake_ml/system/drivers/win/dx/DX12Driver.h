@@ -23,7 +23,7 @@ class DX12Driver : public IRenderDriver
 {
 	static constexpr std::chrono::milliseconds s_DX12FenceDefaultWait = std::chrono::milliseconds::max();
 	static constexpr uint8_t s_backBufferCount = 2u;
-	static constexpr FLOAT s_defaultClearColor[4] = { 0.f,0.f,0.f,1.f };
+	static constexpr FLOAT s_defaultClearColor[4] = { 0.01f,0.01f,0.01f,1.f };
 
 public:
 	enum class CommandQueueType
