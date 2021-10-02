@@ -26,16 +26,31 @@ enum class ComponentType : uint32_t
 #define REGISTER_TYPE(ObjectType) \
 	class ObjectType##Iterator : public IteratorCastableImpl<ObjectType##Iterator> { \
 	public: \
-		ObjectType##Iterator(IComponent* data, size_t num) : IteratorCastableImpl<ObjectType##Iterator>(data, num) { \
+		ObjectType##Iterator(size_t capacity) : IteratorCastableImpl<ObjectType##Iterator>(capacity) { \
+			m_data = AllocTraits::allocate(m_allocator, capacity); \
+			m_begin = static_cast<ObjectType*>(m_data); \
 		} \
 		virtual ~ObjectType##Iterator() { \
-			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
-			delete[] concreteArray; \
+			for(size_t i = 0; i < m_size; ++i) { \
+				AllocTraits::destroy(m_allocator, m_begin + i); \
+			} \
+			AllocTraits::deallocate(m_allocator, m_begin, m_capacity); \
+		} \
+		\
+		ObjectType& Add() { \
+			if (m_size == m_capacity) { \
+				Reallocate(m_capacity * 2u); \
+			} \
+			\
+			AllocTraits::construct(m_allocator, m_begin + m_size); \
+			++m_size; \
+			\
+			return m_begin[m_size - 1]; \
 		} \
 		\
 		ObjectType& At(size_t idx) const { \
-			ObjectType* concreteArray = static_cast<ObjectType*>(m_data); \
-			return concreteArray[idx]; \
+			ASSERT(idx < m_size, "[Iterator] : Trying to access object beyond container size.") \
+			return m_begin[idx]; \
 		} \
 		\
 		void Clear() override { \
@@ -43,12 +58,29 @@ enum class ComponentType : uint32_t
 		} \
 		\
 		ObjectType* begin() const { \
-			return static_cast<ObjectType*>(m_data); \
+			return m_begin; \
 		} \
 		\
 		ObjectType* end() const { \
-			return static_cast<ObjectType*>(m_data) + m_count; \
+			return m_begin + m_size; \
 		} \
+	private: \
+		using Alloc			= std::allocator<ObjectType>; \
+		using AllocTraits	= std::allocator_traits<Alloc>; \
+		\
+		void Reallocate(size_t newCapacity) { \
+			ObjectType* tempIt = AllocTraits::allocate(m_allocator, newCapacity); \
+			std::copy(m_begin, m_begin + m_capacity, tempIt); \
+			\
+			AllocTraits::deallocate(m_allocator, m_begin, m_capacity); \
+			\
+			m_data = tempIt; \
+			m_begin = static_cast<ObjectType*>(m_data); \
+			m_capacity = newCapacity; \
+		} \
+		\
+		Alloc m_allocator; \
+		ObjectType* m_begin = nullptr; \
 	}; \
 	\
 	class ObjectType##Factory : public Factory { \
@@ -57,14 +89,8 @@ enum class ComponentType : uint32_t
 		{ \
 			IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
 		} \
-		virtual IComponent* Create() override { \
-			return new ObjectType(); \
-		} \
-		virtual IComponent* Create(size_t num) override { \
-			return new ObjectType[num]; \
-		} \
-		virtual Iterator* CreateIterator(size_t num) override { \
-			return new ObjectType##Iterator(new ObjectType[num](), num); \
+		virtual Iterator* CreateIterator(size_t capacity) override { \
+			return new ObjectType##Iterator(capacity); \
 		} \
 		virtual void DeleteIterator(Iterator* it) override { \
 			ObjectType##Iterator* itToDelete = static_cast<ObjectType##Iterator*>(it); \
@@ -78,16 +104,19 @@ class IComponent;
 class Iterator : public ICastable
 {
 public:
-	Iterator(IComponent* data, size_t num) : m_data(data), m_count(num) { };
+	Iterator(size_t capacity) : m_size(0), m_capacity(capacity) { };
 	virtual ~Iterator() = default;
 
 	virtual void Clear() = 0;
 
-	size_t Size() const { return m_count; }
+	size_t Size() const { return m_size; }
+
+	static constexpr size_t k_defaultCapacity = 64u; // TODO : use
 
 protected:
-	IComponent* m_data;
-	size_t m_count;
+	IComponent*	m_data = nullptr;
+	size_t		m_size = 0;
+	size_t		m_capacity = 0;
 };
 REGISTER_CASTABLE_TYPE(Iterator);
 
@@ -96,8 +125,6 @@ class Factory
 public:
 	virtual ~Factory() = default;
 
-	virtual IComponent* Create() = 0;
-	virtual IComponent* Create(size_t num) = 0;
 	virtual Iterator* CreateIterator(size_t num) = 0;
 	virtual void DeleteIterator(Iterator* it) = 0;
 };

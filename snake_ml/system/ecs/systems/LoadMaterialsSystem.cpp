@@ -52,7 +52,7 @@ void LoadMaterialsSystem::ParseMaterials(const rapidjson::Document& json)
 		MaterialComponentIterator* it = (MaterialComponentIterator*)IComponent::CreateIterator(ComponentType::MaterialComponent, materialsCount);
 		for (size_t i = 0u; i < materialsCount; ++i)
 		{
-			MaterialComponent& material = it->At(i);
+			MaterialComponent& material = it->Add();
 			const rapidjson::Value& materialJson = *(materialsArray.Begin() + i);
 
 			ParseComponent_EntityId(materialJson, material.m_entityId);
@@ -118,7 +118,7 @@ void LoadMaterialsSystem::ParseTransforms(const rapidjson::Document& json)
 		TransformComponentIterator* it = (TransformComponentIterator*)IComponent::CreateIterator(ComponentType::TransformComponent, transformsCount);
 		for (size_t i = 0u; i < transformsCount; ++i)
 		{
-			TransformComponent& transform = it->At(i);
+			TransformComponent& transform = it->Add();
 			const rapidjson::Value& transformJson = *(transformsArray.Begin() + i);
 
 			ParseComponent_EntityId(transformJson, transform.m_entityId);
@@ -168,7 +168,7 @@ void LoadMaterialsSystem::ParsePhysicsComponents(const rapidjson::Document& json
 		PhysicsComponentIterator* it = (PhysicsComponentIterator*)IComponent::CreateIterator(ComponentType::PhysicsComponent, physicsComponentsCount);
 		for (size_t i = 0u; i < physicsComponentsCount; ++i)
 		{
-			PhysicsComponent& physicsComponent = it->At(i);
+			PhysicsComponent& physicsComponent = it->Add();
 			const rapidjson::Value& physicsComponentJson = *(physicsComponentsArray.Begin() + i);
 
 			ParseComponent_EntityId(physicsComponentJson, physicsComponent.m_entityId);
@@ -232,7 +232,7 @@ void LoadMaterialsSystem::ParseMeshes(const rapidjson::Document& json)
 		MeshComponentIterator* it = (MeshComponentIterator*)IComponent::CreateIterator(ComponentType::MeshComponent, meshComponentsCount);
 		for (size_t i = 0u; i < meshComponentsCount; ++i)
 		{
-			MeshComponent& meshComponent = it->At(i);
+			MeshComponent& meshComponent = it->Add();
 			const rapidjson::Value& meshComponentJson = *(meshComponentsArray.Begin() + i);
 
 			ParseComponent_EntityId(meshComponentJson, meshComponent.m_entityId);
@@ -283,7 +283,7 @@ void LoadMaterialsSystem::ParseConsumables(const rapidjson::Document& json)
 		ConsumableComponentIterator* it = IComponent::CreateIterator(ComponentType::ConsumableComponent, consumableComponentsCount)->As<ConsumableComponentIterator>();
 		for (size_t i = 0u; i < consumableComponentsCount; ++i)
 		{
-			ConsumableComponent& consumableComponent = it->At(i);
+			ConsumableComponent& consumableComponent = it->Add();
 			const rapidjson::Value& consumableComponentJson = *(consumablesDataArray.Begin() + i);
 
 			ParseComponent_EntityId(consumableComponentJson, consumableComponent.m_entityId);
