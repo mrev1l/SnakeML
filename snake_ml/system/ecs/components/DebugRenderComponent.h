@@ -14,6 +14,14 @@ public:
 	bool m_isEnabled = false;
 	AABB m_debugAABB;
 };
-REGISTER_TYPE(DebugRenderComponent);
+
+class DebugRenderComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	DebugRenderComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::DebugRenderComponent; }
+};
+
+REGISTER_COMPONENT(DebugRenderComponent);
 
 }

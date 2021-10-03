@@ -25,7 +25,15 @@ public:
 	DX12RootSignature m_rootSignature;
 	DX12Texture m_texture;
 };
-REGISTER_TYPE(DX12RenderComponent);
+
+class DX12RenderComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	DX12RenderComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::DX12RenderComponent; }
+};
+
+REGISTER_COMPONENT(DX12RenderComponent);
 
 }
 #endif

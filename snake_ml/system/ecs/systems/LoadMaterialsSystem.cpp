@@ -10,11 +10,168 @@
 #include "system/ecs/components/TransformComponent.h"
 #include "system/ecs/components/ConsumableComponent.h"
 
+#ifdef GetObject
+#undef GetObject
+#endif
+
 namespace snakeml
 {
 
+LoadMaterialsSystem::ComponentDescription LoadMaterialsSystem::ParseComponentDescription(const rapidjson::Value& json)
+{
+	ASSERT(json.HasMember("componentId") && json["componentId"].IsUint() && json.HasMember("componentTypeId") && json["componentTypeId"].IsUint() && json.HasMember("description"), "[ParseComponentDescription] : Invalid template json");
+
+	ComponentDescription result
+	{
+		json["componentId"].GetUint(),
+		static_cast<ComponentType>(json["componentTypeId"].GetUint()),
+		json["description"]
+	};
+
+	return result;
+}
+
+void LoadMaterialsSystem::ParseComponentsDescription(const rapidjson::Value& json, std::vector<ComponentDescription>& outComponentsDesc)
+{
+	ASSERT(json.HasMember("component_desription") && json["component_desription"].IsArray(), "[ParseComponentsDescription] : Invalid template json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& descArray = json["component_desription"].GetArray();
+	for (auto descIt = descArray.Begin(); descIt != descArray.End(); ++descIt)
+	{
+		outComponentsDesc.push_back(ParseComponentDescription(*descIt));
+	}
+}
+
+LoadMaterialsSystem::Template LoadMaterialsSystem::ParseTemplateDescription(const rapidjson::Value& json)
+{
+	ASSERT(json.HasMember("templateId") && json["templateId"].IsUint() && json.HasMember("name") && json["name"].IsString() && json.HasMember("components") && json["components"].IsArray(), "[ParseComponentDescription] : Invalid template json");
+
+	Template result;
+	result.id = json["templateId"].GetUint();
+	result.name = json["name"].GetString();
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& componentIds = json["components"].GetArray();
+	for (auto compIt = componentIds.Begin(); compIt != componentIds.End(); ++compIt)
+	{
+		result.componentIds.push_back(compIt->GetUint());
+	}
+
+	return result;
+}
+
+void LoadMaterialsSystem::ParseTemplatesDescription(const rapidjson::Value& json, std::vector<Template>& outTemplates)
+{
+	ASSERT(json.HasMember("templates") && json["templates"].IsArray(), "[ParseComponentsDescription] : Invalid template json");
+
+	const rapidjson::GenericArray<true, rapidjson::Value>& descArray = json["templates"].GetArray();
+	for (auto descIt = descArray.Begin(); descIt != descArray.End(); ++descIt)
+	{
+		outTemplates.push_back(ParseTemplateDescription(*descIt));
+	}
+}
+
+void LoadMaterialsSystem::ParseEntity(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc, Entity& outEntity)
+{
+	ASSERT(json.HasMember("name") && json["name"].IsString() && json.HasMember("templateId") && json["templateId"].IsUint() && json.HasMember("transform") && json["transform"].IsObject(), "[ParseComponentsDescription] : Invalid entities json");
+
+	outEntity.m_name = json["name"].GetString();
+
+	size_t templateId = json["templateId"].GetUint();
+	
+	auto templateIt = std::find_if(templatesDesc.begin(), templatesDesc.end(), [templateId](const Template& a) { return a.id == templateId; });
+	ASSERT(templateIt != templatesDesc.end(), "[ParseEntity] : Invalid entities json");
+
+	for (auto componentId : templateIt->componentIds)
+	{
+		auto componentIt = std::find_if(componentsDesc.begin(), componentsDesc.end(), [componentId](const ComponentDescription& a) { return a.id == componentId; });
+		ASSERT(componentIt != componentsDesc.end(), "[ParseEntity] : Invalid entities json");
+
+		ComponentType compType = static_cast<ComponentType>(componentIt->type);
+
+		Iterator* container = ECSManager::GetInstance()->GetComponents(compType);
+		// visitor that constructs the component
+		std::unique_ptr<ConstructionVisitor> cv = IComponent::CreateIteratorConstructionVisitor(compType, componentIt->json);
+		container->Accept(cv, outEntity);
+	}
+
+	// LOAD TRANSFORM!!!!
+	const rapidjson::Value& transformData = json["transform"];
+	TransformComponentIterator& transforms = *ECSManager::GetInstance()->GetComponents<TransformComponentIterator>();
+
+	TransformComponent& transform = transforms.Add();
+	transform.m_entityId = outEntity.m_entityId;
+	ParseTransformComponent_Position(transformData, transform.m_position);
+	ParseTransformComponent_Rotation(transformData, transform.m_rotation);
+	ParseTransformComponent_Scale(transformData, transform.m_scale);
+
+	outEntity.m_components.insert({ComponentType::TransformComponent, &transform});
+}
+
+void LoadMaterialsSystem::ParseEntities(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc)
+{
+	ASSERT(json.HasMember("level_entities") && json["level_entities"].IsArray(), "[ParseEntities] : Invalid entities json");
+
+	std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
+	const rapidjson::GenericArray<true, rapidjson::Value>& entitiesJson = json["level_entities"].GetArray();
+
+	for (size_t i = 0; i < entitiesJson.Size(); ++i)
+	{
+		Entity& entity = entities[i];
+		const rapidjson::Value& entityJson = *(entitiesJson.Begin() + i);
+
+		entity.m_entityId = i;
+		ParseEntity(entityJson, componentsDesc, templatesDesc, entity);
+	}
+}
+
+void LoadMaterialsSystem::LoadTemplateDescriptions()
+{
+	std::vector<ComponentDescription> componentsDesc;
+	std::vector<Template> templatesDesc;
+
+	// Load templates data
+	//{
+		rapidjson::Document templateDocument;
+		std::string templateString;
+		win::WinUtils::LoadFileIntoBuffer("data\\assets\\levels\\templates\\templates.txt", templateString);
+
+		/// jsonBuffer needs to have the same scope as outJson to utilize ParseInsitu
+		ASSERT(!templateDocument.ParseInsitu(const_cast<char*>(templateString.c_str())).HasParseError(), "Failed to parse JSON"); // remove const cast => error C2664: 'void rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>::Free(void *)': cannot convert argument 1 from 'const char *' to 'void *'
+		ASSERT(templateDocument.IsObject(), "Invalid JSON");
+
+		ParseComponentsDescription(templateDocument.GetObject(), componentsDesc);
+		ParseTemplatesDescription(templateDocument.GetObject(), templatesDesc);
+	//}
+
+	// Create component storage
+	{
+		for (ComponentType type = static_cast<ComponentType>(0); type != ComponentType::Size; ++type)
+		{
+			IComponent::CreateIterator(type, Iterator::k_defaultCapacity);
+		}
+	}
+
+	// Instantiate entities
+	//{
+		constexpr const char* jsonName = "data\\assets\\levels\\level_0\\level_0.txt";
+		rapidjson::Document levelDocument;
+		std::string levelString;
+		win::WinUtils::LoadFileIntoBuffer(jsonName, levelString);
+
+		/// jsonBuffer needs to have the same scope as outJson to utilize ParseInsitu
+		ASSERT(!levelDocument.ParseInsitu(const_cast<char*>(levelString.c_str())).HasParseError(), "Failed to parse JSON"); // remove const cast => error C2664: 'void rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>::Free(void *)': cannot convert argument 1 from 'const char *' to 'void *'
+		ASSERT(levelDocument.IsObject(), "Invalid JSON");
+
+		ParseEntities(levelDocument.GetObject(), componentsDesc, templatesDesc);
+	//}
+
+	int stop = 345;
+}
+
 void LoadMaterialsSystem::Execute()
 {
+	LoadTemplateDescriptions();
+	return;
 	constexpr const char* jsonName = "data\\assets\\levels\\level_0\\level_0.txt";
 	rapidjson::Document jsonDocument;
 	std::string jsonString;

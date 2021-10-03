@@ -14,6 +14,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "third_party/rapidjson/document.h" // rapidjson's DOM-style API
+
 #ifdef NDEBUG
 	#define ASSERT(Condition, Message) (Condition);
 #else
@@ -26,5 +28,7 @@
 #include "utils/math/math_utils.h"
 
 #include "utils/types/arithmetic.h"
+
+#include "system/ecs/ECSManager.h"
 
 #pragma warning(disable : 4834)

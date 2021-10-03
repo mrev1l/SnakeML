@@ -1,0 +1,165 @@
+{
+"component_desription" : [
+	{
+		"componentId": 0,
+		"componentTypeId" : 0,
+		"description" :
+		{
+			"vs": "data/shaders/VS_MvpUV.cso",
+			"ps": "data/shaders/PS_UV.cso",
+			"texture": "data/assets/textures/snake-head-0.png"
+		}
+	},
+	{
+		"componentId": 1,
+		"componentTypeId": 3,
+		"description":
+		{
+			"eyePosition": [0.0, 0.0, -10.0],
+			"focusPoint": [0.0, 0.0, 0.0],
+			"upDirection": [0.0, 1.0, 0.0]
+		}
+	},
+	{
+		"componentId": 2,
+		"componentTypeId" : 0,
+		"description" :
+		{
+			"vs": "data/shaders/VS_MvpUV.cso",
+			"ps": "data/shaders/PS_UV.cso",
+			"texture": "data/assets/textures/fruit-0.png"
+		}
+	},
+	{
+		"componentId": 3,
+		"componentTypeId" : 5,
+		"description" :
+		{
+			"vertices": [
+				{"pos" : [ -16.0, 16.0, 0.0 ], "uv" : [0.0, 0.0]},
+				{"pos" : [ 16.0, -16.0, 0.0 ], "uv" : [1.0, 1.0]},
+				{"pos" : [ -16.0, -16.0, 0.0 ], "uv" : [0.0, 1.0]},
+				{"pos" : [ -16.0, 16.0, 0.0 ], "uv" : [0.0, 0.0]},
+				{"pos" : [ 16.0, 16.0, 0.0 ], "uv" : [1.0, 0.0]},
+				{"pos" : [ 16.0, -16.0, 0.0 ], "uv" : [1.0, 1.0]}
+			]
+		}
+	},
+	{
+		"componentId": 4,
+		"componentTypeId" : 5,
+		"description" :
+		{
+			"vertices": [
+				{"pos" : [ -1.0, -360.0, 0.0 ]},
+				{"pos" : [ -1.0, 360.0, 0.0 ]},
+				{"pos" : [ 1.0, 360.0, 0.0 ]},
+				{"pos" : [ 1.0, -360.0, 0.0 ]}
+			]
+		}
+	},
+	{
+		"componentId": 5,
+		"componentTypeId" : 5,
+		"description" :
+		{
+			"vertices": [
+				{"pos" : [ -360.0, -1.0, 0.0 ]},
+				{"pos" : [ -360.0, 1.0, 0.0 ]},
+				{"pos" : [ 360.0, 1.0, 0.0 ]},
+				{"pos" : [ 360.0, -1.0, 0.0 ]}
+			]
+		}
+	},
+	{
+		"componentId" : 6,
+		"componentTypeId" : 4,
+		"description" :
+		{
+			"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
+			"shape_mass" : 1.0,
+			"is_dynamic" : true,
+			"collision_channel" : 2,
+			"collision_filter" : 3
+		}
+	},
+	{
+		"componentId" : 7,
+		"componentTypeId" : 4,
+		"description" :
+		{
+			"shape_dimensions" : [ 2.0, 720.0, 0.0 ],
+			"shape_mass" : 1.0,
+			"is_dynamic" : false,
+			"collision_channel" : 1,
+			"collision_filter" : 2
+		}
+	},
+	{
+		"componentId" : 8,
+		"componentTypeId" : 4,
+		"description" :
+		{
+			"shape_dimensions" : [ 720.0, 2.0, 0.0 ],
+			"shape_mass" : 1.0,
+			"is_dynamic" : false,
+			"collision_channel" : 1,
+			"collision_filter" : 2
+		}
+	},
+	{
+		"componentId" : 9,
+		"componentTypeId" : 4,
+		"description" :
+		{
+			"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
+			"shape_mass" : 1.0,
+			"is_dynamic" : true,
+			"collision_channel" : 2,
+			"collision_filter" : 2
+		}
+	},
+	{
+		"componentId" : 10,
+		"componentTypeId" : 9,
+		"description" : {}	
+	},
+	{
+		"componentId" : 11,
+		"componentTypeId" : 8,
+		"description" : {}	
+	},
+	{
+		"componentId" : 12,
+		"componentTypeId" : 7,
+		"description" : {}	
+	}
+],
+"templates": [
+	{
+		"templateId": 0,
+		"name": "Snake head",
+		"components": [0, 3, 6, 12]
+	},
+	{
+		"templateId": 1,
+		"name": "Vertical wall",
+		"components": [4, 7]
+	},
+	{
+		"templateId": 2,
+		"name": "Horizontal wall",
+		"components": [5, 8]
+	},
+	{
+		"templateId": 3,
+		"name": "Fruit",
+		"components": [2, 3, 9, 10]
+	},
+	{
+		"templateId": 4,
+		"name": "Level_Master",
+		"components": [1, 11]
+	}
+]
+}

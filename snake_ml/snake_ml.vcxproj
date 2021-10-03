@@ -264,6 +264,16 @@
     <ClCompile Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.cpp" />
     <ClCompile Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
+    <ClCompile Include="system\ecs\components\CameraComponent.cpp" />
+    <ClCompile Include="system\ecs\components\ConsumableComponent.cpp" />
+    <ClCompile Include="system\ecs\components\DebugRenderComponent.cpp" />
+    <ClCompile Include="system\ecs\components\EntityControllerComponent.cpp" />
+    <ClCompile Include="system\ecs\components\InputDataComponent.cpp" />
+    <ClCompile Include="system\ecs\components\MaterialComponent.cpp" />
+    <ClCompile Include="system\ecs\components\MeshComponent.cpp" />
+    <ClCompile Include="system\ecs\components\PhysicsComponent.cpp" />
+    <ClCompile Include="system\ecs\components\platform_specific\win\DX12RenderComponent.cpp" />
+    <ClCompile Include="system\ecs\components\TransformComponent.cpp" />
     <ClCompile Include="system\ecs\EntityComponentPool.cpp" />
     <ClCompile Include="system\ecs\ECSManager.cpp" />
     <ClCompile Include="system\ecs\Entity.cpp" />

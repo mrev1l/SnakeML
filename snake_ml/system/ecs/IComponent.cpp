@@ -16,6 +16,11 @@ Iterator* IComponent::CreateIterator(ComponentType objType, size_t num)
 	return factories.at(objType)->CreateIterator(num);
 }
 
+std::unique_ptr<ConstructionVisitor> IComponent::CreateIteratorConstructionVisitor(ComponentType objType, const rapidjson::Value& json)
+{
+	return factories.at(objType)->CreateIteratorConstructionVisitor(json);
+}
+
 void IComponent::DeleteIterator(ComponentType objType, Iterator* it)
 {
 	factories.at(objType)->DeleteIterator(it);

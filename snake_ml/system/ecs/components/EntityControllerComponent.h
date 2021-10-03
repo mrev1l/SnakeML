@@ -11,8 +11,17 @@ public:
 	virtual ~EntityControllerComponent() = default;
 	ComponentType GetComponentType() const override { return ComponentType::EntityControllerComponent; }
 
-	vector m_inputVector;
+	vector m_inputVector = vector::zero;
 };
-REGISTER_TYPE(EntityControllerComponent);
+
+class EntityControllerComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	EntityControllerComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::EntityControllerComponent; }
+	void Visit(Iterator* it, Entity& entity) override;
+};
+
+REGISTER_COMPONENT(EntityControllerComponent);
 
 }

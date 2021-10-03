@@ -13,6 +13,15 @@ public:
 
 	std::vector<InputManager::InputAxisData> m_axesInput;
 };
-REGISTER_TYPE(InputDataComponent);
+
+class InputDataComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	InputDataComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::InputDataComponent; }
+	void Visit(Iterator* it, Entity& entity) override;
+};
+
+REGISTER_COMPONENT(InputDataComponent);
 
 }

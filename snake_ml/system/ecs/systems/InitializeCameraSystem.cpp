@@ -13,8 +13,10 @@ namespace snakeml
 // todo rework into init level system
 void InitializeCameraSystem::Execute()
 {
+	return;
 	{
-		CameraComponentIterator* it = IComponent::CreateIterator(ComponentType::CameraComponent, 1)->As<CameraComponentIterator>();
+		//CameraComponentIterator* it = IComponent::CreateIterator(ComponentType::CameraComponent, 1)->As<CameraComponentIterator>();
+		CameraComponentIterator* it = ECSManager::GetInstance()->GetComponents<CameraComponentIterator>();
 		CameraComponent& camera = it->Add();
 
 		camera.m_entityId = 1;
@@ -22,26 +24,28 @@ void InitializeCameraSystem::Execute()
 		camera.m_focusPoint =	{ 0.f, 0.f, 0.f };
 		camera.m_upDirection =	{ 0.f, 1.f, 0.f };
 
-		ECSManager::GetInstance()->InsertComponents<CameraComponentIterator>(it);
+		//ECSManager::GetInstance()->InsertComponents<CameraComponentIterator>(it);
 	}
 
 	{
-		InputDataComponentIterator* it = IComponent::CreateIterator(ComponentType::InputDataComponent, 1)->As<InputDataComponentIterator>();
+		//InputDataComponentIterator* it = IComponent::CreateIterator(ComponentType::InputDataComponent, 1)->As<InputDataComponentIterator>();
+		InputDataComponentIterator* it = ECSManager::GetInstance()->GetComponents<InputDataComponentIterator>();
 		InputDataComponent& inputDataComponent = it->Add();
 
 		inputDataComponent.m_entityId = 1;
 
-		ECSManager::GetInstance()->InsertComponents<InputDataComponentIterator>(it);
+		//ECSManager::GetInstance()->InsertComponents<InputDataComponentIterator>(it);
 	}
 
 	{
-		EntityControllerComponentIterator* it = IComponent::CreateIterator(ComponentType::EntityControllerComponent, 1)->As<EntityControllerComponentIterator>();
+		//EntityControllerComponentIterator* it = IComponent::CreateIterator(ComponentType::EntityControllerComponent, 1)->As<EntityControllerComponentIterator>();
+		EntityControllerComponentIterator* it = ECSManager::GetInstance()->GetComponents<EntityControllerComponentIterator>();
 		EntityControllerComponent& controllerComponent = it->Add();
 
 		controllerComponent.m_entityId = 0;
 		controllerComponent.m_inputVector = vector::zero;
 
-		ECSManager::GetInstance()->InsertComponents<EntityControllerComponentIterator>(it);
+		//ECSManager::GetInstance()->InsertComponents<EntityControllerComponentIterator>(it);
 	}
 }
 
