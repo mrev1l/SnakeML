@@ -17,6 +17,21 @@ public:
 	vector m_rotation;
 	vector m_scale;
 };
-REGISTER_TYPE(TransformComponent);
+
+class TransformComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	TransformComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::TransformComponent; }
+
+	void Visit(Iterator* it, Entity& entity) override;
+
+private:
+	static void ParseTransformComponent_Position(const rapidjson::Value& json, vector& _outPosition);
+	static void ParseTransformComponent_Rotation(const rapidjson::Value& json, vector& _outRotation);
+	static void ParseTransformComponent_Scale(const rapidjson::Value& json, vector& _outScale);
+};
+
+REGISTER_COMPONENT(TransformComponent);
 
 }

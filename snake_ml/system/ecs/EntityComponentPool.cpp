@@ -11,6 +11,19 @@ EntityComponentPool::~EntityComponentPool()
 	DeleteComponents();
 }
 
+Iterator* EntityComponentPool::GetComponents(ComponentType type) const
+{
+	for (auto& component : m_componentsPool)
+	{
+		if (type == component.second->GetComponentType())
+		{
+			return component.second;
+		}
+	}
+
+	return nullptr;
+}
+
 std::unordered_map<uint32_t, Entity>& EntityComponentPool::GetEntities()
 {
 	return m_entitiesPool;

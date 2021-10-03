@@ -22,8 +22,9 @@ enum class ComponentType : uint32_t
 
 	Size
 };
+inline void operator++(ComponentType& type) { type = static_cast<ComponentType>(static_cast<uint32_t>(type) + 1); }
 
-#define REGISTER_TYPE(ObjectType) \
+#define REGISTER_COMPONENT(ObjectType) \
 	class ObjectType##Iterator : public IteratorCastableImpl<ObjectType##Iterator> { \
 	public: \
 		ObjectType##Iterator(size_t capacity) : IteratorCastableImpl<ObjectType##Iterator>(capacity) { \
@@ -64,6 +65,18 @@ enum class ComponentType : uint32_t
 		ObjectType* end() const { \
 			return m_begin + m_size; \
 		} \
+		\
+		ComponentType GetComponentType() override { \
+			return ComponentType::##ObjectType; \
+		} \
+		\
+		void Accept(const std::unique_ptr<ConstructionVisitor>& v, Entity& entity) override { \
+			if(v->GetReceiverType() == ComponentType::##ObjectType) { \
+				v->Visit(this, entity); \
+				return; \
+			} \
+			ASSERT(false, "[Iterator::Accept] : got a suspicious visitor."); \
+		} \
 	private: \
 		using Alloc			= std::allocator<ObjectType>; \
 		using AllocTraits	= std::allocator_traits<Alloc>; \
@@ -90,7 +103,12 @@ enum class ComponentType : uint32_t
 			IComponent::RegisterFactory(ComponentType::##ObjectType, this); \
 		} \
 		virtual Iterator* CreateIterator(size_t capacity) override { \
-			return new ObjectType##Iterator(capacity); \
+			ObjectType##Iterator* it = new ObjectType##Iterator(capacity); \
+			ECSManager::GetInstance()->InsertComponents<ObjectType##Iterator>(it); \
+			return it; \
+		} \
+		virtual std::unique_ptr<ConstructionVisitor> CreateIteratorConstructionVisitor(const rapidjson::Value& json) override { \
+			return std::make_unique<ObjectType##ConstructionVisitor>(json); \
 		} \
 		virtual void DeleteIterator(Iterator* it) override { \
 			ObjectType##Iterator* itToDelete = static_cast<ObjectType##Iterator*>(it); \
@@ -100,16 +118,19 @@ enum class ComponentType : uint32_t
 static ObjectType##Factory global_##ObjectType##Factory; \
 
 class IComponent;
-
+class Entity;
+class ConstructionVisitor;
 class Iterator : public ICastable
 {
 public:
 	Iterator(size_t capacity) : m_size(0), m_capacity(capacity) { };
 	virtual ~Iterator() = default;
 
+	virtual ComponentType GetComponentType() = 0;
 	virtual void Clear() = 0;
-
 	size_t Size() const { return m_size; }
+
+	virtual void Accept(const std::unique_ptr<ConstructionVisitor>&, Entity& entity) = 0;
 
 	static constexpr size_t k_defaultCapacity = 64u; // TODO : use
 
@@ -120,12 +141,26 @@ protected:
 };
 REGISTER_CASTABLE_TYPE(Iterator);
 
+class ConstructionVisitor
+{
+public:
+	ConstructionVisitor(const rapidjson::Value& json) : m_description(json) {}
+	virtual ~ConstructionVisitor() = default;
+
+	virtual ComponentType GetReceiverType() = 0;
+	virtual void Visit(Iterator*, Entity& entity) {};
+
+protected:
+	const rapidjson::Value& m_description;
+};
+
 class Factory
 {
 public:
 	virtual ~Factory() = default;
 
 	virtual Iterator* CreateIterator(size_t num) = 0;
+	virtual std::unique_ptr<ConstructionVisitor> CreateIteratorConstructionVisitor(const rapidjson::Value& json) = 0;
 	virtual void DeleteIterator(Iterator* it) = 0;
 };
 
@@ -137,6 +172,7 @@ public:
 
 	static void RegisterFactory(ComponentType objType, Factory* objFactory);
 	static Iterator* CreateIterator(ComponentType objType, size_t num);
+	static std::unique_ptr<ConstructionVisitor> CreateIteratorConstructionVisitor(ComponentType objType, const rapidjson::Value& json);
 	static void DeleteIterator(ComponentType objType, Iterator* it);
 
 	uint32_t m_entityId = -1;

@@ -15,7 +15,7 @@ void Render2DSystem::Update(float deltaTime)
 	const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
 	for (const std::pair<uint32_t, Entity>& entity : entities)
 	{
-		if (entity.second.m_components.contains(ComponentType::DX12RenderComponent))
+		if (entity.second.m_components.contains(ComponentType::DX12RenderComponent) || entity.second.m_components.contains(ComponentType::DebugRenderComponent))
 		{
 			renderDriver->SubscribeForRendering(entity.second);
 		}

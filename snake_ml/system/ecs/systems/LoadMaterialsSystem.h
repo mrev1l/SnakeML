@@ -2,8 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
-#include "third_party/rapidjson/document.h" // rapidjson's DOM-style API
-
 #include "system/ecs/components/MaterialComponent.h"
 #include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/ISystem.h"
@@ -19,6 +17,20 @@ public:
 	void Execute() override;
 
 private:
+	struct ComponentDescription
+	{
+		size_t id;
+		ComponentType type;
+		const rapidjson::Value& json;
+	};
+
+	struct Template
+	{
+		size_t id;
+		std::string name;
+		std::vector<size_t> componentIds;
+	};
+
 	static void ParseJsonString(const char* jsonBuffer, rapidjson::Document& outJson);
 	
 	static void ParseComponent_EntityId(const rapidjson::Value& json, uint32_t& outId);
@@ -57,6 +69,14 @@ private:
 	// ******* ********* ********* ******** ********
 
 	static void ParseIndicesArray(const rapidjson::Document& json, std::vector<uint16_t>& indicesArray);
+
+	void LoadTemplateDescriptions();
+	void ParseEntities(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc);
+	void ParseEntity(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc, Entity& outEntity);
+	ComponentDescription ParseComponentDescription(const rapidjson::Value& json);
+	void ParseComponentsDescription(const rapidjson::Value& json, std::vector<ComponentDescription>& outComponentsDesc);
+	Template ParseTemplateDescription(const rapidjson::Value& json);
+	void ParseTemplatesDescription(const rapidjson::Value& json, std::vector<Template>& outTemplates);
 };
 
 }

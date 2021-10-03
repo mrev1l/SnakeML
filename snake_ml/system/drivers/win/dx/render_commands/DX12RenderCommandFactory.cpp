@@ -52,6 +52,11 @@ void DX12RenderCommandFactory::BuildRenderCommands_CalculateEntityMatrices(const
 void DX12RenderCommandFactory::BuildRenderCommands_Main(const Entity& entity, const matrix& camera, const matrix& ortho, const matrix& scale, const matrix& rotation,
 	const matrix& translation, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
+	if (!entity.m_components.contains(ComponentType::DX12RenderComponent)) // it may still be eligible for debug rendering
+	{
+		return;
+	}
+
 	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();
 	if (renderableComponent.m_pipelineState)
 	{

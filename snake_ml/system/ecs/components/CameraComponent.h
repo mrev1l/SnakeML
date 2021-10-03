@@ -15,6 +15,18 @@ public:
 	vector m_focusPoint;
 	vector m_upDirection;
 };
-REGISTER_TYPE(CameraComponent);
+
+class CameraComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	CameraComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::CameraComponent; }
+	void Visit(Iterator* it, Entity& entity) override;
+
+private:
+	static void ParseVectorValue(const rapidjson::Value& json, const char* name, vector& _outVector);
+};
+
+REGISTER_COMPONENT(CameraComponent);
 
 }

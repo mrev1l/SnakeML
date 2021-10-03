@@ -53,21 +53,27 @@ void InitializeRenderComponentsSystem::Execute()
 	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponents<MaterialComponentIterator>();
 	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponents<MeshComponentIterator>();
 
-	DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialsIt->Size());
+	//DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialsIt->Size());
+	DX12RenderComponentIterator* renderComponentsIt = ECSManager::GetInstance()->GetComponents<DX12RenderComponentIterator>();
 
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
 	auto device = dx12Driver->GetD3D12Device();
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	ASSERT(meshesIt->Size() == materialsIt->Size(), "Renderables initialization is going to fail");
 	for (size_t i = 0; i < materialsIt->Size(); ++i)
 	{
-		DX12RenderComponent& renderComponent = renderComponentsIt->Add();
 		const MaterialComponent& materialComponent = materialsIt->At(i);
-		const MeshComponent& mesh = meshesIt->At(i);
 
+		Entity& entity = ECSManager::GetInstance()->GetEntity(materialComponent.m_entityId);
+
+		ASSERT(entity.m_components.contains(ComponentType::MeshComponent), "[InitializeRenderComponentsSystem::Execute] : Renderables initialization is going to fail");
+		const MeshComponent& mesh = *entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
+
+		DX12RenderComponent& renderComponent = renderComponentsIt->Add();
 		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
+
+		entity.m_components.insert({ComponentType::DX12RenderComponent, &renderComponent});
 	}
 
 	if (commandQueue)
@@ -76,7 +82,7 @@ void InitializeRenderComponentsSystem::Execute()
 		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
-	ECSManager::GetInstance()->InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
+	//ECSManager::GetInstance()->InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
 
 
 	////////////// test

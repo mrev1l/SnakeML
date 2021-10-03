@@ -6,6 +6,11 @@
 namespace snakeml
 {
 
+Iterator* ECSManager::GetComponents(ComponentType type) const
+{
+	return m_entityComponentPool.GetComponents(type);
+}
+
 std::unordered_map<uint32_t, Entity>& ECSManager::GetEntities()
 {
 	return m_entityComponentPool.GetEntities();

@@ -14,6 +14,19 @@ public:
 	std::vector<std::pair<float3, float2>> m_vertices;
 	std::vector<uint16_t> m_indices;
 };
-REGISTER_TYPE(MeshComponent);
+
+class MeshComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	MeshComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::MeshComponent; }
+
+	void Visit(Iterator* it, Entity& entity) override;
+
+private:
+	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<float3, float2>>& outVertices);
+};
+
+REGISTER_COMPONENT(MeshComponent);
 
 }

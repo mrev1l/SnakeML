@@ -29,6 +29,22 @@ public:
 	std::vector<InputLayoutEntries> m_inputLayoutEntries;
 	std::wstring m_texturePath;
 };
-REGISTER_TYPE(MaterialComponent);
+
+class MaterialComponentConstructionVisitor : public ConstructionVisitor
+{
+public:
+	MaterialComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
+	ComponentType GetReceiverType() { return ComponentType::MaterialComponent; }
+
+	void Visit(Iterator*, Entity& entity) override;
+
+private:
+	static void ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
+	static void ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName);
+	static void ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName);
+	static void ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath);
+};
+
+REGISTER_COMPONENT(MaterialComponent);
 
 }

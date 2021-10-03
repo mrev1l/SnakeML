@@ -20,6 +20,7 @@ public:
 	void InsertComponents(Iterator* it);
 	template<class ComponentsIterator>
 	ComponentsIterator* GetComponents() const;
+	Iterator* GetComponents(ComponentType) const;
 
 	std::unordered_map<uint32_t, Entity>& GetEntities();
 	Entity& GetEntity(uint32_t id);
