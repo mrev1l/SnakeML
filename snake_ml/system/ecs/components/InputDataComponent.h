@@ -18,7 +18,7 @@ class InputDataComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	InputDataComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::InputDataComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::InputDataComponent; }
 	void Visit(Iterator* it, Entity& entity) override;
 };
 

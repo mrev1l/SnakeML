@@ -26,4 +26,10 @@ void IComponent::DeleteIterator(ComponentType objType, Iterator* it)
 	factories.at(objType)->DeleteIterator(it);
 }
 
+void ConstructionVisitor::AttachComponentToEntity(IComponent& component, Entity& entity)
+{
+	component.m_entityId = entity.m_entityId;
+	entity.m_components.insert({ component.GetComponentType(), &component });
+}
+
 }

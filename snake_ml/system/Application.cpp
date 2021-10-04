@@ -16,7 +16,7 @@
 #include "ecs/systems/EntityControllerSystem.h"
 #include "ecs/systems/InitializePhysicsComponentsSystem.h"
 #include "ecs/systems/InputHandlingSystem.h"
-#include "ecs/systems/LoadMaterialsSystem.h"
+#include "ecs/systems/LevelLoadingSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
 #include "ecs/systems/WIP_System.h"
@@ -54,7 +54,7 @@ void Application::Initialize()
 
 	new ECSManager();
 
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LoadMaterialsSystem>());
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LevelLoadingSystem>());
 #ifdef _WINDOWS
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 #endif

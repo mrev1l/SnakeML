@@ -16,7 +16,7 @@ class ConsumableComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	ConsumableComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::ConsumableComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::ConsumableComponent; }
 	void Visit(Iterator* it, Entity& entity) override;
 };
 

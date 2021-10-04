@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <functional>
 #include <stdint.h>
 #include <map>
 #include <math.h>

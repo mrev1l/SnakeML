@@ -19,7 +19,7 @@ class DebugRenderComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	DebugRenderComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::DebugRenderComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::DebugRenderComponent; }
 };
 
 REGISTER_COMPONENT(DebugRenderComponent);

@@ -9,11 +9,9 @@ namespace snakeml
 void ConsumableComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 {
 	ConsumableComponentIterator& container = *it->As<ConsumableComponentIterator>();
-
 	ConsumableComponent& consumable = container.Add();
 
-	consumable.m_entityId = entity.m_entityId;
-	entity.m_components.insert({ ComponentType::ConsumableComponent, &consumable });
+	AttachComponentToEntity(consumable, entity);
 }
 
 }

@@ -9,11 +9,9 @@ namespace snakeml
 void InputDataComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 {
 	InputDataComponentIterator& container = *it->As<InputDataComponentIterator>();
+	InputDataComponent& inputDataComponent = container.Add();
 
-	InputDataComponent& idc = container.Add();
-
-	idc.m_entityId = entity.m_entityId;
-	entity.m_components.insert({ ComponentType::InputDataComponent, &idc });
+	AttachComponentToEntity(inputDataComponent, entity);
 }
 
 }

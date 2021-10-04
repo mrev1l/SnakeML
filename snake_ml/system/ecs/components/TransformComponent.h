@@ -22,14 +22,14 @@ class TransformComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	TransformComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::TransformComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::TransformComponent; }
 
 	void Visit(Iterator* it, Entity& entity) override;
 
 private:
-	static void ParseTransformComponent_Position(const rapidjson::Value& json, vector& _outPosition);
-	static void ParseTransformComponent_Rotation(const rapidjson::Value& json, vector& _outRotation);
-	static void ParseTransformComponent_Scale(const rapidjson::Value& json, vector& _outScale);
+	static constexpr const char* k_positionValueName	= "position";
+	static constexpr const char* k_rotationValueName	= "rotation";
+	static constexpr const char* k_scaleValueName		= "scale";
 };
 
 REGISTER_COMPONENT(TransformComponent);

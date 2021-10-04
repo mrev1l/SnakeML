@@ -19,12 +19,14 @@ class MeshComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	MeshComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::MeshComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::MeshComponent; }
 
 	void Visit(Iterator* it, Entity& entity) override;
 
 private:
-	static void ParseMeshes_VerticesArray(const rapidjson::Value& json, std::vector<std::pair<float3, float2>>& outVertices);
+	static constexpr const char* k_posValueName			= "pos";
+	static constexpr const char* k_uvValueName			= "uv";
+	static constexpr const char* k_verticesValueName	= "vertices";
 };
 
 REGISTER_COMPONENT(MeshComponent);
