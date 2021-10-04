@@ -69,9 +69,6 @@
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\InitializeCameraSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -312,9 +309,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\CameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\ecs\systems\InitializeCameraSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\types\arithmetic.h">

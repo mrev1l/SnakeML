@@ -11,7 +11,6 @@
 
 #include "ecs/ECSManager.h"
 #include "ecs/systems/ConsumablesSystem.h"
-#include "ecs/systems/InitializeCameraSystem.h"
 #include "ecs/systems/InitializeDebugRenderComponentsSystem.h"
 #include "ecs/systems/EntityControllerSystem.h"
 #include "ecs/systems/InitializePhysicsComponentsSystem.h"
@@ -58,7 +57,6 @@ void Application::Initialize()
 #ifdef _WINDOWS
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 #endif
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeCameraSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
 	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
 
