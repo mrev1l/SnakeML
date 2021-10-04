@@ -34,15 +34,16 @@ class MaterialComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	MaterialComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::MaterialComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::MaterialComponent; }
 
 	void Visit(Iterator*, Entity& entity) override;
 
 private:
-	static void ParseMaterialComponent_VerticesArray(const rapidjson::Value& json, std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
-	static void ParseMaterialComponent_VSPath(const rapidjson::Value& json, std::wstring& outVSName);
-	static void ParseMaterialComponent_PSPath(const rapidjson::Value& json, std::wstring& outPSName);
-	static void ParseMaterialComponent_TexturePath(const rapidjson::Value& json, std::wstring& outTexturePath);
+	static void InitInputLayoutDescription(const rapidjson::Value& json, std::vector<MaterialComponent::InputLayoutEntries>& inputLayoutEntries);
+
+	static constexpr const char* k_vsValueName		= "vs";
+	static constexpr const char* k_psValueName		= "ps";
+	static constexpr const char* k_textureValueName	= "texture";
 };
 
 REGISTER_COMPONENT(MaterialComponent);

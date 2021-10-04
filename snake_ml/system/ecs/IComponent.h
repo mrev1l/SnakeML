@@ -151,6 +151,8 @@ public:
 	virtual void Visit(Iterator*, Entity& entity) {};
 
 protected:
+	void AttachComponentToEntity(IComponent& component, Entity& entity);
+
 	const rapidjson::Value& m_description;
 };
 

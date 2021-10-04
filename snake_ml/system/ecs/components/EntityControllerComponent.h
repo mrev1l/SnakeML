@@ -18,7 +18,7 @@ class EntityControllerComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	EntityControllerComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::EntityControllerComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::EntityControllerComponent; }
 	void Visit(Iterator* it, Entity& entity) override;
 };
 

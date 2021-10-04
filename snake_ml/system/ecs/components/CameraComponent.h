@@ -20,11 +20,13 @@ class CameraComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	CameraComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::CameraComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::CameraComponent; }
 	void Visit(Iterator* it, Entity& entity) override;
 
 private:
-	static void ParseVectorValue(const rapidjson::Value& json, const char* name, vector& _outVector);
+	static constexpr const char* k_eyePositionValueName	= "eyePosition";
+	static constexpr const char* k_focusPointValueName	= "focusPoint";
+	static constexpr const char* k_upDirectionValueName	= "upDirection";
 };
 
 REGISTER_COMPONENT(CameraComponent);

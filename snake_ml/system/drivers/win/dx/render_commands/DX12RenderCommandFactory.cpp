@@ -52,7 +52,7 @@ void DX12RenderCommandFactory::BuildRenderCommands_CalculateEntityMatrices(const
 void DX12RenderCommandFactory::BuildRenderCommands_Main(const Entity& entity, const matrix& camera, const matrix& ortho, const matrix& scale, const matrix& rotation,
 	const matrix& translation, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
-	if (!entity.m_components.contains(ComponentType::DX12RenderComponent)) // it may still be eligible for debug rendering
+	if (!entity.m_components.contains(ComponentType::DX12RenderComponent)) // the entity may still be eligible for debug rendering
 	{
 		return;
 	}
@@ -70,6 +70,11 @@ void DX12RenderCommandFactory::BuildRenderCommands_Main(const Entity& entity, co
 
 void DX12RenderCommandFactory::BuildRenderCommands_Debug(const Entity& entity, const matrix& camera, const matrix& ortho, const matrix& translation, std::vector<std::unique_ptr<IRenderCommand>>& outRenderCommands)
 {
+	if (!entity.m_components.contains(ComponentType::DebugRenderComponent)) // the entity may not require debug rendering
+	{
+		return;
+	}
+
 	const DebugRenderComponent& debugRenderComponent = *entity.m_components.at(ComponentType::DebugRenderComponent)->As<DebugRenderComponent>();
 	if (debugRenderComponent.m_isEnabled)
 	{

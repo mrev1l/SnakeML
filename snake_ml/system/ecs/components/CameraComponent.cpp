@@ -3,31 +3,21 @@
 #include "stdafx.h"
 #include "CameraComponent.h"
 
+#include "utils/rapidjson_utils.h"
+
 namespace snakeml
 {
 
 void CameraComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 {
 	CameraComponentIterator& container = *it->As<CameraComponentIterator>();
-
 	CameraComponent& camera = container.Add();
 
-	camera.m_entityId = entity.m_entityId;
+	RapidjsonUtils::ParseVectorValue(m_description, k_eyePositionValueName, camera.m_eyePosition);
+	RapidjsonUtils::ParseVectorValue(m_description, k_focusPointValueName, camera.m_focusPoint);
+	RapidjsonUtils::ParseVectorValue(m_description, k_upDirectionValueName, camera.m_upDirection);
 
-	ParseVectorValue(m_description, "eyePosition", camera.m_eyePosition);
-	ParseVectorValue(m_description, "focusPoint", camera.m_focusPoint);
-	ParseVectorValue(m_description, "upDirection", camera.m_upDirection);
-
-	entity.m_components.insert({ ComponentType::CameraComponent, &camera });
-}
-
-void CameraComponentConstructionVisitor::ParseVectorValue(const rapidjson::Value& json, const char* name, vector& _outVector)
-{
-	ASSERT(json.HasMember(name) && json[name].IsArray() && json[name].Size() == 3u, "[CameraComponentConstructionVisitor::ParseVectorValue] : Invalid camera json");
-
-	const rapidjson::GenericArray<true, rapidjson::Value>& vectorJson = json[name].GetArray();
-
-	_outVector = { vectorJson[0].GetFloat(), vectorJson[1].GetFloat(), vectorJson[2].GetFloat() };
+	AttachComponentToEntity(camera, entity);
 }
 
 }

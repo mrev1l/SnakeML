@@ -9,11 +9,9 @@ namespace snakeml
 void EntityControllerComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 {
 	EntityControllerComponentIterator& container = *it->As<EntityControllerComponentIterator>();
+	EntityControllerComponent& controller = container.Add();
 
-	EntityControllerComponent& ec = container.Add();
-
-	ec.m_entityId = entity.m_entityId;
-	entity.m_components.insert({ ComponentType::EntityControllerComponent, &ec });
+	AttachComponentToEntity(controller, entity);
 }
 
 }

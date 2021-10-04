@@ -54,16 +54,16 @@ class PhysicsComponentConstructionVisitor : public ConstructionVisitor
 {
 public:
 	PhysicsComponentConstructionVisitor(const rapidjson::Value& json) : ConstructionVisitor(json) {}
-	ComponentType GetReceiverType() { return ComponentType::PhysicsComponent; }
+	ComponentType GetReceiverType() override { return ComponentType::PhysicsComponent; }
 
 	void Visit(Iterator* it, Entity& entity) override;
 
 private:
-	static void ParsePhysicsComponents_ShapeDimensions(const rapidjson::Value& json, vector& _outShapeDimensions);
-	static void ParsePhysicsComponents_ShapeMass(const rapidjson::Value& json, float& _outMass);
-	static void ParsePhysicsComponents_IsDynamic(const rapidjson::Value& json, bool& _outIsDynamic);
-	static void ParsePhysicsComponents_CollisionChannel(const rapidjson::Value& json, CollisionChannel& _outCollisionChannel);
-	static void ParsePhysicsComponents_CollisionFilter(const rapidjson::Value& json, CollisionChannel& _outCollisionFilter);
+	static constexpr const char* k_shapeDimensionsValueName		= "shape_dimensions";
+	static constexpr const char* k_shapeMassValueName			= "shape_mass";
+	static constexpr const char* k_isDynamicValueName			= "is_dynamic";
+	static constexpr const char* k_collisionChannelValueName	= "collision_channel";
+	static constexpr const char* k_collisionFilterValueName		= "collision_filter";
 };
 
 REGISTER_COMPONENT(PhysicsComponent);

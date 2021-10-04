@@ -141,7 +141,7 @@
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="system\ecs\systems\LoadMaterialsSystem.cpp">
+    <ClCompile Include="system\ecs\systems\LevelLoadingSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\math\vector.cpp">
@@ -226,6 +226,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\ecs\components\InputDataComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\rapidjson_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -395,7 +398,7 @@
     <ClInclude Include="system\ecs\components\MaterialComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\ecs\systems\LoadMaterialsSystem.h">
+    <ClInclude Include="system\ecs\systems\LevelLoadingSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\math\vector.h">
@@ -474,6 +477,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\ecs\components\ConsumableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\rapidjson_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
