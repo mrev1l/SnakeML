@@ -12,14 +12,31 @@ namespace snakeml
 
 void InitializePhysicsComponentsSystem::Execute()
 {
-	const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
-	for (const std::pair<uint32_t, Entity>& entity : entities)
+	if (m_targetEntities.empty()) // init all entities
 	{
-		if (entity.second.m_components.find(ComponentType::TransformComponent) != entity.second.m_components.end() &&
-			entity.second.m_components.find(ComponentType::PhysicsComponent) != entity.second.m_components.end())
+		const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
+		for (const std::pair<uint32_t, Entity>& entity : entities)
 		{
-			TransformComponent& transform = *entity.second.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
-			PhysicsComponent& body = *entity.second.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+			if (entity.second.m_components.find(ComponentType::TransformComponent) != entity.second.m_components.end() && // TODO Contains!
+				entity.second.m_components.find(ComponentType::PhysicsComponent) != entity.second.m_components.end())	  // TODO Contains!
+			{
+				TransformComponent& transform = *entity.second.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+				PhysicsComponent& body = *entity.second.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+
+				InitPhysicsBody(transform, body);
+			}
+		}
+	}
+	else
+	{
+		for (uint32_t entityId : m_targetEntities)
+		{
+			Entity& entity = ECSManager::GetInstance()->GetEntity(entityId);
+			ASSERT(entity.m_components.contains(ComponentType::PhysicsComponent) && entity.m_components.contains(ComponentType::TransformComponent),
+				"[InitializePhysicsComponentsSystem::Execute] : incorrect occurence in m_entitiesToInit.");
+
+			TransformComponent& transform = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
+			PhysicsComponent& body = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
 
 			InitPhysicsBody(transform, body);
 		}

@@ -61,19 +61,36 @@ void InitializeRenderComponentsSystem::Execute()
 	auto commandQueue = dx12Driver->GetDX12CommandQueue(DX12Driver::CommandQueueType::Copy);
 	auto commandList = commandQueue ? commandQueue->GetCommandList() : nullptr;
 
-	for (size_t i = 0; i < materialsIt->Size(); ++i)
+	if (m_targetEntities.empty())
 	{
-		const MaterialComponent& materialComponent = materialsIt->At(i);
+		for (size_t i = 0; i < materialsIt->Size(); ++i)
+		{
+			const MaterialComponent& materialComponent = materialsIt->At(i);
 
-		Entity& entity = ECSManager::GetInstance()->GetEntity(materialComponent.m_entityId);
+			Entity& entity = ECSManager::GetInstance()->GetEntity(materialComponent.m_entityId);
 
-		ASSERT(entity.m_components.contains(ComponentType::MeshComponent), "[InitializeRenderComponentsSystem::Execute] : Renderables initialization is going to fail");
-		const MeshComponent& mesh = *entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
+			ASSERT(entity.m_components.contains(ComponentType::MeshComponent), "[InitializeRenderComponentsSystem::Execute] : Renderables initialization is going to fail");
+			const MeshComponent& mesh = *entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
 
-		DX12RenderComponent& renderComponent = renderComponentsIt->Add();
-		InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
+			DX12RenderComponent& renderComponent = renderComponentsIt->Add();
+			InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
 
-		entity.m_components.insert({ComponentType::DX12RenderComponent, &renderComponent});
+			entity.m_components.insert({ ComponentType::DX12RenderComponent, &renderComponent });
+		}
+	}
+	else
+	{
+		for (uint32_t entityId : m_targetEntities)
+		{
+			Entity& entity = ECSManager::GetInstance()->GetEntity(entityId);
+			const MaterialComponent& materialComponent = *entity.m_components.at(ComponentType::MaterialComponent)->As<MaterialComponent>();
+			const MeshComponent& mesh = *entity.m_components.at(ComponentType::MeshComponent)->As<MeshComponent>();
+
+			DX12RenderComponent& renderComponent = renderComponentsIt->Add();
+			InitRenderComponent(commandList, materialComponent, mesh, renderComponent);
+
+			entity.m_components.insert({ ComponentType::DX12RenderComponent, &renderComponent });
+		}
 	}
 
 	if (commandQueue)
@@ -84,7 +101,7 @@ void InitializeRenderComponentsSystem::Execute()
 
 	//ECSManager::GetInstance()->InsertComponents<DX12RenderComponentIterator>(renderComponentsIt);
 
-
+	return;
 	////////////// test
 	{
 		Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob;
@@ -248,7 +265,14 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 {
 	_outRenderComponent.m_entityId = materialComponent.m_entityId;
 
-	InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePath, _outRenderComponent.m_texture);
+	if (materialComponent.m_textures.size() == 1) // TODO : revise
+	{
+		InitRenderComponent_LoadTextures(commandList, materialComponent.m_textures[0], _outRenderComponent.m_texture);
+	}
+	else
+	{
+		InitRenderComponent_LoadTextures(commandList, materialComponent.m_textures, _outRenderComponent.m_texture);
+	}
 
 	const std::vector<std::pair<float3, float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<float3, float2>>() : meshComponent.m_vertices;
 	InitRenderComponent_LoadBuffers(commandList, vertices, _outRenderComponent.m_vertexBuffer);
@@ -265,6 +289,10 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	if (vertexShaderBlob.Get() && pixelShaderBlob.Get())
 	{
 		rootParamsIds = { RootParameters::MatricesCB, RootParameters::Textures };
+	}
+	if (materialComponent.m_textures.size() > 1)
+	{
+		rootParamsIds.push_back(RootParameters::TextureId);
 	}
 	InitRenderComponent_InitializeRootSignatures(rootParamsIds, _outRenderComponent.m_rootSignature);
 
@@ -284,6 +312,14 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::sha
 	if (!texturePath.empty())
 	{
 		commandList->LoadTextureFromFile(_outTexture, texturePath);
+	}
+}
+
+void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::vector<std::wstring> texturesPath, DX12Texture& _outTexture)
+{
+	if (!texturesPath.empty())
+	{
+		commandList->LoadTextureFromFile(_outTexture, texturesPath);
 	}
 }
 
@@ -503,7 +539,7 @@ std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRoo
 	{
 		switch (rootParamsIds[i])
 		{
-		case snakeml::win::MatricesCB:
+		case RootParameters::MatricesCB:
 		{
 			rootParameters[i].InitAsConstants(
 				GetRootParameterNumValues(RootParameters::MatricesCB),
@@ -512,12 +548,21 @@ std::vector<CD3DX12_ROOT_PARAMETER1> InitializeRenderComponentsSystem::CreateRoo
 				GetRootParameterShaderVisibility(RootParameters::MatricesCB));
 		}
 		break;
-		case snakeml::win::Textures:
+		case RootParameters::Textures:
 		{
 			rootParameters[i].InitAsDescriptorTable(
 				GetRootParameterNumValues(RootParameters::Textures),
 				descriptorRange,
 				GetRootParameterShaderVisibility(RootParameters::Textures));
+		}
+		break;
+		case RootParameters::TextureId:
+		{
+			rootParameters[i].InitAsConstants(
+				GetRootParameterNumValues(RootParameters::TextureId),
+				1,
+				0,
+				GetRootParameterShaderVisibility(RootParameters::TextureId));
 		}
 		break;
 		default:
@@ -534,9 +579,10 @@ UINT InitializeRenderComponentsSystem::GetRootParameterNumValues(RootParameters 
 	switch (paramType)
 	{
 	case MatricesCB:		return k_mvpNumValues;
+	case TextureId:
 	case Textures:			return 1u;
 	default:
-		static_assert(RootParameters::NumRootParameters == 2u);
+		static_assert(RootParameters::NumRootParameters == 3u);
 	}
 	ASSERT(false, "InitializeRenderComponentsGetRootParameterNumValues Incorrect input param");
 	return 0u;
@@ -547,9 +593,10 @@ D3D12_SHADER_VISIBILITY InitializeRenderComponentsSystem::GetRootParameterShader
 	switch (paramType)
 	{
 	case MatricesCB:		return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
+	case TextureId:
 	case Textures:			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL;
 	default:
-		static_assert(RootParameters::NumRootParameters == 2u);
+		static_assert(RootParameters::NumRootParameters == 3u);
 	}
 	ASSERT(false, "InitializeRenderComponentsGetRootParameterShaderVisibility Incorrect input param");
 	return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;

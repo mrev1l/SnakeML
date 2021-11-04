@@ -15,7 +15,7 @@ public:
 	ECSManager() = default;
 	~ECSManager() = default;
 
-	/** Relay to entity-components pool */
+	/** Relay to entity-components pool */ // TODO : Should remove?
 	template<class ConcreteIteratorType>
 	void InsertComponents(Iterator* it);
 	template<class ComponentsIterator>

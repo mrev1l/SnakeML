@@ -4,6 +4,7 @@
 #include "WIP_System.h"
 
 #include "system/ecs/components/EntityControllerComponent.h"
+#include "system/ecs/components/ChildControllerComponent.h"
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
@@ -17,6 +18,16 @@ namespace wip
 
 void WIP_System::Update(float deltaTime)
 {
+	// attach child to parent
+	ChildControllerComponentIterator* childContrainer = ECSManager::GetInstance()->GetComponents<ChildControllerComponentIterator>();
+	EntityControllerComponentIterator* playerContainer = ECSManager::GetInstance()->GetComponents<EntityControllerComponentIterator>();
+
+	if (childContrainer->Size() > 0)
+	{
+		childContrainer->At(0).m_parentId = playerContainer->At(0).m_entityId;
+	}
+	ECSManager::GetInstance()->UnscheduleSystem(this);
+	return;
 	// Give initial nudge
 	const uint32_t entityIdToUpdate = 0;
 	Entity& entity = ECSManager::GetInstance()->GetEntity(entityIdToUpdate);

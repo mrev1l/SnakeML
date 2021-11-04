@@ -53,6 +53,7 @@ enum RootParameters
 //	PointLights,		// StructuredBuffer<PointLight> PointLights : register( t0 );
 //	SpotLights,			// StructuredBuffer<SpotLight> SpotLights : register( t1 );
 	Textures,			// Texture2D DiffuseTexture : register( t2 );
+	TextureId,			// ConstantBuffer<TextureParameters> TextureParams : register(b1);
 	NumRootParameters
 };
 

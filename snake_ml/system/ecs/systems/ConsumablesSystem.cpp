@@ -11,7 +11,7 @@
 namespace snakeml
 {
 
-ConsumablesSystem::ConsumablesSystem()
+ConsumablesSystem::ConsumablesSystem(std::vector<uint32_t> targetEntities) : ISystemCastableImpl<ConsumablesSystem>(targetEntities)
 {
 	if (PhysicsSystem* physicsSystem = ECSManager::GetInstance()->GetSystem<PhysicsSystem>())
 	{

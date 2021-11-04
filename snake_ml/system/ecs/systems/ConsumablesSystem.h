@@ -9,7 +9,7 @@ namespace snakeml
 class ConsumablesSystem : public ISystemCastableImpl<ConsumablesSystem>
 {
 public:
-	ConsumablesSystem();
+	ConsumablesSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>());
 
 private:
 	void OnCollisionEvent(Collision);

@@ -15,11 +15,13 @@ template<class ComponentsIterator>
 inline ComponentsIterator* EntityComponentPool::GetComponents() const
 {
 	const std::type_info& tInfo = typeid(ComponentsIterator);
-	if (Iterator* it = m_componentsPool.at(tInfo.hash_code()))
+	if (!m_componentsPool.contains(tInfo.hash_code()))
 	{
-		return it->As<ComponentsIterator>();
+		return nullptr;
 	}
-	return nullptr;
+
+	Iterator* it = m_componentsPool.at(tInfo.hash_code());
+	return it->As<ComponentsIterator>();
 }
 
 template<class ComponentsIterator>

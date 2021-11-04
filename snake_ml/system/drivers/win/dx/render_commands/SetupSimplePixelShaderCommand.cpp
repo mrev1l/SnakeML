@@ -13,12 +13,14 @@ namespace snakeml
 namespace win
 {
 
-SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture, const matrix& mvp)
+SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture,
+	const matrix& mvp, int32_t textureId)
 	: DX12RenderCommand()
 	, m_pipelineState(pipelineState)
 	, m_rootSignature(rootSignature)
 	, m_texture(texture)
 	, m_mvpMatrix(mvp)
+	, m_textureId(textureId)
 {
 }
 
@@ -27,6 +29,10 @@ void SetupSimplePixelShaderCommand::Execute(std::shared_ptr<DX12CommandList> com
 	commandList->SetPipelineState(m_pipelineState);
 	commandList->SetGraphicsRootSignature(m_rootSignature);
 	commandList->SetGraphics32BitConstants(RootParameters::MatricesCB, m_mvpMatrix);
+	if (m_textureId != -1) // TODO Generalize
+	{
+		commandList->SetGraphics32BitConstants(RootParameters::TextureId, m_textureId);
+	}
 	commandList->SetShaderResourceView(RootParameters::Textures, 0, m_texture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 

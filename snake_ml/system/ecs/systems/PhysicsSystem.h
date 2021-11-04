@@ -24,7 +24,7 @@ struct Collision
 class PhysicsSystem : public ISystemCastableImpl<PhysicsSystem>
 {
 public:
-	PhysicsSystem();
+	PhysicsSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>());
 
 	void Update(float deltaTime) override;
 
@@ -68,7 +68,7 @@ private:
 
 	vector m_quadTreeHalfDimensions = vector::zero;
 
-	static TransformComponent*	s_emptyTransformComponent;
+	static TransformComponent*	s_emptyTransformComponent; // TODO : Remove Pointer
 	static MeshComponent*		s_emptyMeshComponent;
 	static constexpr float		k_physicsTimeStep = 1.f / 144.f;		// 1 simulation step per frame per 144 fps
 	static constexpr uint32_t	k_quadTreeHalfDimensionsMargin = 10u;

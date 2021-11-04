@@ -6,15 +6,34 @@
 #include "system/ecs/components/PhysicsComponent.h"
 #include "system/ecs/ISystem.h"
 
+#include "utils/patterns/event.h"
+
 namespace snakeml
 {
 
 class LevelLoadingSystem : public ISystemCastableImpl<LevelLoadingSystem>
 {
 public:
-	LevelLoadingSystem() = default;
+	struct SpawnRequest
+	{
+		size_t templateId;
+		std::string name;
+		vector spawnPosition;
+		vector spawnRotation;
+	};
 
-	void Execute() override;
+	struct LoadRequest
+	{
+		std::string templatesFilePath;
+		std::string levelFilePath;
+	};
+
+	LevelLoadingSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<LevelLoadingSystem>(targetEntities) {};
+
+	void Update(float deltaTime) override;
+
+	Event<LevelLoadingSystem, void> m_onLoadingComplete;
+	Event<LevelLoadingSystem, uint32_t> m_onEntitySpawned;
 
 private:
 	struct ComponentDescription
@@ -33,6 +52,9 @@ private:
 		std::vector<size_t> componentIds;
 	};
 
+	void HandleLoadRequest(const LoadRequest& request);
+	void HandleSpawnRequest(const SpawnRequest& request);
+
 	static void LoadDataFile(const char* fileName, std::string& _outFileBuffer, rapidjson::Document& _outFileDocument);
 
 	static void LoadComponentsDescription(const rapidjson::Value& json, std::vector<ComponentDescription>& outComponentsDesc);
@@ -45,6 +67,7 @@ private:
 
 	static void LoadEntities(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc);
 	static void LoadEntity(const rapidjson::Value& json, const std::vector<ComponentDescription>& componentsDesc, const std::vector<Template>& templatesDesc, Entity& outEntity);
+	static void InstantiateEntityFromTemplate(const std::vector<ComponentDescription>& componentsDesc, const Template& templateDesc, const std::string& entityName, Entity& outEntity);
 
 	std::string m_levelFileBuffer, m_templatesFileBuffer;
 	rapidjson::Document m_levelDocument, m_templatesDocument;

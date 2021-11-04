@@ -5,6 +5,8 @@
 
 #include "utils/rapidjson_utils.h"
 
+#include "system/drivers/win/os/helpers/win_utils.h"// TODO Fix closs platform
+
 namespace snakeml
 {
 
@@ -16,7 +18,18 @@ void MaterialComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 	InitInputLayoutDescription(m_description, material.m_inputLayoutEntries);
 	RapidjsonUtils::ParseWstringValue(m_description, k_vsValueName, material.m_vs);
 	RapidjsonUtils::ParseWstringValue(m_description, k_psValueName, material.m_ps);
-	RapidjsonUtils::ParseWstringValue(m_description, k_textureValueName, material.m_texturePath);
+	//RapidjsonUtils::ParseWstringValue(m_description, k_textureValueName, material.m_texturePath);
+
+	const auto ParseElement = [this, &material](const rapidjson::Value* elementIt) -> void
+	{
+		std::wstring texture;
+		// TODO : Abstract
+		const std::string string = elementIt->GetString();
+		win::WinUtils::StringToWstring(string.c_str(), texture); // TODO Fix closs platform
+		material.m_textures.push_back(texture);
+	};
+
+	RapidjsonUtils::ParseArrayValue(m_description, k_texturesValueName, false, ParseElement);
 
 	AttachComponentToEntity(material, entity);
 }

@@ -265,10 +265,12 @@
     <ClCompile Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.cpp" />
     <ClCompile Include="system\drivers\win\os\WinDriver.cpp" />
     <ClCompile Include="system\ecs\components\CameraComponent.cpp" />
+    <ClCompile Include="system\ecs\components\ChildControllerComponent.cpp" />
     <ClCompile Include="system\ecs\components\ConsumableComponent.cpp" />
     <ClCompile Include="system\ecs\components\DebugRenderComponent.cpp" />
     <ClCompile Include="system\ecs\components\EntityControllerComponent.cpp" />
     <ClCompile Include="system\ecs\components\InputDataComponent.cpp" />
+    <ClCompile Include="system\ecs\components\LevelRequestComponent.cpp" />
     <ClCompile Include="system\ecs\components\MaterialComponent.cpp" />
     <ClCompile Include="system\ecs\components\MeshComponent.cpp" />
     <ClCompile Include="system\ecs\components\PhysicsComponent.cpp" />
@@ -280,6 +282,7 @@
     <ClCompile Include="system\ecs\IComponent.cpp" />
     <ClCompile Include="system\ecs\ISystem.cpp" />
     <ClCompile Include="system\ecs\SystemsPool.cpp" />
+    <ClCompile Include="system\ecs\systems\ChildControllerSystem.cpp" />
     <ClCompile Include="system\ecs\systems\ConsumablesSystem.cpp" />
     <ClCompile Include="system\ecs\systems\EntityControllerSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.cpp" />
@@ -340,10 +343,12 @@
     <ClInclude Include="system\drivers\win\dx\render_commands\DX12RenderCommandFactory.h" />
     <ClInclude Include="system\drivers\win\dx\render_commands\SetupSimplePixelShaderCommand.h" />
     <ClInclude Include="system\drivers\win\os\WinDriver.h" />
+    <ClInclude Include="system\ecs\components\ChildControllerComponent.h" />
     <ClInclude Include="system\ecs\components\ConsumableComponent.h" />
     <ClInclude Include="system\ecs\components\DebugRenderComponent.h" />
     <ClInclude Include="system\ecs\components\EntityControllerComponent.h" />
     <ClInclude Include="system\ecs\components\InputDataComponent.h" />
+    <ClInclude Include="system\ecs\components\LevelRequestComponent.h" />
     <ClInclude Include="system\ecs\EntityComponentPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
@@ -356,6 +361,7 @@
     <ClInclude Include="system\ecs\IComponent.h" />
     <ClInclude Include="system\ecs\ISystem.h" />
     <ClInclude Include="system\ecs\SystemsPool.h" />
+    <ClInclude Include="system\ecs\systems\ChildControllerSystem.h" />
     <ClInclude Include="system\ecs\systems\ConsumablesSystem.h" />
     <ClInclude Include="system\ecs\systems\EntityControllerSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.h" />

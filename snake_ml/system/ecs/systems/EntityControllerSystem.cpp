@@ -5,6 +5,7 @@
 
 #include "system/ecs/components/EntityControllerComponent.h"
 #include "system/ecs/components/PhysicsComponent.h"
+#include "system/ecs/components/TransformComponent.h"
 
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
@@ -17,19 +18,54 @@ void EntityControllerSystem::Update(float dt)
 	EntityControllerComponentIterator& entityControllers = *ECSManager::GetInstance()->GetComponents<EntityControllerComponentIterator>();
 	for (EntityControllerComponent& controller : entityControllers)
 	{
-		Entity entity = ECSManager::GetInstance()->GetEntity(controller.m_entityId);
+		Entity& entity = ECSManager::GetInstance()->GetEntity(controller.m_entityId);
 		PhysicsComponent& physics = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+		//TransformComponent& transform = *entity.m_components.at(ComponentType::TransformComponent)->As<TransformComponent>();
 
 		const vector normalizedInput = controller.m_inputVector.getNormalized();
-		if (!IsNearlyZero(normalizedInput.length()))
+		//if (!IsNearlyZero(normalizedInput.length()))
 		{
-			const vector currentVelocityDirection = physics.m_velocity.getNormalized();
-			const vector newMovementDirection = CalculateNewMovingDirection(currentVelocityDirection, normalizedInput);
+			static float timer = 0.f;
+			static constexpr float timerThreshold = 0.5f;
+			static vector forwardToApply = vector::zero;
 
-			physics.m_velocity = newMovementDirection * s_maxMovementSpeed;
-			physics.m_rotation = CalculateNewRotation(newMovementDirection);
+			timer += dt;
 
+			if (timer < timerThreshold)
+			{
+				physics.m_velocity = vector::zero;
+				if (!IsNearlyZero(normalizedInput.length()))
+				{
+					matrix rotationMatrix = RotationMatrix(ConvertToRadians(physics.m_rotation.y), ConvertToRadians(physics.m_rotation.x), ConvertToRadians(physics.m_rotation.z));
+					const vector currentForward = rotationMatrix * vector::up;
+
+					const vector newForward = CalculateNewMovingDirection(currentForward, normalizedInput);
+					forwardToApply = newForward;
+				}
+			}
+			else
+			{
+				timer = 0.f;
+
+				if (!IsNearlyZero(forwardToApply.length()))
+				{
+					physics.m_velocity = forwardToApply * /*s_maxMovementSpeed*/32.f / dt;
+					physics.m_rotation = CalculateNewRotation(forwardToApply);
+
+					//forwardToApply = vector::zero;
+				}
+			}
 			controller.m_inputVector = vector::zero;
+			
+			//const vector currentVelocityDirection = physics.m_velocity.getNormalized();
+			//const vector newMovementDirection = CalculateNewMovingDirection(currentVelocityDirection, normalizedInput);
+
+			//physics.m_velocity = newMovementDirection * /*s_maxMovementSpeed*/32.f / dt;
+			//physics.m_rotation = CalculateNewRotation(newMovementDirection);
+
+			////transform.m_rotation = physics.m_rotation;
+
+			//controller.m_inputVector = vector::zero;
 		}
 	}
 }
