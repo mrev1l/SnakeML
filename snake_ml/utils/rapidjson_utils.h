@@ -9,7 +9,7 @@ public:
 	static void ParseVectorValue(const rapidjson::Value& json, const char* name, vector& _outVector);
 	static void ParseWstringValue(const rapidjson::Value& json, const char* name, std::wstring& _outWstring);
 	static void ParseStringValue(const rapidjson::Value& json, const char* name, std::string& _outString);
-	static void ParseArrayValue(const rapidjson::Value& json, const char* name, const std::function<void(const rapidjson::Value*)>& elementCallback);
+	static void ParseArrayValue(const rapidjson::Value& json, const char* name, bool isOptional, const std::function<void(const rapidjson::Value*)>& elementCallback);
 	static void ParseFloat3Value(const rapidjson::Value& json, const char* name, float3& _outFloat3);
 	static void ParseFloat2Value(const rapidjson::Value& json, const char* name, float2& _outFloat2);
 	static void ParseFloatValue(const rapidjson::Value& json, const char* name, float& _outFloat);

@@ -6,8 +6,18 @@
 		"description" :
 		{
 			"vs": "data/shaders/VS_MvpUV.cso",
-			"ps": "data/shaders/PS_UV.cso",
-			"texture": "data/assets/textures/snake-head-0.png"
+			"ps": "data/shaders/PS_UV_TextureArray.cso",
+			"textures": [
+				"data/assets/textures/snake-head-0.png",
+				"data/assets/textures/snake-head-1.png",
+				"data/assets/textures/snake-head-2.png",
+				"data/assets/textures/snake-body-left-up-0.png",
+				"data/assets/textures/snake-body-down-right-0.png",
+				"data/assets/textures/snake-body-straight-0.png",
+				"data/assets/textures/snake-body-left-down-0.png",
+				"data/assets/textures/snake-body-up-right-0.png",
+				"data/assets/textures/snake-tail-0.png"
+			]
 		}
 	},
 	{
@@ -27,7 +37,9 @@
 		{
 			"vs": "data/shaders/VS_MvpUV.cso",
 			"ps": "data/shaders/PS_UV.cso",
-			"texture": "data/assets/textures/fruit-0.png"
+			"textures": [
+				"data/assets/textures/fruit-0.png"
+			]
 		}
 	},
 	{
@@ -76,7 +88,7 @@
 		"componentTypeId" : 4,
 		"description" :
 		{
-			"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
+			"shape_dimensions" : [ 30.0, 30.0, 0.0 ],
 			"shape_mass" : 1.0,
 			"is_dynamic" : true,
 			"collision_channel" : 2,
@@ -112,7 +124,7 @@
 		"componentTypeId" : 4,
 		"description" :
 		{
-			"shape_dimensions" : [ 32.0, 32.0, 0.0 ],
+			"shape_dimensions" : [ 30.0, 30.0, 0.0 ],
 			"shape_mass" : 1.0,
 			"is_dynamic" : true,
 			"collision_channel" : 2,
@@ -133,6 +145,16 @@
 		"componentId" : 12,
 		"componentTypeId" : 7,
 		"description" : {}	
+	},
+	{
+		"componentId" : 13,
+		"componentTypeId" : 10,
+		"description" : {}
+	},
+	{
+		"componentId" : 14,
+		"componentTypeId" : 11,
+		"description" :	{}
 	}
 ],
 "templates": [
@@ -159,7 +181,12 @@
 	{
 		"templateId": 4,
 		"name": "Level_Master",
-		"components": [1, 11]
+		"components": [1, 11, 14]
+	},
+	{
+		"templateId": 5,
+		"name": "Snake child",
+		"components": [0, 3, 6, 13]
 	}
 ]
 }

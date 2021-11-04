@@ -11,7 +11,8 @@ namespace snakeml
 std::unordered_map<InputKey, InputAction> InputManager::s_actionsMappings =
 {
 	{ InputKey::ESC,	InputAction::Exit },
-	{ InputKey::Num1,	InputAction::DebugRendering }
+	{ InputKey::Num1,	InputAction::DebugRendering },
+	{ InputKey::Num2,	InputAction::DebugSpawnSnakeChild }
 };
 
 std::unordered_map<InputKey, InputManager::InputAxisData> InputManager::s_axesMappings =

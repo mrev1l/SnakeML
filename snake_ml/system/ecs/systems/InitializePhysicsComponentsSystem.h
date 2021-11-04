@@ -13,10 +13,11 @@ class PhysicsComponent;
 class InitializePhysicsComponentsSystem : public ISystemCastableImpl<InitializePhysicsComponentsSystem>
 {
 public:
-	InitializePhysicsComponentsSystem() = default;
+	InitializePhysicsComponentsSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<InitializePhysicsComponentsSystem>(targetEntities) {};
 
 	void Execute() override;
 
+private:
 	static void InitPhysicsBody(const TransformComponent& transform, PhysicsComponent& _outBody);
 };
 

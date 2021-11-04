@@ -10,13 +10,17 @@ namespace snakeml
 class ISystem : public ICastable
 {
 public:
-	ISystem() : m_id(++s_globalSystemIdCounter) {}
+	ISystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : m_targetEntities(targetEntities), m_id(++s_globalSystemIdCounter) {}
 	virtual ~ISystem() = 0 {};
 
 	virtual void Execute() {} // TODO: private + friend class?
 	virtual void Update(float deltaTime) {} // TODO: private + friend class?
 
 	uint32_t m_id = 0;
+
+protected:
+	/// if empty - all the entities
+	std::vector<uint32_t> m_targetEntities; // TODO : Abstract the interation over targets
 
 private:
 	// TODO deleted copy ctor

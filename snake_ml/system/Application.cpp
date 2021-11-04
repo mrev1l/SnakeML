@@ -10,6 +10,7 @@
 #endif
 
 #include "ecs/ECSManager.h"
+#include "ecs/systems/ChildControllerSystem.h"
 #include "ecs/systems/ConsumablesSystem.h"
 #include "ecs/systems/InitializeDebugRenderComponentsSystem.h"
 #include "ecs/systems/EntityControllerSystem.h"
@@ -40,7 +41,7 @@ void Application::Initialize()
 {
 	constexpr std::wstring_view windowClassName(L"SnakeML_WindowClass");
 	constexpr std::wstring_view windowTitle(L"snake_ml");
-	constexpr uint32_t2 windowSz = { 720, 720 };
+	constexpr uint32_t2 windowSz = { 640, 640 };
 
 #ifdef _WINDOWS
 	new win::WinDriver(windowClassName.data(), windowTitle.data(), windowSz);
@@ -53,17 +54,23 @@ void Application::Initialize()
 
 	new ECSManager();
 
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<LevelLoadingSystem>());
+	std::unique_ptr<LevelLoadingSystem> levelLoadingSystem = std::make_unique<LevelLoadingSystem>();
+	levelLoadingSystem->m_onLoadingComplete.Subscribe(this, []() -> void
+		{
 #ifdef _WINDOWS
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 #endif
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
-	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
+		});
+	ECSManager::GetInstance()->ScheduleSystem(std::move(levelLoadingSystem));
+
 
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<wip::WIP_System>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<InputHandlingSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<EntityControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ChildControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ConsumablesSystem>()); // TODO : ordering!
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }

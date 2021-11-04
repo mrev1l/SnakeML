@@ -27,7 +27,7 @@ void MeshComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 		mesh.m_vertices.push_back(vertex);
 	};
 
-	RapidjsonUtils::ParseArrayValue(m_description, k_verticesValueName, vertexJsonCallback);
+	RapidjsonUtils::ParseArrayValue(m_description, k_verticesValueName, false, vertexJsonCallback);
 
 	AttachComponentToEntity(mesh, entity);
 }

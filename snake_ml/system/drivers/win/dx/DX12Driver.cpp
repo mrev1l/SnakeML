@@ -181,7 +181,7 @@ void DX12Driver::OnRender_ExecuteFrame(std::shared_ptr<DX12CommandQueue> command
 	}
 
 	// test
-	{
+	/*{
 		CameraComponent& camera = ECSManager::GetInstance()->GetComponents<CameraComponentIterator>()->At(0);
 		LookAtMatrixLH(camera.m_eyePosition, camera.m_focusPoint, camera.m_upDirection);
 
@@ -194,7 +194,7 @@ void DX12Driver::OnRender_ExecuteFrame(std::shared_ptr<DX12CommandQueue> command
 		commandList->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		commandList->SetVertexBuffer(0, testVertexBuffer);
 		commandList->Draw(static_cast<uint32_t>(testVertexBuffer.GetNumVertices()));
-	}
+	}*/
 
 	commandQueue->ExecuteCommandList(commandList);
 }

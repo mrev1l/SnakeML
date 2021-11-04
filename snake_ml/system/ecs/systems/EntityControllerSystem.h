@@ -9,7 +9,7 @@ namespace snakeml
 class EntityControllerSystem : public ISystemCastableImpl<EntityControllerSystem>
 {
 public:
-	EntityControllerSystem() = default;
+	EntityControllerSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<EntityControllerSystem>(targetEntities) {};
 	virtual ~EntityControllerSystem() = default;
 
 	void Update(float dt) override;

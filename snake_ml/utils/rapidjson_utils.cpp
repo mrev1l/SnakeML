@@ -28,9 +28,14 @@ void RapidjsonUtils::ParseStringValue(const rapidjson::Value& json, const char* 
 	_outString = json[name].GetString();
 }
 
-void RapidjsonUtils::ParseArrayValue(const rapidjson::Value& json, const char* name, const std::function<void(const rapidjson::Value*)>& elementCallback)
+void RapidjsonUtils::ParseArrayValue(const rapidjson::Value& json, const char* name, bool isOptional, const std::function<void(const rapidjson::Value*)>& elementCallback)
 {
-	ASSERT(json.HasMember(name) && json[name].IsArray(), "[RapidjsonUtils::ParseArrayValue] : Invalid array json.");
+	const bool isValueValid = json.HasMember(name) && json[name].IsArray();
+	if (isOptional && !isValueValid)
+	{
+		return;
+	}
+	ASSERT(isValueValid, "[RapidjsonUtils::ParseArrayValue] : Invalid array json.");
 
 	const rapidjson::GenericArray<true, rapidjson::Value>& array = json[name].GetArray();
 	for (rapidjson::Value::ConstValueIterator vertexIt = array.Begin(); vertexIt != array.End(); ++vertexIt)

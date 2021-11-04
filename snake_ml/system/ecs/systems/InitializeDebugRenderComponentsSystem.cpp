@@ -12,23 +12,50 @@ namespace snakeml
 
 void InitializeDebugRenderComponentsSystem::Execute()
 {
-	PhysicsComponentIterator* physicsComponentsIt = ECSManager::GetInstance()->GetComponents<PhysicsComponentIterator>();
-	//DebugRenderComponentIterator* debugRenderComponents = IComponent::CreateIterator(ComponentType::DebugRenderComponent, physicsComponentsIt->Size())->As<DebugRenderComponentIterator>();
-	DebugRenderComponentIterator* debugRenderComponents = ECSManager::GetInstance()->GetComponents<DebugRenderComponentIterator>();
-	
-	for (size_t idx = 0; idx < physicsComponentsIt->Size(); ++idx)
+	if (m_targetEntities.empty()) // init for every entity
 	{
-		DebugRenderComponent& debugRenderComponent = debugRenderComponents->Add();
-		PhysicsComponent& physicsComponent = physicsComponentsIt->At(idx);
-		
-		debugRenderComponent.m_entityId = physicsComponent.m_entityId;
-		debugRenderComponent.m_debugAABB = physicsComponent.m_aabb;
+		PhysicsComponentIterator* physicsComponentsIt = ECSManager::GetInstance()->GetComponents<PhysicsComponentIterator>();
+		//DebugRenderComponentIterator* debugRenderComponents = IComponent::CreateIterator(ComponentType::DebugRenderComponent, physicsComponentsIt->Size())->As<DebugRenderComponentIterator>();
+		DebugRenderComponentIterator* debugRenderComponents = ECSManager::GetInstance()->GetComponents<DebugRenderComponentIterator>();
 
-		Entity& entity = ECSManager::GetInstance()->GetEntity(physicsComponent.m_entityId);
-		entity.m_components.insert({ ComponentType::DebugRenderComponent, &debugRenderComponent });
+		for (size_t idx = 0; idx < physicsComponentsIt->Size(); ++idx)
+		{
+			DebugRenderComponent& debugRenderComponent = debugRenderComponents->Add();
+			PhysicsComponent& physicsComponent = physicsComponentsIt->At(idx);
+
+			Entity& entity = ECSManager::GetInstance()->GetEntity(physicsComponent.m_entityId);
+
+			InitDebugRenderComponent(entity, physicsComponent, debugRenderComponent);
+
+			//debugRenderComponent.m_entityId = physicsComponent.m_entityId;
+			//debugRenderComponent.m_debugAABB = physicsComponent.m_aabb;
+			//
+			//entity.m_components.insert({ ComponentType::DebugRenderComponent, &debugRenderComponent });
+		}
+
+		//ECSManager::GetInstance()->InsertComponents<DebugRenderComponentIterator>(debugRenderComponents);
 	}
+	else
+	{
+		DebugRenderComponentIterator* debugRenderComponents = ECSManager::GetInstance()->GetComponents<DebugRenderComponentIterator>();
+		for (int32_t entityId : m_targetEntities)
+		{
+			Entity& entity = ECSManager::GetInstance()->GetEntity(entityId);
 
-	//ECSManager::GetInstance()->InsertComponents<DebugRenderComponentIterator>(debugRenderComponents);
+			DebugRenderComponent& debugRenderComponent = debugRenderComponents->Add();
+			const PhysicsComponent& physicsComponent = *entity.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>();
+
+			InitDebugRenderComponent(entity, physicsComponent, debugRenderComponent);
+		}
+	}
+}
+
+void InitializeDebugRenderComponentsSystem::InitDebugRenderComponent(Entity& entity, const PhysicsComponent& physicsComp, DebugRenderComponent& debugRenderComponent)
+{
+	debugRenderComponent.m_entityId = physicsComp.m_entityId;
+	debugRenderComponent.m_debugAABB = physicsComp.m_aabb;
+
+	entity.m_components.insert({ ComponentType::DebugRenderComponent, &debugRenderComponent });
 }
 
 }

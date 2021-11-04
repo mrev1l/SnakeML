@@ -63,7 +63,7 @@ inline T DivideByMultiple(T value, size_t alignment)
 	return (T)((value + alignment - 1) / alignment);
 }
 
-inline bool IsNearlyZero(float val, float epsilon = k_precise_epsilon)
+inline bool IsNearlyZero(float val, float epsilon = k_default_epsilon)
 {
 	return abs(val - 0.f) < epsilon;
 }

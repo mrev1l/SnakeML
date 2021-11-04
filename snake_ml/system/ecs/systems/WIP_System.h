@@ -12,7 +12,7 @@ namespace wip
 class WIP_System : public ISystemCastableImpl<WIP_System>
 {
 public:
-	WIP_System() = default;
+	WIP_System(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<WIP_System>(targetEntities) {};
 
 	void Update(float deltaTime) override;
 };

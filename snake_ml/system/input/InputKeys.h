@@ -18,6 +18,7 @@ enum class InputKey : uint64_t
 	ESC					= VK_ESCAPE,
 	F11					= VK_F11,
 	Num1				= VK_NUMPAD1,
+	Num2				= VK_NUMPAD2,
 
 	W					= 0x57,
 	S					= 0x53,

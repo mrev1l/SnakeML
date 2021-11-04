@@ -10,7 +10,7 @@ namespace snakeml
 class Render2DSystem : public ISystemCastableImpl<Render2DSystem>
 {
 public:
-	Render2DSystem() = default;
+	Render2DSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<Render2DSystem>(targetEntities) {};
 
 	void Update(float deltaTime) override;
 };

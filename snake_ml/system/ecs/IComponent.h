@@ -19,6 +19,8 @@ enum class ComponentType : uint32_t
 	EntityControllerComponent,
 	InputDataComponent,
 	ConsumableComponent,
+	ChildControllerComponent,
+	LevelRequestComponent,
 
 	Size
 };
@@ -41,6 +43,10 @@ inline void operator++(ComponentType& type) { type = static_cast<ComponentType>(
 		ObjectType& Add() { \
 			if (m_size == m_capacity) { \
 				Reallocate(m_capacity * 2u); \
+				for(size_t i = 0; i < m_size; ++i) { \
+					Entity& entity = ECSManager::GetInstance()->GetEntity(m_begin[i].m_entityId); \
+					entity.m_components.at(ComponentType::##ObjectType) = &m_begin[i]; \
+				} \
 			} \
 			\
 			AllocTraits::construct(m_allocator, m_begin + m_size); \
@@ -55,7 +61,7 @@ inline void operator++(ComponentType& type) { type = static_cast<ComponentType>(
 		} \
 		\
 		void Clear() override { \
-			IComponent::DeleteIterator(At(0).GetComponentType(), this); \
+			IComponent::DeleteIterator(ComponentType::##ObjectType, this); \
 		} \
 		\
 		ObjectType* begin() const { \
@@ -83,7 +89,11 @@ inline void operator++(ComponentType& type) { type = static_cast<ComponentType>(
 		\
 		void Reallocate(size_t newCapacity) { \
 			ObjectType* tempIt = AllocTraits::allocate(m_allocator, newCapacity); \
-			std::copy(m_begin, m_begin + m_capacity, tempIt); \
+			\
+			for (size_t i = 0; i < m_capacity; ++i) { \
+				AllocTraits::construct(m_allocator, tempIt + i, std::move(m_begin[i])); \
+				AllocTraits::destroy(m_allocator, m_begin + i); \
+			} \
 			\
 			AllocTraits::deallocate(m_allocator, m_begin, m_capacity); \
 			\

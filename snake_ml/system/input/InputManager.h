@@ -20,6 +20,7 @@ enum class InputAction
 {
 	Exit,
 	DebugRendering,
+	DebugSpawnSnakeChild,
 
 	Invalid
 };

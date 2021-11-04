@@ -13,6 +13,7 @@
 #include "system/ecs/components/CameraComponent.h"
 #include "system/ecs/components/DebugRenderComponent.h"
 #include "system/ecs/components/TransformComponent.h"
+#include "system/ecs/components/MaterialComponent.h"
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
@@ -58,12 +59,16 @@ void DX12RenderCommandFactory::BuildRenderCommands_Main(const Entity& entity, co
 	}
 
 	const DX12RenderComponent& renderableComponent = *entity.m_components.at(ComponentType::DX12RenderComponent)->As<DX12RenderComponent>();
+	const MaterialComponent& materialComponent = *entity.m_components.at(ComponentType::MaterialComponent)->As<MaterialComponent>();
 	if (renderableComponent.m_pipelineState)
 	{
 		const matrix modelMatrix = scale * rotation * translation;
 		const matrix mvpMatrix = modelMatrix * camera * ortho;
 
-		outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture, mvpMatrix));
+		int32_t textureId = materialComponent.m_textures.size() > 1 ? static_cast<uint32_t>(materialComponent.m_textureId) : -1;
+
+		outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture,
+			mvpMatrix, textureId));
 		outRenderCommands.push_back(std::make_unique<DrawMeshCommand>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, renderableComponent.m_vertexBuffer));
 	}
 }
