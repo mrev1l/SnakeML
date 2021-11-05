@@ -61,12 +61,6 @@ public:
 	const DX12DebugRenderingSettings& GetDebugRenderingSettings() const { return m_debugRenderingSettings; }
 	XInputHandler& GetXInputHandler() { return m_xInputHandler; }
 
-/// TEST
-	DX12RootSignature testRootSig;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> testPipelineState;
-	DX12Texture testTexture;
-	DX12VertexBuffer testVertexBuffer;
-	
 private:
 	void OnInitialize() override;
 	void OnShutdown() override;

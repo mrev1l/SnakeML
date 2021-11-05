@@ -158,7 +158,7 @@ void InitializeRenderComponentsSystem::Execute()
 		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription;
 		rootSignatureDescription.Init_1_1(static_cast<UINT>(rootParameters.size()), rootParameters.data(), 1, &linearRepeatSampler, rootSignatureFlags);
 
-		dx12Driver->testRootSig.SetRootSignatureDesc(rootSignatureDescription.Desc_1_1, featureData.HighestVersion);
+		//dx12Driver->//testRootSig.SetRootSignatureDesc(rootSignatureDescription.Desc_1_1, featureData.HighestVersion);
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
 		inputLayout.resize(2);
@@ -215,7 +215,7 @@ void InitializeRenderComponentsSystem::Execute()
 		rtvFormats.NumRenderTargets = 1;
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-		pipelineStateStream.pRootSignature = dx12Driver->testRootSig.GetRootSignature().Get();
+		//pipelineStateStream.pRootSignature = dx12Driver->testRootSig.GetRootSignature().Get();
 		pipelineStateStream.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
 		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
@@ -242,14 +242,14 @@ void InitializeRenderComponentsSystem::Execute()
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 			sizeof(PipelineStateStream), &pipelineStateStream
 		};
-		WinUtils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&dx12Driver->testPipelineState)));
+		//WinUtils::ThrowIfFailed(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&dx12Driver->testPipelineState)));
 
 		std::vector<std::wstring> files =
 		{
 			L"data/assets/textures/snake-head-2.png",
 			L"data/assets/textures/snake-head-1.png"
 		};
-		commandList->LoadTextureFromFile(dx12Driver->testTexture, files);
+		//commandList->LoadTextureFromFile(dx12Driver->testTexture, files);
 	}
 
 	if (commandQueue)
@@ -279,7 +279,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	if (materialComponent.m_entityId == 0)
 	{
 		DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
-		InitRenderComponent_LoadBuffers(commandList, vertices, dx12Driver->testVertexBuffer);
+		//InitRenderComponent_LoadBuffers(commandList, vertices, dx12Driver->testVertexBuffer);
 	}
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob;
