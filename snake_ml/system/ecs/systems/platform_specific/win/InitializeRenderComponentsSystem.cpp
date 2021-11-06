@@ -17,39 +17,8 @@ namespace snakeml
 namespace win
 {
 
-CD3DX12_BLEND_DESC s_alphaBlend; // TODO move to the driver
-CD3DX12_DEPTH_STENCIL_DESC s_depthStencilDesc;
 void InitializeRenderComponentsSystem::Execute()
 {
-	s_alphaBlend.RenderTarget[0].BlendEnable = TRUE;
-
-	// dest.rgb = src.rgb * src.a + dest.rgb * (1 - src.a)
-	s_alphaBlend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	s_alphaBlend.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	s_alphaBlend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-
-	// dest.a = 1 - (1 - src.a) * (1 - dest.a) [the math works out]
-	s_alphaBlend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_INV_DEST_ALPHA;
-	s_alphaBlend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
-	s_alphaBlend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-
-	s_alphaBlend.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-	s_depthStencilDesc.DepthEnable = false;
-	s_depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	s_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	s_depthStencilDesc.StencilEnable = true;
-	s_depthStencilDesc.StencilReadMask = 0xFF;
-	s_depthStencilDesc.StencilWriteMask = 0xFF;
-	s_depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	s_depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_INCR;
-	s_depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	s_depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-	s_depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	s_depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_DECR;
-	s_depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	s_depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
 	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponents<MaterialComponentIterator>();
 	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponents<MeshComponentIterator>();
 
@@ -303,19 +272,10 @@ void InitializeRenderComponentsSystem::CreatePipelineState(
 	pipelineStateStream.SampleDesc = sampleDesc;
 	pipelineStateStream.Rasterizer = rasterizerDesc;
 
-	/*CD3DX12_BLEND_DESC alphaBlend = {};
-	alphaBlend.IndependentBlendEnable = FALSE;
-	alphaBlend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	alphaBlend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	alphaBlend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	alphaBlend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
-	alphaBlend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	alphaBlend.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	alphaBlend.RenderTarget[0].BlendEnable = TRUE;
-	alphaBlend.RenderTarget[0].DestBlend = D3D12_BLEND_ONE*/;
+	const DX12GlobalRenderSettings& globalRenderSettings = dx12Driver->GetGlobalRenderSettings();
 
-	pipelineStateStream.BlendDesc = s_alphaBlend;
-	pipelineStateStream.DepthStencilDesc = s_depthStencilDesc;
+	pipelineStateStream.BlendDesc = globalRenderSettings.GetAlphaBlendDesc();
+	pipelineStateStream.DepthStencilDesc = globalRenderSettings.GetNoDepthStencilDesc();;
 
 	D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 		sizeof(PipelineStateStream), &pipelineStateStream
