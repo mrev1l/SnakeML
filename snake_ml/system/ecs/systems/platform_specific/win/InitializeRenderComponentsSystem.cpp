@@ -311,7 +311,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::sha
 {
 	if (!texturePath.empty())
 	{
-		commandList->LoadTextureFromFile(_outTexture, texturePath);
+		commandList->LoadTexture(_outTexture, { texturePath });
 	}
 }
 
@@ -319,7 +319,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::sha
 {
 	if (!texturesPath.empty())
 	{
-		commandList->LoadTextureFromFile(_outTexture, texturesPath);
+		commandList->LoadTexture(_outTexture, texturesPath);
 	}
 }
 
