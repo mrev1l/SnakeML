@@ -37,6 +37,9 @@
 
 #include "system/drivers/win/dx/resource/DX12TextureUsage.h"
 
+#include "third_party/win/DirectXTex/DirectXTex/DirectXTex.h"
+
+#include <filesystem>
 #include <map>
 #include <mutex>
 
@@ -176,8 +179,7 @@ public:
 	/**
 	 * Load a texture by a filename.
 	 */
-	void LoadTextureFromFile(DX12Texture& texture, const std::wstring& fileName, TextureUsage textureUsage = TextureUsage::Albedo);
-	void LoadTextureFromFile(DX12Texture& texture, const std::vector<std::wstring>& fileNames, TextureUsage textureUsage = TextureUsage::Albedo);
+	void LoadTexture(DX12Texture& texture, const std::vector<std::wstring>& filePaths, TextureUsage textureUsage = TextureUsage::Albedo);
 	
 	/**
 	 * Clear a texture.
@@ -388,6 +390,16 @@ public:
 private:
 	using TrackedObjects = std::vector<Microsoft::WRL::ComPtr<ID3D12Object>>;
 
+	struct TextureMetadata
+	{
+		DirectX::TEX_DIMENSION dimension;
+		DXGI_FORMAT format;
+		UINT64 width;
+		UINT64 height;
+		UINT16 arraySize;
+		UINT16 depth;
+	};
+
 	void TrackObject(Microsoft::WRL::ComPtr<ID3D12Object> object);
 	void TrackResource(const DX12Resource& res);
 
@@ -403,6 +415,21 @@ private:
 
 	// Binds the current descriptor heaps to the command list.
 	void BindDescriptorHeaps();
+
+	static std::vector<std::filesystem::path> LoadTexture_ValidatePaths(const std::vector<std::wstring>& filePaths);
+	static bool LoadTexture_InitFromCache(DX12Texture& texture, const std::vector<std::wstring>& filePaths, TextureUsage textureUsage);
+	static std::wstring LoadTexture_GenerateTextureArrayName(const std::vector<std::wstring>& filePaths);
+	static void LoadTexture_LoadSubresourceData(
+		std::vector<std::filesystem::path> texturePaths,
+		TextureUsage textureUsage,
+		std::vector<DirectX::TexMetadata>& _outFileMetadatas,
+		std::vector<DirectX::ScratchImage>& _outScratchImages,
+		std::vector<D3D12_SUBRESOURCE_DATA>& _outSubresourceData,
+		TextureMetadata& _outTexMetadata);
+	static void LoadTexture_LoadTextureFile(const std::filesystem::path& path, DirectX::TexMetadata& _outFileMetadata, DirectX::ScratchImage& _outScratchImage);
+	static D3D12_RESOURCE_DESC LoadTexture_CreateResourceDesc(const TextureMetadata& textureMetadata);
+	static Microsoft::WRL::ComPtr<ID3D12Resource> LoadTexture_CreateCommitedResource(const D3D12_RESOURCE_DESC& textureDesc);
+
 
 	D3D12_COMMAND_LIST_TYPE m_d3d12CommandListType;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> m_d3d12CommandList;

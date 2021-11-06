@@ -21,10 +21,6 @@
 
 #include "system/drivers/win/os/helpers/win_utils.h"
 
-#include "third_party/win/DirectXTex/DirectXTex/DirectXTex.h"
-
-#include <filesystem>
-
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -154,220 +150,41 @@ void DX12CommandList::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopol
 	m_d3d12CommandList->IASetPrimitiveTopology(primitiveTopology);
 }
 
-void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::wstring& fileName, TextureUsage textureUsage)
+void DX12CommandList::LoadTexture(DX12Texture& texture, const std::vector<std::wstring>& filePaths, TextureUsage textureUsage)
 {
-	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
-
-	std::filesystem::path filePath(fileName);
-	if (!std::filesystem::exists(filePath))
+	if (!LoadTexture_InitFromCache(texture, filePaths, textureUsage))
 	{
-		throw std::exception("File not found.");
-	}
+		std::vector<std::filesystem::path> texturePaths = LoadTexture_ValidatePaths(filePaths);
 
-	auto iter = s_textureCache.find(fileName);
-	if (iter != s_textureCache.end())
-	{
-		texture.SetTextureUsage(textureUsage);
-		texture.SetD3D12Resource(iter->second);
-		texture.CreateViews();
-		texture.SetName(fileName);
-	}
-	else
-	{
-		DirectX::TexMetadata metadata;
-		DirectX::ScratchImage scratchImage;
-		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
+		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+		std::vector<DirectX::TexMetadata> fileMetadatas;
+		std::vector<DirectX::ScratchImage> scratchImages;
+		TextureMetadata texMetadata;
+		LoadTexture_LoadSubresourceData(texturePaths, textureUsage, fileMetadatas, scratchImages, subresources, texMetadata);
 
-		if (filePath.extension() == ".dds")
-		{
-			// Use DDS texture loader.
-			WinUtils::ThrowIfFailed(LoadFromDDSFile(fileName.c_str(), DirectX::DDS_FLAGS_NONE, &metadata, scratchImage));
-		}
-		else if (filePath.extension() == ".hdr")
-		{
-			WinUtils::ThrowIfFailed(LoadFromHDRFile(fileName.c_str(), &metadata, scratchImage));
-		}
-		else if (filePath.extension() == ".tga")
-		{
-			WinUtils::ThrowIfFailed(LoadFromTGAFile(fileName.c_str(), &metadata, scratchImage));
-		}
-		else
-		{
-			WinUtils::ThrowIfFailed(LoadFromWICFile(fileName.c_str(), DirectX::WIC_FLAGS_NONE, &metadata, scratchImage));
-		}
+		D3D12_RESOURCE_DESC textureDesc = LoadTexture_CreateResourceDesc(texMetadata);
+		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = LoadTexture_CreateCommitedResource(textureDesc);
 
-		if (textureUsage == TextureUsage::Albedo)
-		{
-			metadata.format = DirectX::MakeSRGB(metadata.format);
-		}
-
-		D3D12_RESOURCE_DESC textureDesc = {};
-		switch (metadata.dimension)
-		{
-		case DirectX::TEX_DIMENSION_TEXTURE1D:
-			textureDesc = CD3DX12_RESOURCE_DESC::Tex1D(metadata.format, static_cast<UINT64>(metadata.width), static_cast<UINT16>(metadata.arraySize));
-			break;
-		case DirectX::TEX_DIMENSION_TEXTURE2D:
-			textureDesc = CD3DX12_RESOURCE_DESC::Tex2D(metadata.format, static_cast<UINT64>(metadata.width), static_cast<UINT>(metadata.height), static_cast<UINT16>(metadata.arraySize));
-			break;
-		case DirectX::TEX_DIMENSION_TEXTURE3D:
-			textureDesc = CD3DX12_RESOURCE_DESC::Tex3D(metadata.format, static_cast<UINT64>(metadata.width), static_cast<UINT>(metadata.height), static_cast<UINT16>(metadata.depth));
-			break;
-		default:
-			throw std::exception("Invalid texture dimension.");
-			break;
-		}
-
-		{
-			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-			WinUtils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
-				D3D12_HEAP_FLAG_NONE,
-				&textureDesc,
-				D3D12_RESOURCE_STATE_COMMON,
-				nullptr,
-				IID_PPV_ARGS(&textureResource)));
-		}
 		// Update the global state tracker.
 		DX12ResourceStateTracker::AddGlobalResourceState(textureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
+
+		std::wstring textureName = LoadTexture_GenerateTextureArrayName(filePaths);
 
 		texture.SetTextureUsage(textureUsage);
 		texture.SetD3D12Resource(textureResource);
 		texture.CreateViews();
-		texture.SetName(fileName);
-
-		std::vector<D3D12_SUBRESOURCE_DATA> subresources(scratchImage.GetImageCount());
-		const DirectX::Image* pImages = scratchImage.GetImages();
-		for (size_t i = 0; i < scratchImage.GetImageCount(); ++i)
-		{
-			auto& subresource = subresources[i];
-			subresource.RowPitch = pImages[i].rowPitch;
-			subresource.SlicePitch = pImages[i].slicePitch;
-			subresource.pData = pImages[i].pixels;
-		}
+		texture.SetName(textureName);
 
 		CopyTextureSubresource(texture, 0, static_cast<uint32_t>(subresources.size()), subresources.data());
 
-		if (subresources.size() < textureResource->GetDesc().MipLevels)
+		if (texMetadata.dimension <= DirectX::TEX_DIMENSION_TEXTURE3D)
 		{
 			GenerateMips(texture);
 		}
 
 		// Add the texture resource to the texture cache.
 		std::lock_guard<std::mutex> lock(s_textureCacheMutex);
-		s_textureCache[fileName] = textureResource.Get();
-	}
-}
-
-void DX12CommandList::LoadTextureFromFile(DX12Texture& texture, const std::vector<std::wstring>& fileNames, TextureUsage textureUsage)
-{
-	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
-
-	std::vector<std::filesystem::path> filePaths(fileNames.size());
-
-	for (int i = 0; i < fileNames.size(); ++i)
-	{
-		filePaths[i] = std::filesystem::path(fileNames[i]);
-		if (!std::filesystem::exists(filePaths[i]))
-		{
-			throw std::exception("File not found.");
-		}
-	}
-
-	std::vector<D3D12_SUBRESOURCE_DATA> subresources(fileNames.size());
-
-	auto iter = s_textureCache.find(fileNames[0]); // TODO: solve
-	if (iter != s_textureCache.end())
-	{
-		texture.SetTextureUsage(textureUsage);
-		texture.SetD3D12Resource(iter->second);
-		texture.CreateViews();
-		texture.SetName(fileNames[0]);
-	}
-	else
-	{
-		std::vector<DirectX::TexMetadata> metadata(fileNames.size());
-		std::vector<DirectX::ScratchImage> scratchImage(fileNames.size());
-
-		for (int i = 0; i < fileNames.size(); ++i)
-		{
-			auto filePath = filePaths[i];
-
-			if (filePath.extension() == ".dds")
-			{
-				// Use DDS texture loader.
-				WinUtils::ThrowIfFailed(LoadFromDDSFile(fileNames[i].c_str(), DirectX::DDS_FLAGS_NONE, &metadata[i], scratchImage[i]));
-			}
-			else if (filePath.extension() == ".hdr")
-			{
-				WinUtils::ThrowIfFailed(LoadFromHDRFile(fileNames[i].c_str(), &metadata[i], scratchImage[i]));
-			}
-			else if (filePath.extension() == ".tga")
-			{
-				WinUtils::ThrowIfFailed(LoadFromTGAFile(fileNames[i].c_str(), &metadata[i], scratchImage[i]));
-			}
-			else
-			{
-				WinUtils::ThrowIfFailed(LoadFromWICFile(fileNames[i].c_str(), DirectX::WIC_FLAGS_NONE, &metadata[i], scratchImage[i]));
-			}
-
-			if (textureUsage == TextureUsage::Albedo)
-			{
-				metadata[i].format = DirectX::MakeSRGB(metadata[i].format);
-			}
-
-			const DirectX::Image* pImages = scratchImage[i].GetImages();
-			ASSERT(scratchImage[i].GetImageCount() == 1, "Weird image count");
-			//for (size_t i = 0; i < scratchImage[i].GetImageCount(); ++i)
-			{
-				auto& subresource = subresources[i];
-				subresource.RowPitch = pImages[0].rowPitch;
-				subresource.SlicePitch = pImages[0].slicePitch;
-				subresource.pData = pImages[0].pixels;
-			}
-		}
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
-
-		D3D12_RESOURCE_DESC textureDesc = {};
-		textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		textureDesc.Format = metadata[0].format;
-		textureDesc.MipLevels = 1;
-		textureDesc.Alignment = 0;
-		textureDesc.DepthOrArraySize = metadata.size();
-		textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-		textureDesc.Height = metadata[0].height;
-		textureDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.Width = metadata[0].width;
-
-		{
-			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
-			WinUtils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
-				D3D12_HEAP_FLAG_NONE,
-				&textureDesc,
-				D3D12_RESOURCE_STATE_COMMON,
-				nullptr,
-				IID_PPV_ARGS(&textureResource)));
-		}
-		// Update the global state tracker.
-		DX12ResourceStateTracker::AddGlobalResourceState(textureResource.Get(), D3D12_RESOURCE_STATE_COMMON);
-
-		texture.SetTextureUsage(textureUsage);
-		texture.SetD3D12Resource(textureResource);
-		texture.CreateViews();
-		texture.SetName(fileNames[0]);
-
-		CopyTextureSubresource(texture, 0, static_cast<uint32_t>(subresources.size()), subresources.data());
-
-		/*if (subresources.size() < textureResource->GetDesc().MipLevels)
-		{
-			GenerateMips(texture);
-		}*/
-
-		// Add the texture resource to the texture cache.
-		std::lock_guard<std::mutex> lock(s_textureCacheMutex);
-		s_textureCache[fileNames[0]] = textureResource.Get();
+		s_textureCache[textureName] = textureResource.Get();
 	}
 }
 
@@ -1265,6 +1082,170 @@ void DX12CommandList::BindDescriptorHeaps()
 	}
 
 	m_d3d12CommandList->SetDescriptorHeaps(numDescriptorHeaps, descriptorHeaps);
+}
+
+std::vector<std::filesystem::path> DX12CommandList::LoadTexture_ValidatePaths(const std::vector<std::wstring>& filePaths)
+{
+	std::vector<std::filesystem::path> result(filePaths.size());
+
+	for (std::vector<std::filesystem::path>::size_type i = 0; i < filePaths.size(); ++i)
+	{
+		result[i] = std::filesystem::path(filePaths[i]);
+		ASSERT(std::filesystem::exists(result[i]), "[DX12CommandList::LoadTexture_ValidatePath] : Invalid texture path.");
+	}
+
+	return result;
+}
+
+bool DX12CommandList::LoadTexture_InitFromCache(DX12Texture& texture, const std::vector<std::wstring>& filePaths, TextureUsage textureUsage)
+{
+	const std::wstring textureName = LoadTexture_GenerateTextureArrayName(filePaths);
+
+	auto it = s_textureCache.find(textureName);
+	if (it != s_textureCache.end())
+	{
+		texture.SetTextureUsage(textureUsage);
+		texture.SetD3D12Resource(it->second);
+		texture.CreateViews();
+		texture.SetName(textureName);
+
+		return true;
+	}
+
+	return false;
+}
+
+std::wstring DX12CommandList::LoadTexture_GenerateTextureArrayName(const std::vector<std::wstring>& filePaths)
+{
+	std::wstring result;
+	if (filePaths.size() > 1)
+	{
+		// Not ideal by any means, but good enough for this project
+		std::wstring::size_type i = -1;
+
+		for (const std::wstring& path : filePaths)
+		{
+			std::filesystem::path fileName = std::filesystem::path(path).filename();
+
+			i = fileName.wstring().size() > (i + 1) ? (i + 1) : 0;
+			result += fileName.wstring()[i];
+		}
+	}
+	else
+	{
+		result = filePaths[0];
+	}
+	return result;
+}
+
+void DX12CommandList::LoadTexture_LoadSubresourceData(
+	std::vector<std::filesystem::path> texturePaths,
+	TextureUsage textureUsage,
+	std::vector<DirectX::TexMetadata>& _outFileMetadatas,
+	std::vector<DirectX::ScratchImage>& _outScratchImages,
+	std::vector<D3D12_SUBRESOURCE_DATA>& _outSubresourceData,
+	TextureMetadata& _outTexMetadata)
+{
+	_outSubresourceData.resize(texturePaths.size());
+
+	_outFileMetadatas.resize(texturePaths.size());
+	_outScratchImages.resize(texturePaths.size());
+
+
+	for (uint32_t i = 0; i < texturePaths.size(); ++i)
+	{
+		DirectX::TexMetadata& fileMetadata = _outFileMetadatas[i];
+		DirectX::ScratchImage& scratchImage = _outScratchImages[i];
+
+		LoadTexture_LoadTextureFile(texturePaths[i], fileMetadata, scratchImage);
+
+		if (textureUsage == TextureUsage::Albedo)
+		{
+			fileMetadata.format = DirectX::MakeSRGB(fileMetadata.format);
+		}
+
+		const DirectX::Image* pImages = scratchImage.GetImages();
+		ASSERT(scratchImage.GetImageCount() == 1, "[DX12CommandList::LoadTexture_LoadSubresourceData] : Unexpected image count.");
+		
+		D3D12_SUBRESOURCE_DATA& subresource = _outSubresourceData[i];
+		subresource.RowPitch = pImages[0].rowPitch;
+		subresource.SlicePitch = pImages[0].slicePitch;
+		subresource.pData = pImages[0].pixels;
+
+		_outTexMetadata.format = fileMetadata.format;
+		_outTexMetadata.width = fileMetadata.width;
+		_outTexMetadata.height = fileMetadata.height;
+		_outTexMetadata.depth = fileMetadata.depth;
+	}
+
+	if (texturePaths.size() > 1)
+	{
+		_outTexMetadata.dimension = static_cast<DirectX::TEX_DIMENSION>(DirectX::TEX_DIMENSION_TEXTURE3D + 1);
+		_outTexMetadata.arraySize = texturePaths.size();
+	}
+	else
+	{
+		_outTexMetadata.dimension = _outFileMetadatas[0].dimension;
+		_outTexMetadata.arraySize = _outFileMetadatas[0].arraySize;
+	}
+}
+
+void DX12CommandList::LoadTexture_LoadTextureFile(const std::filesystem::path& path, DirectX::TexMetadata& _outFileMetadata, DirectX::ScratchImage& _outScratchImage)
+{
+	const std::filesystem::path& pathExtension = path.extension();
+
+	if (pathExtension == ".dds")
+	{
+		WinUtils::ThrowIfFailed(LoadFromDDSFile(path.c_str(), DirectX::DDS_FLAGS_NONE, &_outFileMetadata, _outScratchImage));
+	}
+	else if (pathExtension == ".hdr")
+	{
+		WinUtils::ThrowIfFailed(LoadFromHDRFile(path.c_str(), &_outFileMetadata, _outScratchImage));
+	}
+	else if (pathExtension == ".tga")
+	{
+		WinUtils::ThrowIfFailed(LoadFromTGAFile(path.c_str(), &_outFileMetadata, _outScratchImage));
+	}
+	else
+	{
+		WinUtils::ThrowIfFailed(LoadFromWICFile(path.c_str(), DirectX::WIC_FLAGS_NONE, &_outFileMetadata, _outScratchImage));
+	}
+}
+
+D3D12_RESOURCE_DESC DX12CommandList::LoadTexture_CreateResourceDesc(const TextureMetadata& textureMetadata)
+{
+	switch (textureMetadata.dimension)
+	{
+	case DirectX::TEX_DIMENSION_TEXTURE1D:
+		return CD3DX12_RESOURCE_DESC::Tex1D(textureMetadata.format, static_cast<UINT64>(textureMetadata.width), static_cast<UINT16>(textureMetadata.arraySize));
+	case DirectX::TEX_DIMENSION_TEXTURE2D:
+		return CD3DX12_RESOURCE_DESC::Tex2D(textureMetadata.format, static_cast<UINT64>(textureMetadata.width), static_cast<UINT>(textureMetadata.height), static_cast<UINT16>(textureMetadata.arraySize));
+	case DirectX::TEX_DIMENSION_TEXTURE3D:
+		return CD3DX12_RESOURCE_DESC::Tex3D(textureMetadata.format, static_cast<UINT64>(textureMetadata.width), static_cast<UINT>(textureMetadata.height), static_cast<UINT16>(textureMetadata.depth));
+
+	default:
+	{
+		return CD3DX12_RESOURCE_DESC(D3D12_RESOURCE_DIMENSION_TEXTURE2D, 0, static_cast<UINT64>(textureMetadata.width), static_cast<UINT>(textureMetadata.height),
+			static_cast<UINT16>(textureMetadata.arraySize), 1, textureMetadata.format, 1, 0, D3D12_TEXTURE_LAYOUT_UNKNOWN, D3D12_RESOURCE_FLAG_NONE);
+	}
+	}
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> DX12CommandList::LoadTexture_CreateCommitedResource(const D3D12_RESOURCE_DESC& textureDesc)
+{
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
+
+	auto device = ((DX12Driver*)DX12Driver::GetInstance())->GetD3D12Device();
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
+
+	WinUtils::ThrowIfFailed(device->CreateCommittedResource(&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&textureDesc,
+		D3D12_RESOURCE_STATE_COMMON,
+		nullptr,
+		IID_PPV_ARGS(&textureResource)));
+
+	return textureResource;
 }
 
 }
