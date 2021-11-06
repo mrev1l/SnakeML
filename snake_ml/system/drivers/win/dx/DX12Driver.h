@@ -4,6 +4,7 @@
 #include "DX12RenderTarget.h"
 
 #include "helpers/DX12DebugRenderingSettings.h"
+#include "helpers/DX12GlobalRenderSettings.h"
 #include "helpers/XInputHandler.h"
 
 #include "pipeline/DX12CommandQueue.h"
@@ -59,6 +60,7 @@ public:
 	void GetMatrices(matrix& outProjection, matrix& outOrthogonal) const;
 
 	const DX12DebugRenderingSettings& GetDebugRenderingSettings() const { return m_debugRenderingSettings; }
+	const DX12GlobalRenderSettings& GetGlobalRenderSettings() const { return m_globalRenderSettings; }
 	XInputHandler& GetXInputHandler() { return m_xInputHandler; }
 
 private:
@@ -105,6 +107,7 @@ private:
 	UINT m_currentBackBufferIndex = 0;
 
 	DX12DebugRenderingSettings m_debugRenderingSettings;
+	DX12GlobalRenderSettings m_globalRenderSettings;
 	XInputHandler m_xInputHandler;
 
 	// Synchronization objects
