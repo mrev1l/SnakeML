@@ -13,7 +13,6 @@ public:
 
 	uint32_t m_parentId;
 	vector m_parentPosition, m_parentPreviousPosition;
-	vector m_parentRotation, m_parentPreviousRotation;
 };
 
 class ChildControllerComponentConstructionVisitor : public ConstructionVisitor

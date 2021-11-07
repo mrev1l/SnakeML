@@ -33,15 +33,6 @@ void ChildControllerSystem::Update(float dt)
 			childPhysics.m_position = childController.m_parentPreviousPosition;
 			childTransform.m_position = childPhysics.m_position; // TODO : Fix
 		}
-
-		//if (!IsNearlyZero((childController.m_parentRotation - parentPhysics.m_rotation).length()))
-		//{
-		//	childController.m_parentPreviousRotation = childController.m_parentRotation;
-		//	childController.m_parentRotation = parentPhysics.m_rotation;
-
-		//	childPhysics.m_rotation = childController.m_parentRotation;
-		//	childTransform.m_rotation = childPhysics.m_rotation;// TODO : Fix
-		//}
 	}
 
 }
