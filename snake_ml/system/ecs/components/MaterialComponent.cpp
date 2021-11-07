@@ -26,7 +26,7 @@ void MaterialComponentConstructionVisitor::Visit(Iterator* it, Entity& entity)
 		// TODO : Abstract
 		const std::string string = elementIt->GetString();
 		win::WinUtils::StringToWstring(string.c_str(), texture); // TODO Fix closs platform
-		material.m_textures.push_back(texture);
+		material.m_texturePaths.push_back(texture);
 	};
 
 	RapidjsonUtils::ParseArrayValue(m_description, k_texturesValueName, false, ParseElement);
