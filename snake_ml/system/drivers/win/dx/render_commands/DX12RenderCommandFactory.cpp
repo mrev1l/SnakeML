@@ -65,7 +65,9 @@ void DX12RenderCommandFactory::BuildRenderCommands_Main(const Entity& entity, co
 		const matrix modelMatrix = scale * rotation * translation;
 		const matrix mvpMatrix = modelMatrix * camera * ortho;
 
-		int32_t textureId = materialComponent.m_textures.size() > 1 ? static_cast<uint32_t>(materialComponent.m_textureId) : -1;
+		std::optional<int32_t> textureId = materialComponent.m_textureId != MaterialComponent::TextureId::Count ? 
+			static_cast<uint32_t>(materialComponent.m_textureId) :
+			std::optional<int32_t>();
 
 		outRenderCommands.push_back(std::make_unique<SetupSimplePixelShaderCommand>(renderableComponent.m_pipelineState, renderableComponent.m_rootSignature, renderableComponent.m_texture,
 			mvpMatrix, textureId));
