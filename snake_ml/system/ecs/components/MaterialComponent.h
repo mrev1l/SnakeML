@@ -42,8 +42,7 @@ public:
 	std::wstring m_vs;
 	std::wstring m_ps;
 	std::vector<InputLayoutEntries> m_inputLayoutEntries;
-	//std::wstring m_texturePath;
-	std::vector<std::wstring> m_textures;
+	std::vector<std::wstring> m_texturePaths;
 
 	// runtime
 	TextureId m_textureId = TextureId::Count; // TODO Write system for selecting id

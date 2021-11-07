@@ -73,13 +73,13 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 {
 	_outRenderComponent.m_entityId = materialComponent.m_entityId;
 
-	if (materialComponent.m_textures.size() == 1) // TODO : revise
+	if (materialComponent.m_texturePaths.size() == 1) // TODO : revise
 	{
-		InitRenderComponent_LoadTextures(commandList, materialComponent.m_textures[0], _outRenderComponent.m_texture);
+		InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePaths[0], _outRenderComponent.m_texture);
 	}
 	else
 	{
-		InitRenderComponent_LoadTextures(commandList, materialComponent.m_textures, _outRenderComponent.m_texture);
+		InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePaths, _outRenderComponent.m_texture);
 	}
 
 	const std::vector<std::pair<float3, float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<float3, float2>>() : meshComponent.m_vertices;
@@ -98,7 +98,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 	{
 		rootParamsIds = { RootParameters::MatricesCB, RootParameters::Textures };
 	}
-	if (materialComponent.m_textures.size() > 1)
+	if (materialComponent.m_texturePaths.size() > 1)
 	{
 		rootParamsIds.push_back(RootParameters::TextureId);
 	}
