@@ -14,7 +14,7 @@ namespace win
 {
 
 SetupSimplePixelShaderCommand::SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture,
-	const matrix& mvp, int32_t textureId)
+	const matrix& mvp, std::optional<uint32_t> textureId)
 	: DX12RenderCommand()
 	, m_pipelineState(pipelineState)
 	, m_rootSignature(rootSignature)
@@ -29,9 +29,9 @@ void SetupSimplePixelShaderCommand::Execute(std::shared_ptr<DX12CommandList> com
 	commandList->SetPipelineState(m_pipelineState);
 	commandList->SetGraphicsRootSignature(m_rootSignature);
 	commandList->SetGraphics32BitConstants(RootParameters::MatricesCB, m_mvpMatrix);
-	if (m_textureId != -1) // TODO Generalize
+	if (m_textureId.has_value())
 	{
-		commandList->SetGraphics32BitConstants(RootParameters::TextureId, m_textureId);
+		commandList->SetGraphics32BitConstants(RootParameters::TextureId, m_textureId.value());
 	}
 	commandList->SetShaderResourceView(RootParameters::Textures, 0, m_texture, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }

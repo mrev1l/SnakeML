@@ -31,7 +31,9 @@ public:
 		Straight,
 		LeftDown,
 		UpRight,
-		Tail
+		Tail,
+
+		Count
 	};
 
 	virtual ~MaterialComponent() = default;
@@ -44,7 +46,7 @@ public:
 	std::vector<std::wstring> m_textures;
 
 	// runtime
-	TextureId m_textureId = TextureId::Head0;
+	TextureId m_textureId = TextureId::Count; // TODO Write system for selecting id
 };
 
 class MaterialComponentConstructionVisitor : public ConstructionVisitor

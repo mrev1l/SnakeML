@@ -3,6 +3,8 @@
 
 #include "lib_includes/directX_includes.h"
 
+#include <optional>
+
 namespace snakeml
 {
 #ifdef _WINDOWS
@@ -16,7 +18,7 @@ class SetupSimplePixelShaderCommand : public DX12RenderCommand
 {
 public:
 	SetupSimplePixelShaderCommand(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState, const DX12RootSignature& rootSignature, const DX12Texture& texture,
-		const matrix& mvp, int32_t textureId);
+		const matrix& mvp, std::optional<uint32_t> textureId = std::optional<uint32_t>());
 	~SetupSimplePixelShaderCommand() = default;
 
 	void Execute(std::shared_ptr<DX12CommandList> commandList) override;
@@ -26,7 +28,7 @@ private:
 	const DX12RootSignature& m_rootSignature;
 	const DX12Texture& m_texture;
 	const matrix m_mvpMatrix;
-	const int32_t m_textureId;
+	const std::optional<uint32_t> m_textureId;
 };
 
 }
