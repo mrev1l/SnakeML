@@ -23,6 +23,8 @@
 
 #include "input/InputManager.h"
 
+#include "time/TimerManager.h"
+
 #include <functional>
 #include <string_view>
 
@@ -53,6 +55,8 @@ void Application::Initialize()
 	InputManager::GetInstance()->m_onActionReleased.Subscribe(this, std::bind(&Application::OnInput, this, std::placeholders::_1));
 
 	new ECSManager();
+
+	new TimerManager();
 
 	std::unique_ptr<LevelLoadingSystem> levelLoadingSystem = std::make_unique<LevelLoadingSystem>();
 	levelLoadingSystem->m_onLoadingComplete.Subscribe(this, []() -> void
@@ -85,10 +89,12 @@ void Application::Shutdown()
 	ECSManager* ecsManager = ECSManager::GetInstance();
 	IOSDriver* osDriver = IOSDriver::GetInstance();
 	InputManager* inputMgr = InputManager::GetInstance();
+	TimerManager* timerMgr = TimerManager::GetInstance();
 
 	delete ecsManager;
 	delete osDriver;
 	delete inputMgr;
+	delete timerMgr;
 }
 
 void Application::OnInput(InputAction inputEvent)
@@ -101,6 +107,7 @@ void Application::OnInput(InputAction inputEvent)
 
 void Application::Update(float dt)
 {
+	// TODO : reimplement with a Timer
 	static uint64_t frameCounter = 0;
 	static float elapsedSeconds = 0.0;
 	static std::chrono::high_resolution_clock clock;
@@ -121,6 +128,7 @@ void Application::Update(float dt)
 		frameCounter = 0;
 		elapsedSeconds = 0.0;
 	}
+	TimerManager::GetInstance()->Update(dt);
 	InputManager::GetInstance()->Update(dt);
 	ECSManager::GetInstance()->Update(dt);
 	Render();

@@ -134,7 +134,7 @@ void WinDriver::OnQuit()
 void WinDriver::OnUpdate()
 {
 	m_updateClock.Tick();
-	((DX12Driver*)IRenderDriver::GetInstance())->GetXInputHandler().Update(); // TODO solve cast for drivers?
+	((DX12Driver*)IRenderDriver::GetInstance())->GetXInputHandler().Update(); // TODO solve cast for drivers? + call this from within the driver?
 	SendUpdateEvent(static_cast<float>(m_updateClock.GetDeltaSeconds()));
 }
 
