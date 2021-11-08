@@ -18,23 +18,6 @@ namespace wip
 
 void WIP_System::Update(float deltaTime)
 {
-	// attach child to parent
-	ChildControllerComponentIterator* childContrainer = ECSManager::GetInstance()->GetComponents<ChildControllerComponentIterator>();
-	EntityControllerComponentIterator* playerContainer = ECSManager::GetInstance()->GetComponents<EntityControllerComponentIterator>();
-
-	if (childContrainer->Size() > 0)
-	{
-		childContrainer->At(0).m_parentId = playerContainer->At(0).m_entityId;
-	}
-	ECSManager::GetInstance()->UnscheduleSystem(this);
-	return;
-	// Give initial nudge
-	const uint32_t entityIdToUpdate = 0;
-	Entity& entity = ECSManager::GetInstance()->GetEntity(entityIdToUpdate);
-	EntityControllerComponent& controller = *entity.m_components.at(ComponentType::EntityControllerComponent)->As<EntityControllerComponent>();
-
-	controller.m_inputVector = vector::up;
-
 	ECSManager::GetInstance()->UnscheduleSystem(this);
 }
 
