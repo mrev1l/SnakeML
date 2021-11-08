@@ -296,6 +296,7 @@
     <ClCompile Include="system\ecs\systems\WIP_System.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
+    <ClCompile Include="system\time\TimerManager.cpp" />
     <ClCompile Include="utils\math\algorithms\AABB.cpp" />
     <ClCompile Include="utils\math\algorithms\CollisionDetectionGJK.cpp" />
     <ClCompile Include="utils\math\algorithms\CollisionDetectionSAT.cpp" />
@@ -306,6 +307,7 @@
     <ClCompile Include="utils\types\HighResolutionClock.cpp" />
     <ClCompile Include="system\drivers\win\os\helpers\win_utils.cpp" />
     <ClCompile Include="utils\types\QuadTree.cpp" />
+    <ClCompile Include="utils\types\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h" />
@@ -377,6 +379,7 @@
     <ClInclude Include="system\input\InputKeys.h" />
     <ClInclude Include="system\input\InputManager.h" />
     <ClInclude Include="system\drivers\win\dx\helpers\directX_utils.h" />
+    <ClInclude Include="system\time\TimerManager.h" />
     <ClInclude Include="utils\math\algorithms\AABB.h" />
     <ClInclude Include="utils\math\algorithms\CollisionDetectionGJK.h" />
     <ClInclude Include="utils\math\algorithms\CollisionDetectionSAT.h" />
@@ -394,6 +397,7 @@
     <ClInclude Include="utils\types\QuadTree.h" />
     <ClInclude Include="utils\types\ThreadSafeQueue.h" />
     <ClInclude Include="system\drivers\win\os\helpers\win_utils.h" />
+    <ClInclude Include="utils\types\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\GenerateMips_CS.hlsl">

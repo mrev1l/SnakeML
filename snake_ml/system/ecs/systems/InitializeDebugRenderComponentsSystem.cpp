@@ -15,25 +15,17 @@ void InitializeDebugRenderComponentsSystem::Execute()
 	if (m_targetEntities.empty()) // init for every entity
 	{
 		PhysicsComponentIterator* physicsComponentsIt = ECSManager::GetInstance()->GetComponents<PhysicsComponentIterator>();
-		//DebugRenderComponentIterator* debugRenderComponents = IComponent::CreateIterator(ComponentType::DebugRenderComponent, physicsComponentsIt->Size())->As<DebugRenderComponentIterator>();
 		DebugRenderComponentIterator* debugRenderComponents = ECSManager::GetInstance()->GetComponents<DebugRenderComponentIterator>();
 
 		for (size_t idx = 0; idx < physicsComponentsIt->Size(); ++idx)
 		{
 			DebugRenderComponent& debugRenderComponent = debugRenderComponents->Add();
-			PhysicsComponent& physicsComponent = physicsComponentsIt->At(idx);
+			const PhysicsComponent& physicsComponent = physicsComponentsIt->At(idx);
 
 			Entity& entity = ECSManager::GetInstance()->GetEntity(physicsComponent.m_entityId);
 
 			InitDebugRenderComponent(entity, physicsComponent, debugRenderComponent);
-
-			//debugRenderComponent.m_entityId = physicsComponent.m_entityId;
-			//debugRenderComponent.m_debugAABB = physicsComponent.m_aabb;
-			//
-			//entity.m_components.insert({ ComponentType::DebugRenderComponent, &debugRenderComponent });
 		}
-
-		//ECSManager::GetInstance()->InsertComponents<DebugRenderComponentIterator>(debugRenderComponents);
 	}
 	else
 	{

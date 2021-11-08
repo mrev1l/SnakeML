@@ -54,6 +54,11 @@ public:
 		}
 	}
 
+	void Reset()
+	{
+		m_subscriptions.clear();
+	}
+
 private:
 	struct Subscription
 	{
@@ -114,6 +119,11 @@ public:
 		{
 			m_subscriptions.erase(foundSubscriber);
 		}
+	}
+
+	void Reset()
+	{
+		m_subscriptions.clear();
 	}
 
 private:

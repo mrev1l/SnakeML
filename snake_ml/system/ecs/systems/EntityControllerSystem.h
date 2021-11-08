@@ -18,6 +18,12 @@ private:
 	vector CalculateNewMovingDirection(vector currentMovingDirection, vector inputDirection);
 	vector CalculateNewRotation(vector currentMovingDirection);
 
+	static void OnTimerElapsed(EntityControllerSystem* me);
+
+	uint32_t	m_timerId			= -1;
+	bool		m_shouldApplyInput	= false;
+	vector		movementDirection	= vector::zero;
+
 	static constexpr float s_maxMovementSpeed = 100.f;
 };
 

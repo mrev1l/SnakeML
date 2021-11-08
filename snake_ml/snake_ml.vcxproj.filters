@@ -240,6 +240,9 @@
     <ClCompile Include="system\drivers\win\dx\helpers\DX12GlobalRenderSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\types\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib_includes\directX_includes.h">
@@ -498,6 +501,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\drivers\win\dx\helpers\DX12GlobalRenderSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\types\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\time\TimerManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
