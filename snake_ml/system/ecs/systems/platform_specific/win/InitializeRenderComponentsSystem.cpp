@@ -22,7 +22,6 @@ void InitializeRenderComponentsSystem::Execute()
 	MaterialComponentIterator* materialsIt = ECSManager::GetInstance()->GetComponents<MaterialComponentIterator>();
 	MeshComponentIterator* meshesIt = ECSManager::GetInstance()->GetComponents<MeshComponentIterator>();
 
-	//DX12RenderComponentIterator* renderComponentsIt = (DX12RenderComponentIterator*)IComponent::CreateIterator(ComponentType::DX12RenderComponent, materialsIt->Size());
 	DX12RenderComponentIterator* renderComponentsIt = ECSManager::GetInstance()->GetComponents<DX12RenderComponentIterator>();
 
 	DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
@@ -73,22 +72,10 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 {
 	_outRenderComponent.m_entityId = materialComponent.m_entityId;
 
-	if (materialComponent.m_texturePaths.size() == 1) // TODO : revise
-	{
-		InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePaths[0], _outRenderComponent.m_texture);
-	}
-	else
-	{
-		InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePaths, _outRenderComponent.m_texture);
-	}
+	InitRenderComponent_LoadTextures(commandList, materialComponent.m_texturePaths, _outRenderComponent.m_texture);
 
 	const std::vector<std::pair<float3, float2>>& vertices = materialComponent.m_vs.empty() ? std::vector<std::pair<float3, float2>>() : meshComponent.m_vertices;
 	InitRenderComponent_LoadBuffers(commandList, vertices, _outRenderComponent.m_vertexBuffer);
-	if (materialComponent.m_entityId == 0)
-	{
-		DX12Driver* dx12Driver = (DX12Driver*)IRenderDriver::GetInstance();
-		//InitRenderComponent_LoadBuffers(commandList, vertices, dx12Driver->testVertexBuffer);
-	}
 
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob, pixelShaderBlob;
 	InitRenderComponent_LoadShaders(materialComponent.m_vs.data(), materialComponent.m_ps.data(), vertexShaderBlob, pixelShaderBlob);
@@ -113,14 +100,6 @@ void InitializeRenderComponentsSystem::InitRenderComponent(std::shared_ptr<DX12C
 		vertexShaderBlob,
 		pixelShaderBlob,
 		_outRenderComponent.m_pipelineState);
-}
-
-void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::wstring texturePath, DX12Texture& _outTexture)
-{
-	if (!texturePath.empty())
-	{
-		commandList->LoadTexture(_outTexture, { texturePath });
-	}
 }
 
 void InitializeRenderComponentsSystem::InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::vector<std::wstring> texturesPath, DX12Texture& _outTexture)
@@ -166,7 +145,7 @@ void InitializeRenderComponentsSystem::InitRenderComponent_InitializeRootSignatu
 	if(!rootParamsIds.empty())
 	{
 		const CD3DX12_DESCRIPTOR_RANGE1 descriptorRage(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-		std::vector<CD3DX12_ROOT_PARAMETER1> rootParameters = CreateRootParameters(rootParamsIds, &descriptorRage);
+		const std::vector<CD3DX12_ROOT_PARAMETER1>& rootParameters = CreateRootParameters(rootParamsIds, &descriptorRage);
 		CD3DX12_STATIC_SAMPLER_DESC linearRepeatSampler(0, D3D12_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR);
 		CreateRootSignature(rootParameters, 1u, &linearRepeatSampler, _outRootSignature);
 	}

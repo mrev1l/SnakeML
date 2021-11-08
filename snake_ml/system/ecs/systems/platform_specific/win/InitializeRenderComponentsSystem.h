@@ -29,7 +29,6 @@ public:
 
 private:
 	static void InitRenderComponent(std::shared_ptr<DX12CommandList> commandList, const MaterialComponent& materialComponent, const MeshComponent& meshComponent, DX12RenderComponent& _outRenderComponent);
-	static void InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::wstring texturePath, DX12Texture& _outTexture);
 	static void InitRenderComponent_LoadTextures(std::shared_ptr<DX12CommandList> commandList, std::vector<std::wstring> texturesPath, DX12Texture& _outTexture);
 	static void InitRenderComponent_LoadBuffers(
 		std::shared_ptr<DX12CommandList> commandList,
