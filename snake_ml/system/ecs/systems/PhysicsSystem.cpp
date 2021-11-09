@@ -31,20 +31,7 @@ PhysicsSystem::PhysicsSystem(std::vector<uint32_t> targetEntities) : ISystemCast
 
 void PhysicsSystem::Update(float deltaTime)
 {
-	static float timer = 0, timerThreshold = 0.5f;
-	//deltaTime = k_physicsTimeStep; // debug // TODO Move to Application cpp
 	float timeToSimulate = deltaTime;
-
-	//timer += deltaTime;
-	//if (timer < timerThreshold)
-	//{
-	//	return;
-	//}
-	//else
-	//{
-	//	//timeToSimulate = timer;
-	//	timer = 0;
-	//}
 
 	do
 	{
@@ -92,16 +79,6 @@ void PhysicsSystem::SimulatePhysicsStep(PhysicsComponent& body, TransformCompone
 	// Update transform
 	transform.m_position = body.m_position;
 	transform.m_rotation = body.m_rotation;
-
-	// test
-	{
-		static std::vector<vector> s_headPos;
-
-		if (body.m_velocity.length() != 0.f)
-		{
-			s_headPos.push_back(body.m_position);
-		}
-	}
 }
 
 void PhysicsSystem::UpdateAABBs(const PhysicsComponentIterator& bodiesIt)
