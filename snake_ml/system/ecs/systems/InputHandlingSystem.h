@@ -21,7 +21,7 @@ private:
 	void PopulateInputVector(InputManager::InputAxisData) const;
 
 	bool m_debugRenderingToggle = false; // TODO : Add macro for debug code
-	uint32_t m_parentId = -1;
+	uint32_t m_parentId = -1; // Add costexpr for invalid entity id
 };
 
 }

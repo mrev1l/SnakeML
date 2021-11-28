@@ -69,6 +69,7 @@ class DX12PanoToCubemapPSO
 {
 public:
 	DX12PanoToCubemapPSO();
+	~DX12PanoToCubemapPSO() = default;
 
 	const DX12RootSignature& GetRootSignature() const { return m_rootSignature; }
 

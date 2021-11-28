@@ -10,6 +10,8 @@
 #include "system/ecs/ECSManager.h"
 #include "system/ecs/Entity.h"
 
+#include "system/ecs/systems/SelectSnakeSegmentTextureIdSystem.h"
+
 #include "system/time/TimerManager.h"
 
 namespace snakeml
@@ -49,6 +51,13 @@ void EntityControllerSystem::Update(float dt)
 			{
 				physics.m_velocity = movementDirection * 32.f / dt;
 				physics.m_rotation = CalculateNewRotation(movementDirection);
+
+				// TEST
+				{
+					//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<SelectSnakeSegmentTextureIdSystem>());
+					std::unique_ptr<ISystem> sys = std::make_unique<SelectSnakeSegmentTextureIdSystem>();
+					ECSManager::GetInstance()->ExecuteSystem(sys);
+				}
 			}
 			m_shouldApplyInput = false;
 		}

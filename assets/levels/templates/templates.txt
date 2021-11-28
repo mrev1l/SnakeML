@@ -13,10 +13,12 @@
 				"data/assets/textures/snake-head-2.png",
 				"data/assets/textures/snake-body-left-up-0.png",
 				"data/assets/textures/snake-body-down-right-0.png",
-				"data/assets/textures/snake-body-straight-0.png",
+				"data/assets/textures/snake-body-straight-vertical-0.png",
+				"data/assets/textures/snake-body-straight-horizontal-0.png",
 				"data/assets/textures/snake-body-left-down-0.png",
 				"data/assets/textures/snake-body-up-right-0.png",
-				"data/assets/textures/snake-tail-0.png"
+				"data/assets/textures/snake-tail-vertical-0.png",
+				"data/assets/textures/snake-tail-horizontal-0.png"
 			]
 		}
 	},
@@ -155,13 +157,18 @@
 		"componentId" : 14,
 		"componentTypeId" : 11,
 		"description" :	{}
+	},
+	{
+		"componentId" : 15,
+		"componentTypeId" : 12,
+		"description" : {}
 	}
 ],
 "templates": [
 	{
 		"templateId": 0,
 		"name": "Snake head",
-		"components": [0, 3, 6, 12]
+		"components": [0, 3, 6, 12, 15]
 	},
 	{
 		"templateId": 1,
@@ -186,7 +193,7 @@
 	{
 		"templateId": 5,
 		"name": "Snake child",
-		"components": [0, 3, 6, 13]
+		"components": [0, 3, 6, 15]
 	}
 ]
 }

@@ -19,8 +19,9 @@ enum class ComponentType : uint32_t
 	EntityControllerComponent,
 	InputDataComponent,
 	ConsumableComponent,
-	ChildControllerComponent,
+	ChildControllerComponent, // TODO : deprecate. to do that - specify component id by name in data
 	LevelRequestComponent,
+	ParentComponent,
 
 	Size
 };

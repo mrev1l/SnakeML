@@ -28,10 +28,12 @@ public:
 		Head2,
 		LeftUp,
 		DownRight,
-		Straight,
+		StraightVertical,
+		StraightHorizontal,
 		LeftDown,
 		UpRight,
-		Tail,
+		TailVertical,
+		TailHorizontal,
 
 		Count
 	};

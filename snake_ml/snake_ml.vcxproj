@@ -274,6 +274,7 @@
     <ClCompile Include="system\ecs\components\LevelRequestComponent.cpp" />
     <ClCompile Include="system\ecs\components\MaterialComponent.cpp" />
     <ClCompile Include="system\ecs\components\MeshComponent.cpp" />
+    <ClCompile Include="system\ecs\components\ParentComponent.cpp" />
     <ClCompile Include="system\ecs\components\PhysicsComponent.cpp" />
     <ClCompile Include="system\ecs\components\platform_specific\win\DX12RenderComponent.cpp" />
     <ClCompile Include="system\ecs\components\TransformComponent.cpp" />
@@ -289,10 +290,12 @@
     <ClCompile Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InitializePhysicsComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\InputHandlingSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\ParentSystem.cpp" />
     <ClCompile Include="system\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.cpp" />
     <ClCompile Include="system\ecs\systems\LevelLoadingSystem.cpp" />
     <ClCompile Include="system\ecs\systems\Render2DSystem.cpp" />
+    <ClCompile Include="system\ecs\systems\SelectSnakeSegmentTextureIdSystem.cpp" />
     <ClCompile Include="system\ecs\systems\WIP_System.cpp" />
     <ClCompile Include="system\input\InputManager.cpp" />
     <ClCompile Include="system\drivers\win\dx\helpers\directX_utils.cpp" />
@@ -353,6 +356,7 @@
     <ClInclude Include="system\ecs\components\EntityControllerComponent.h" />
     <ClInclude Include="system\ecs\components\InputDataComponent.h" />
     <ClInclude Include="system\ecs\components\LevelRequestComponent.h" />
+    <ClInclude Include="system\ecs\components\ParentComponent.h" />
     <ClInclude Include="system\ecs\EntityComponentPool.h" />
     <ClInclude Include="system\ecs\components\CameraComponent.h" />
     <ClInclude Include="system\ecs\components\MaterialComponent.h" />
@@ -371,10 +375,12 @@
     <ClInclude Include="system\ecs\systems\InitializeDebugRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\InitializePhysicsComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\InputHandlingSystem.h" />
+    <ClInclude Include="system\ecs\systems\ParentSystem.h" />
     <ClInclude Include="system\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="system\ecs\systems\platform_specific\win\InitializeRenderComponentsSystem.h" />
     <ClInclude Include="system\ecs\systems\LevelLoadingSystem.h" />
     <ClInclude Include="system\ecs\systems\Render2DSystem.h" />
+    <ClInclude Include="system\ecs\systems\SelectSnakeSegmentTextureIdSystem.h" />
     <ClInclude Include="system\ecs\systems\WIP_System.h" />
     <ClInclude Include="system\input\InputKeys.h" />
     <ClInclude Include="system\input\InputManager.h" />

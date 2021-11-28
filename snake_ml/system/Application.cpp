@@ -17,8 +17,10 @@
 #include "ecs/systems/InitializePhysicsComponentsSystem.h"
 #include "ecs/systems/InputHandlingSystem.h"
 #include "ecs/systems/LevelLoadingSystem.h"
+#include "ecs/systems/ParentSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/Render2DSystem.h"
+#include "ecs/systems/SelectSnakeSegmentTextureIdSystem.h"
 #include "ecs/systems/WIP_System.h"
 
 #include "input/InputManager.h"
@@ -62,10 +64,13 @@ void Application::Initialize()
 	levelLoadingSystem->m_onLoadingComplete.Subscribe(this, []() -> void
 		{
 #ifdef _WINDOWS
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
+			std::unique_ptr<ISystem> s1 = std::make_unique<win::InitializeRenderComponentsSystem>();
+			ECSManager::GetInstance()->ExecuteSystem(s1);
 #endif
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
+			std::unique_ptr<ISystem> s2 = std::make_unique<InitializePhysicsComponentsSystem>();
+			std::unique_ptr<ISystem> s3 = std::make_unique<InitializeDebugRenderComponentsSystem>();
+			ECSManager::GetInstance()->ExecuteSystem(s2);
+			ECSManager::GetInstance()->ExecuteSystem(s3);
 		});
 	ECSManager::GetInstance()->ScheduleSystem(std::move(levelLoadingSystem));
 
@@ -74,7 +79,8 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<InputHandlingSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<EntityControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
-	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ChildControllerSystem>());
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ParentSystem>());
+	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<SelectSnakeSegmentTextureIdSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ConsumablesSystem>()); // TODO : ordering!
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
@@ -108,7 +114,7 @@ void Application::OnInput(InputAction inputEvent)
 void Application::Update(float dt)
 {
 	static constexpr float		k_physicsTimeStep = 1.f / 144.f;		// 1 simulation step per frame per 144 fps
-	//dt = k_physicsTimeStep; // debug
+	dt = k_physicsTimeStep; // debug
 	
 	// TODO : reimplement with a Timer
 	static uint64_t frameCounter = 0;

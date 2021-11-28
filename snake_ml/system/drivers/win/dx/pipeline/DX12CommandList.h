@@ -68,7 +68,7 @@ class DX12CommandList
 {
 public:
 	DX12CommandList(D3D12_COMMAND_LIST_TYPE type);
-	virtual ~DX12CommandList() = default;
+	virtual ~DX12CommandList();
 
 	/**
 	 * Get the type of command list.
