@@ -3,20 +3,12 @@
 #include "stdafx.h"
 #include "SystemsPool.h"
 
-#include "systems/Render2DSystem.h"
-#include "systems/SelectSnakeSegmentTextureIdSystem.h"
-
 namespace snakeml
 {
 
-void SystemsPool::ExecuteSystem(/*const*/ std::unique_ptr<ISystem>& system) /*const*/
+void SystemsPool::ExecuteSystem(const std::unique_ptr<ISystem>& system) const
 {
-	if (system->As<SelectSnakeSegmentTextureIdSystem>())
-	{
-		m_systemsToExecuteThisFrame.push_back(std::move(system));
-	}
-	else
-		system->Execute();
+	system->Execute();
 }
 
 void SystemsPool::ScheduleSystem(std::unique_ptr<ISystem>&& system)
@@ -34,14 +26,6 @@ void SystemsPool::Update(float deltaTime)
 {
 	for (const std::unique_ptr<ISystem>& system : m_systems)
 	{
-		if (system->As<Render2DSystem>())
-		{
-			for (const std::unique_ptr<ISystem>& sys: m_systemsToExecuteThisFrame)
-			{
-				sys->Execute();
-			}
-			m_systemsToExecuteThisFrame.clear();
-		}
 		system->Update(deltaTime);
 	}
 

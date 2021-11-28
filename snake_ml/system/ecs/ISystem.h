@@ -7,14 +7,6 @@
 namespace snakeml
 {
 
-enum class TickGroup
-{
-	PrePhysics,
-	Physics,
-	PostPhysics,
-	Render
-};
-
 class ISystem : public ICastable
 {
 public:

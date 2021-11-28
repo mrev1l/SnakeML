@@ -11,7 +11,7 @@ public:
 	SystemsPool() = default;
 	~SystemsPool() = default;
 
-	void ExecuteSystem(/*const*/ std::unique_ptr<ISystem>& system) /*const*/; // TODO temp hack to prove the concept
+	void ExecuteSystem(const std::unique_ptr<ISystem>& system) const;
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 	void UnscheduleSystem(const ISystem* system);
 
@@ -22,8 +22,6 @@ public:
 
 private:
 	std::vector<std::unique_ptr<ISystem>> m_systems;
-	std::vector<std::unique_ptr<ISystem>> m_systemsToExecuteThisFrame;
-
 	std::unordered_set<uint32_t> m_systemsToUnschedule;
 };
 

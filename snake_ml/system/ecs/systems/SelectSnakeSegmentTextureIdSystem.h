@@ -11,8 +11,11 @@ public:
 	SelectSnakeSegmentTextureIdSystem(std::vector<uint32_t> targetEntities = std::vector<uint32_t>()) : ISystemCastableImpl<SelectSnakeSegmentTextureIdSystem>(targetEntities) {};
 	virtual ~SelectSnakeSegmentTextureIdSystem() = default;
 
-	//void Update(float dt) override;
-	void Execute() override;
+	void Update(float dt) override;
+
+private:
+	vector	m_oldHeadPosition	= vector::zero;
+	bool	m_hasHeadMoved		= false;
 };
 
 }

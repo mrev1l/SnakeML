@@ -133,13 +133,9 @@ void InputHandlingSystem::Cheat_SpawnSnakeSection() const
 
 			std::vector<uint32_t> entitiesToInit = { spawnedId };
 
-			std::unique_ptr<ISystem> initPhysicsCompSystem = std::make_unique<InitializePhysicsComponentsSystem>(entitiesToInit);
-			std::unique_ptr<ISystem> initDebugRenderSystem = std::make_unique<InitializeDebugRenderComponentsSystem>(entitiesToInit);
-			std::unique_ptr<ISystem> initRenderSystem = std::make_unique<win::InitializeRenderComponentsSystem>(entitiesToInit);
-
-			ECSManager::GetInstance()->ExecuteSystem(/*std::move*/(initPhysicsCompSystem));
-			ECSManager::GetInstance()->ExecuteSystem(/*std::move*/(initDebugRenderSystem));
-			ECSManager::GetInstance()->ExecuteSystem(/*std::move*/(initRenderSystem));
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>(entitiesToInit));
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>(entitiesToInit));
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>(entitiesToInit));
 
 			spawned.m_components.at(ComponentType::DebugRenderComponent)->As<DebugRenderComponent>()->m_isEnabled = me->m_debugRenderingToggle;
 			spawned.m_components.at(ComponentType::MaterialComponent)->As<MaterialComponent>()->m_textureId = MaterialComponent::TextureId::Count;

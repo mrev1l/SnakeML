@@ -26,7 +26,7 @@ public:
 	Entity& GetEntity(uint32_t id);
 
 	/** Relay to systems pool */
-	void ExecuteSystem(/*const*/ std::unique_ptr<ISystem>& system) /*const*/;
+	void ExecuteSystem(const std::unique_ptr<ISystem>& system) const;
 	void ScheduleSystem(std::unique_ptr<ISystem>&& system);
 	void UnscheduleSystem(const ISystem* system);
 

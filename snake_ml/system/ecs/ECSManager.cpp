@@ -21,7 +21,7 @@ Entity& ECSManager::GetEntity(uint32_t id)
 	return m_entityComponentPool.GetEntity(id);
 }
 
-void ECSManager::ExecuteSystem(/*const*/ std::unique_ptr<ISystem>& system) /*const*/
+void ECSManager::ExecuteSystem(const std::unique_ptr<ISystem>& system) const
 {
 	m_systemsPool.ExecuteSystem(system);
 }

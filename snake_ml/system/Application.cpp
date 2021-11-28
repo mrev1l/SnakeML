@@ -64,13 +64,10 @@ void Application::Initialize()
 	levelLoadingSystem->m_onLoadingComplete.Subscribe(this, []() -> void
 		{
 #ifdef _WINDOWS
-			std::unique_ptr<ISystem> s1 = std::make_unique<win::InitializeRenderComponentsSystem>();
-			ECSManager::GetInstance()->ExecuteSystem(s1);
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>());
 #endif
-			std::unique_ptr<ISystem> s2 = std::make_unique<InitializePhysicsComponentsSystem>();
-			std::unique_ptr<ISystem> s3 = std::make_unique<InitializeDebugRenderComponentsSystem>();
-			ECSManager::GetInstance()->ExecuteSystem(s2);
-			ECSManager::GetInstance()->ExecuteSystem(s3);
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>());
+			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>());
 		});
 	ECSManager::GetInstance()->ScheduleSystem(std::move(levelLoadingSystem));
 
@@ -80,8 +77,8 @@ void Application::Initialize()
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<EntityControllerSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<PhysicsSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ParentSystem>());
-	//ECSManager::GetInstance()->ScheduleSystem(std::make_unique<SelectSnakeSegmentTextureIdSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<ConsumablesSystem>()); // TODO : ordering!
+	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<SelectSnakeSegmentTextureIdSystem>());
 	ECSManager::GetInstance()->ScheduleSystem(std::make_unique<Render2DSystem>());
 }
 
