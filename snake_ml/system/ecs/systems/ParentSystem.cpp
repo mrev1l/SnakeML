@@ -27,12 +27,6 @@ void ParentSystem::Update(float dt)
 			parentComponent.m_parentPreviousMovementTickRotation = parentComponent.m_parentPreviousFrameRotation;
 		}
 
-		/*if (!IsNearlyZero((parentComponent.m_parentPreviousFrameRotation - parentComponent.m_parentPreviousMovementTickRotation).length()) &&
-			!IsNearlyZero((parentComponent.m_parentPreviousFrameRotation - parentPhysics.m_rotation).length()))
-		{
-			parentComponent.m_parentPreviousMovementTickRotation = parentComponent.m_parentPreviousFrameRotation;
-		}*/
-
 		if (!IsNearlyZero((parentComponent.m_parentPreviousFramePosition - parentPhysics.m_position).length()))
 		{
 			if (parentComponent.m_childId != -1)
@@ -48,11 +42,6 @@ void ParentSystem::Update(float dt)
 			parentComponent.m_parentPreviousFramePosition = parentPhysics.m_position;
 			parentComponent.m_parentPreviousFrameRotation = parentPhysics.m_rotation;
 		}
-
-		/*if (!IsNearlyZero((parentComponent.m_parentPreviousFrameRotation - parentPhysics.m_rotation).length()))
-		{
-			parentComponent.m_parentPreviousFrameRotation = parentPhysics.m_rotation;
-		}*/
 	}
 }
 
