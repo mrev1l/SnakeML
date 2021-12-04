@@ -23,6 +23,8 @@ private:
 	void OnInput(InputAction);
 	void Update(float dt);
 	void Render();
+
+	static constexpr float k_debugTimeStep = 1.f / 144.f; // 1 simulation step per frame per 144 fps
 };
 
 }

@@ -49,7 +49,7 @@ void EntityControllerSystem::Update(float dt)
 		{
 			if (!IsNearlyZero(movementDirection.length()))
 			{
-				physics.m_velocity = movementDirection * 32.f / dt;
+				physics.m_position += movementDirection * 32.f; // TODO Magic number
 				physics.m_rotation = CalculateNewRotation(movementDirection);
 			}
 			m_shouldApplyInput = false;

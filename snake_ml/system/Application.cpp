@@ -110,8 +110,7 @@ void Application::OnInput(InputAction inputEvent)
 
 void Application::Update(float dt)
 {
-	static constexpr float		k_physicsTimeStep = 1.f / 144.f;		// 1 simulation step per frame per 144 fps
-	dt = k_physicsTimeStep; // debug
+	//dt = k_debugTimeStep; // debug
 	
 	// TODO : reimplement with a Timer
 	static uint64_t frameCounter = 0;
