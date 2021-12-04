@@ -18,7 +18,11 @@ public:
 private:
 	enum SegmentDirection
 	{
-		Left, Right, Up, Down, Invalid
+		Left,
+		Right,
+		Up,
+		Down,
+		Invalid
 	};
 
 	void UpdateHasMovedToggle(Entity* snakeHead);
