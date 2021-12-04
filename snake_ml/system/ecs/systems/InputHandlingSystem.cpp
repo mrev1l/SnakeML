@@ -79,73 +79,70 @@ void InputHandlingSystem::Cheat_ToggleDebugRendering() const
 
 void InputHandlingSystem::Cheat_SpawnSnakeSection() const
 {
-	static size_t s_count = 0;
-	if(m_parentId == -1)
-	{
-		const std::unordered_map<uint32_t, Entity>& entities = ECSManager::GetInstance()->GetEntities();
-		for (const std::pair<uint32_t, Entity>& entity : entities)
-		{
-			if (entity.second.m_components.contains(ComponentType::EntityControllerComponent))
-			{
-				InputHandlingSystem* me = const_cast<InputHandlingSystem*>(this);
-				me->m_parentId = entity.first;
-				break;
-			}
-		}
-	}
+	InputHandlingSystem* me = const_cast<InputHandlingSystem*>(this);
 
+	Cheat_SpawnSnakeSection_ValidateParentId(me);
+	Cheat_SpawnSnakeSection_ConstructSpawnRequest(me);
+}
+
+void InputHandlingSystem::Cheat_SpawnSnakeSection_ValidateParentId(InputHandlingSystem* me)
+{
+	if (me->m_debugSpawningParentId == -1)
+	{
+		const EntityControllerComponentIterator* controllersContainer = ECSManager::GetInstance()->GetComponents<EntityControllerComponentIterator>();
+		ASSERT(controllersContainer->Size() == 1, "[InputHandlingSystem::Cheat_SpawnSnakeSection_ValidateParentId] : Unexpected amount of controllers.");
+		me->m_debugSpawningParentId = controllersContainer->At(0).m_entityId;
+	}
+}
+
+void InputHandlingSystem::Cheat_SpawnSnakeSection_ConstructSpawnRequest(InputHandlingSystem* me)
+{
 	LevelRequestComponentIterator* levelRequestContainer = ECSManager::GetInstance()->GetComponents<LevelRequestComponentIterator>();
 	if (levelRequestContainer)
 	{
 		ASSERT(levelRequestContainer->Size() <= 1, "[InputHandlingSystem::Cheat_SpawnSnakeSection] : Weird amount of LevelRequestComponent.");
 
-		{
-			const Entity& parent = ECSManager::GetInstance()->GetEntity(m_parentId);
+		const Entity& parent = ECSManager::GetInstance()->GetEntity(me->m_debugSpawningParentId);
 
-			levelRequestContainer->At(0).m_spawnRequests.push_back(
-				LevelLoadingSystem::SpawnRequest{
-					5u,																								// templateId
-					std::string("Snake_child_") + std::to_string(s_count++),										// name
-					vector::zero, //parent.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>()->m_position,	// spawnPosition
-					parent.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>()->m_rotation		// spawnRotation
-				}
-			);
-		}
+		levelRequestContainer->At(0).m_spawnRequests.push_back(
+			LevelLoadingSystem::SpawnRequest{
+				5u,																								// templateId
+				std::string("Snake_child_") + std::to_string(s_spawnedCounter++),								// name
+				vector::zero,																					// spawnPosition
+				parent.m_components.at(ComponentType::PhysicsComponent)->As<PhysicsComponent>()->m_rotation		// spawnRotation
+			}
+		);
 
 		LevelLoadingSystem* loadingSystem = ECSManager::GetInstance()->GetSystem<LevelLoadingSystem>();
-		const auto OnSpawned = [this, loadingSystem](uint32_t spawnedId) -> void
-		{
-			InputHandlingSystem* me = const_cast<InputHandlingSystem*>(this);
-			Entity& spawned = ECSManager::GetInstance()->GetEntity(spawnedId);
-
-			//ASSERT(spawned.m_components.contains(ComponentType::ChildControllerComponent), "[InputHandlingSystem::Cheat_SpawnSnakeSection] : spawned entity is set up incorrectly.");
-			//
-			//spawned.m_components.at(ComponentType::ChildControllerComponent)->As<ChildControllerComponent>()->m_parentId = me->m_parentId;
-			//me->m_parentId = spawnedId;
-
-			ASSERT(m_parentId != -1, "[InputHandlingSystem::Cheat_SpawnSnakeSection] : Failed to locate parent entity.");
-			Entity& parent = ECSManager::GetInstance()->GetEntity(m_parentId);
-			ASSERT(parent.m_components.contains(ComponentType::ParentComponent), "[InputHandlingSystem::Cheat_SpawnSnakeSection] : Misconfigured parent entity.");
-			ParentComponent& parentComponent = *parent.m_components[ComponentType::ParentComponent]->As<ParentComponent>();
-			parentComponent.m_childId = spawnedId;
-			parentComponent.m_parentPreviousFramePosition = parent.m_components[ComponentType::PhysicsComponent]->As<PhysicsComponent>()->m_position;
-			me->m_parentId = spawnedId;
-
-			std::vector<uint32_t> entitiesToInit = { spawnedId };
-
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>(entitiesToInit));
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>(entitiesToInit));
-			ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>(entitiesToInit));
-
-			spawned.m_components.at(ComponentType::DebugRenderComponent)->As<DebugRenderComponent>()->m_isEnabled = me->m_debugRenderingToggle;
-			spawned.m_components.at(ComponentType::MaterialComponent)->As<MaterialComponent>()->m_textureId = MaterialComponent::TextureId::Count;
-
-			loadingSystem->m_onEntitySpawned.Unsubscribe(const_cast<InputHandlingSystem*>(me));
-		};
-
-		loadingSystem->m_onEntitySpawned.Subscribe(const_cast<InputHandlingSystem*>(this), OnSpawned); // TODO : add implementation for subscriber to be const void*
+		loadingSystem->m_onEntitySpawned.Subscribe(
+			me,
+			std::bind(&InputHandlingSystem::Cheat_SpawnSnakeSection_OnSpawned, me, loadingSystem, std::placeholders::_1));
+			// TODO : add implementation for subscriber to be const void*
 	}
+}
 
+void InputHandlingSystem::Cheat_SpawnSnakeSection_OnSpawned(InputHandlingSystem* me, LevelLoadingSystem* loadingSystem, uint32_t spawnedId)
+{
+	Entity& spawned = ECSManager::GetInstance()->GetEntity(spawnedId);
+
+	ASSERT(me->m_debugSpawningParentId != -1, "[InputHandlingSystem::Cheat_SpawnSnakeSection] : Failed to locate parent entity.");
+	Entity& parent = ECSManager::GetInstance()->GetEntity(me->m_debugSpawningParentId);
+	ASSERT(parent.m_components.contains(ComponentType::ParentComponent), "[InputHandlingSystem::Cheat_SpawnSnakeSection] : Misconfigured parent entity.");
+	
+	ParentComponent& parentComponent = *parent.m_components[ComponentType::ParentComponent]->As<ParentComponent>();
+	parentComponent.m_childId = spawnedId;
+	parentComponent.m_parentPreviousFramePosition = parent.m_components[ComponentType::PhysicsComponent]->As<PhysicsComponent>()->m_position;
+	me->m_debugSpawningParentId = spawnedId;
+
+	std::vector<uint32_t> entitiesToInit = { spawnedId };
+
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializePhysicsComponentsSystem>(entitiesToInit));
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<InitializeDebugRenderComponentsSystem>(entitiesToInit));
+	ECSManager::GetInstance()->ExecuteSystem(std::make_unique<win::InitializeRenderComponentsSystem>(entitiesToInit));
+
+	spawned.m_components.at(ComponentType::DebugRenderComponent)->As<DebugRenderComponent>()->m_isEnabled = me->m_debugRenderingToggle;
+
+	loadingSystem->m_onEntitySpawned.Unsubscribe(me);
 }
 
 void InputHandlingSystem::PopulateInputVector(InputManager::InputAxisData inputAxis) const

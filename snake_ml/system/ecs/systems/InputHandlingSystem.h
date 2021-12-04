@@ -5,6 +5,8 @@
 namespace snakeml
 {
 
+class LevelLoadingSystem;
+
 class InputHandlingSystem : public ISystemCastableImpl<InputHandlingSystem>
 {
 public:
@@ -17,11 +19,18 @@ private:
 	void OnAxis(InputManager::InputAxisData) const;
 
 	void Cheat_ToggleDebugRendering() const;
+
 	void Cheat_SpawnSnakeSection() const;
+	static void Cheat_SpawnSnakeSection_ValidateParentId(InputHandlingSystem* me);
+	static void Cheat_SpawnSnakeSection_ConstructSpawnRequest(InputHandlingSystem* me);
+	static void Cheat_SpawnSnakeSection_OnSpawned(InputHandlingSystem* me, LevelLoadingSystem* loadingSystem, uint32_t spawnedId);
+
 	void PopulateInputVector(InputManager::InputAxisData) const;
 
-	bool m_debugRenderingToggle = false; // TODO : Add macro for debug code
-	uint32_t m_parentId = -1; // Add costexpr for invalid entity id
+	bool		m_debugRenderingToggle	= false;	// TODO : Add macro for debug code
+	uint32_t	m_debugSpawningParentId	= -1;		// Add costexpr for invalid entity id
+
+	static inline uint32_t s_spawnedCounter = 0;
 };
 
 }
