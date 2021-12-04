@@ -14,11 +14,7 @@
 				"data/assets/textures/snake-body-left-up-0.png",
 				"data/assets/textures/snake-body-down-right-0.png",
 				"data/assets/textures/snake-body-straight-vertical-0.png",
-				"data/assets/textures/snake-body-straight-horizontal-0.png",
-				"data/assets/textures/snake-body-left-down-0.png",
-				"data/assets/textures/snake-body-up-right-0.png",
-				"data/assets/textures/snake-tail-vertical-0.png",
-				"data/assets/textures/snake-tail-horizontal-0.png"
+				"data/assets/textures/snake-tail-vertical-0.png"
 			]
 		}
 	},

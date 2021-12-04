@@ -29,11 +29,7 @@ public:
 		LeftUp,
 		DownRight,
 		StraightVertical,
-		StraightHorizontal,
-		LeftDown,
-		UpRight,
 		TailVertical,
-		TailHorizontal,
 
 		Count
 	};
