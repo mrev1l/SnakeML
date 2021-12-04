@@ -265,10 +265,10 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 		return;
 	}
 
-	/*if (!m_PanoToCubemapPSO)
+	if (!m_PanoToCubemapPSO)
 	{
 		m_PanoToCubemapPSO = std::make_unique<DX12PanoToCubemapPSO>();
-	}*/
+	}
 
 	auto cubemapResource = cubemap.GetD3D12Resource();
 	if (!cubemapResource) return;
@@ -308,8 +308,8 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 
 	TransitionBarrier(stagingTexture, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-	/*m_d3d12CommandList->SetPipelineState(m_PanoToCubemapPSO->GetPipelineState().Get());
-	SetComputeRootSignature(m_PanoToCubemapPSO->GetRootSignature());*/
+	m_d3d12CommandList->SetPipelineState(m_PanoToCubemapPSO->GetPipelineState().Get());
+	SetComputeRootSignature(m_PanoToCubemapPSO->GetRootSignature());
 
 	PanoToCubemapCB panoToCubemapCB;
 
@@ -341,7 +341,7 @@ void DX12CommandList::PanoToCubemap(DX12Texture& cubemap, const DX12Texture& pan
 		if (numMips < 5)
 		{
 			// Pad unused mips. This keeps DX12 runtime happy.
-			//m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(PanoToCubemapRS::DstMips, panoToCubemapCB.NumMips, 5 - numMips, m_PanoToCubemapPSO->GetDefaultUAV());
+			m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(PanoToCubemapRS::DstMips, panoToCubemapCB.NumMips, 5 - numMips, m_PanoToCubemapPSO->GetDefaultUAV());
 		}
 
 		const uint32_t numGroup = DivideByMultiple(panoToCubemapCB.CubemapSize, 16);
